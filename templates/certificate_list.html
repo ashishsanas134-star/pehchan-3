@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}My Certificates - Pehchan{% endblock %}
+
+{% block content %}
+<div class="dashboard-hero" style="padding: 48px 40px; background: linear-gradient(135deg, var(--secondary-600), var(--secondary-400));">
+    <div class="dashboard-hero-content">
+        <span class="badge-chip" style="background: rgba(255, 255, 255, 0.2); color: rgba(255, 255, 255, 0.95); border-color: rgba(255, 255, 255, 0.3);">
+            <span class="material-icons-round">workspace_premium</span> Your Achievements
+        </span>
+        <h1>My Certificates</h1>
+        <p>A gallery of every milestone you've nurtured through your volunteer journey.</p>
+    </div>
+</div>
+
+<div class="dashboard-section">
+    {% if certificates %}
+        <div class="dashboard-grid">
+            {% for certificate in certificates %}
+            <div class="surface-card certificate-card">
+                <div class="mdl-card__title">
+                    <h2 class="mdl-card__title-text">
+                        <span class="material-icons-round">verified</span>
+                        Certificate #{{ certificate.pk }}
+                    </h2>
+                </div>
+                <div class="mdl-card__supporting-text">
+                    <div style="display: grid; gap: 14px;">
+                        <div style="padding: 12px; background: rgba(255, 255, 255, 0.6); border-radius: var(--radius-md); border-left: 3px solid var(--secondary-500);">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span class="material-icons-round" style="font-size: 1.2rem; color: var(--secondary-600);">event</span>
+                                <strong style="color: var(--neutral-700);">Event</strong>
+                            </div>
+                            <p style="margin: 0; color: var(--text-primary); font-weight: 600;">{{ certificate.event.name }}</p>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-tertiary); margin-bottom: 4px;">
+                                    <span class="material-icons-round" style="font-size: 1rem;">calendar_today</span>
+                                    <span style="font-size: 0.85rem; font-weight: 600;">Issued</span>
+                                </div>
+                                <p style="margin: 0; color: var(--text-primary);">{{ certificate.issue_date|date:"M d, Y" }}</p>
+                            </div>
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-tertiary); margin-bottom: 4px;">
+                                    <span class="material-icons-round" style="font-size: 1rem;">event</span>
+                                    <span style="font-size: 0.85rem; font-weight: 600;">Event Date</span>
+                                </div>
+                                <p style="margin: 0; color: var(--text-primary);">{{ certificate.event.event_date|date:"M d, Y" }}</p>
+                            </div>
+                        </div>
+                        
+                        <div style="padding: 10px; background: rgba(255, 248, 225, 0.6); border-radius: var(--radius-sm);">
+                            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                                <span class="material-icons-round" style="font-size: 1rem; color: var(--secondary-600);">location_on</span>
+                                <span style="font-size: 0.85rem; font-weight: 600; color: var(--neutral-700);">Location</span>
+                            </div>
+                            <p style="margin: 0; color: var(--text-primary);">{{ certificate.event.location }}</p>
+                        </div>
+                    </div>
+                    
+                    {% if certificate.file %}
+                    <div style="margin-top: 20px;">
+                        <a href="{{ certificate.file.url }}" target="_blank" class="pill-button pill-button--secondary">
+                            <span class="material-icons-round">download</span> Download Certificate
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="surface-card">
+            <div class="mdl-card__supporting-text">
+                <div class="info-panel info-panel--sun" style="text-align: center; padding: 40px;">
+                    <span class="material-icons-round" style="font-size: 4rem; color: var(--secondary-500); margin-bottom: 16px;">emoji_events</span>
+                    <h3 style="margin: 12px 0;">No Certificates Yet</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 20px;">You don't have any certificates yet. Join events to grow your achievements and earn recognition!</p>
+                    <a href="{% url 'event_list' %}" class="pill-button pill-button--primary">
+                        <span class="material-icons-round">search</span> Browse Events
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<div style="display: flex; justify-content: center; gap: 12px; margin-top: 40px; flex-wrap: wrap;">
+    <a href="{% url 'certificate_verify' %}" class="pill-button pill-button--outline">
+        <span class="material-icons-round">verified_user</span> Verify a Certificate
+    </a>
+    <a href="{% url 'dashboard' %}" class="pill-button pill-button--ghost">
+        <span class="material-icons-round">home</span> Back to Dashboard
+    </a>
+</div>
+{% endblock %}

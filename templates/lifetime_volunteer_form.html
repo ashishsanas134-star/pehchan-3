@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Become Lifetime Volunteer - Pehchan{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+    <div class="surface-card form-card">
+        <div class="mdl-card__title" style="background: linear-gradient(135deg, var(--secondary-600), var(--secondary-400));">
+            <h2 class="mdl-card__title-text">
+                <span class="material-icons-round">stars</span>
+                Become a Lifetime Volunteer
+            </h2>
+        </div>
+        <div class="mdl-card__supporting-text">
+            <div style="text-align: center; padding: 20px 0; margin-bottom: 24px;">
+                <span class="material-icons-round" style="font-size: 4rem; color: var(--secondary-500); margin-bottom: 12px;">emoji_events</span>
+                <h3 style="margin: 12px 0 8px; color: var(--text-primary);">Join Our Core Team</h3>
+                <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">Thank you for your interest in becoming a lifetime volunteer with Pehchan! Make a lasting commitment to creating positive change in our community.</p>
+            </div>
+            
+            <div class="info-panel" style="background: linear-gradient(135deg, var(--secondary-50), var(--surface-1)); border-left: 4px solid var(--secondary-500); margin-bottom: 32px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                    <span class="material-icons-round" style="color: var(--secondary-600); font-size: 1.5rem;">star</span>
+                    <h4 style="margin: 0; color: var(--text-primary);">Benefits & Opportunities</h4>
+                </div>
+                <ul style="margin: 12px 0 0 20px; color: var(--text-secondary); line-height: 1.8;">
+                    <li><strong>Priority Access:</strong> Get first access to all events and programs</li>
+                    <li><strong>Special Recognition:</strong> Receive exclusive certificates and badges</li>
+                    <li><strong>Decision Making:</strong> Be part of planning and strategy discussions</li>
+                    <li><strong>Exclusive Training:</strong> Access to specialized volunteer training sessions</li>
+                    <li><strong>Lasting Impact:</strong> Make a long-term commitment to social change</li>
+                    <li><strong>Community Network:</strong> Connect with like-minded changemakers</li>
+                </ul>
+            </div>
+            
+            <form method="post" class="form-shell">
+                {% csrf_token %}
+                
+                <div class="form-field">
+                    <label class="form-label" for="{{ form.motivation.id_for_label }}">
+                        <span class="material-icons-round" style="vertical-align: middle; margin-right: 6px;">edit_note</span>
+                        Why do you want to become a lifetime volunteer?
+                    </label>
+                    <p style="font-size: 0.9rem; color: var(--text-tertiary); margin: 4px 0 12px;">Share your motivation and vision for creating positive change in the community.</p>
+                    {{ form.motivation }}
+                    {% if form.motivation.errors %}
+                        <span style="color: var(--error); font-size: 0.9rem; margin-top: 4px; display: block;">{{ form.motivation.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="info-panel info-panel--sky" style="margin-top: 20px;">
+                    <span class="material-icons-round" style="color: var(--info);">info</span>
+                    <p style="margin: 0;">By submitting this form, you're taking the first step towards becoming a core member of our volunteer family. We'll review your application and get back to you soon!</p>
+                </div>
+                
+                <div class="mdl-card__actions" style="margin-top: 28px; padding: 0; display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button type="submit" class="pill-button pill-button--secondary">
+                        <span class="material-icons-round">send</span> Submit Application
+                    </button>
+                    <a href="{% url 'dashboard' %}" class="pill-button pill-button--outline">
+                        <span class="material-icons-round">close</span> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div style="text-align: center; margin-top: 32px;">
+    <a href="{% url 'dashboard' %}" class="pill-button pill-button--ghost">
+        <span class="material-icons-round">home</span> Back to Dashboard
+    </a>
+</div>
+{% endblock %}

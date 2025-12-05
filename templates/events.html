@@ -1,0 +1,255 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - Pehchan</title>
+    <link rel="stylesheet" href="{% static 'CSS/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Enhanced mobile responsiveness */
+        @media (max-width: 1024px) {
+            .gallery-grid-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .gallery-grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-category h2 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-title h1 {
+                font-size: 2.5rem;
+            }
+
+            .gallery-grid-3,
+            .gallery-grid-2 {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .gallery-category h2 {
+                font-size: 1.6rem;
+                text-align: center;
+            }
+
+            .gallery-grid-3 img,
+            .gallery-grid-2 img {
+                height: auto;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title h1 {
+                font-size: 2rem;
+            }
+
+            .gallery-category {
+                margin-bottom: 2rem;
+            }
+
+            .gallery-category h2 {
+                font-size: 1.4rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .gallery-grid-3 img,
+            .gallery-grid-2 img {
+                height: auto;
+            }
+        }
+
+        /* Center Navbar Content */
+        .nav-container {
+            justify-content: center !important;
+        }
+
+        .nav-links {
+            margin-left: 0 !important;
+            margin-right: 80px !important;
+        }
+
+        /* Image Styling with Navy Blue Borders and Hover Effects */
+        .gallery-grid-3 img,
+        .gallery-grid-2 img {
+            border: 3px solid #0A1A4A;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(10, 26, 74, 0.12);
+            transition: all 0.3s ease;
+            object-fit: contain;
+            width: 100%;
+            height: auto;
+        }
+
+        .gallery-grid-3 img:hover,
+        .gallery-grid-2 img:hover {
+            border-color: #2b4dad;
+            box-shadow: 0 12px 40px rgba(10, 26, 74, 0.25);
+            transform: translateY(-5px) scale(1.03);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">HOME</a></li>
+                <li><a href="{% url 'public_events' %}" class="active">EVENTS</a></li>
+                <li><a href="{% url 'public_volunteer' %}">VOLUNTEER</a></li>
+                <li><a href="{% url 'about' %}">ABOUT US</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'dashboard' %}">DASHBOARD</a></li>
+                {% else %}
+                <li><a class="mdl-navigation__link" href="{% url 'login' %}">Login</a></li>
+                <li><a class="mdl-navigation__link" href="{% url 'signup' %}">Sign Up</a></li>
+                {% endif %}
+            </ul>
+            <a href="{% if user.is_authenticated %}{% url 'money_donation' %}{% else %}{% url 'public_donate' %}{% endif %}"
+                class="donate-btn">Donate Now</a>
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Title -->
+    <section class="page-title">
+        <h1>GALLERY</h1>
+    </section>
+
+    <!-- Gallery Sections -->
+    <section class="gallery-section">
+        <div class="container">
+            <!-- Drawing Competition -->
+            <!-- <div class="gallery-category">
+                <h2>DRAWING COMPETITION</h2>
+                <div class="gallery-grid-3">
+                    <img src="{% static 'images/celebrate1.png' %}" alt="Drawing Competition">
+                    <img src="{% static 'images/celebrate2.png' %}" alt="Drawing Competition">
+                    <img src="{% static 'images/NGO images/Screenshot 2025-07-13 at 05.29.11.png' %}" alt="Drawing Competition">
+                </div>
+            </div> -->
+
+            <!-- Best Out of Waste -->
+            <div class="gallery-category">
+                <h2>RATION DISTRIBUTION DRIVE</h2>
+                <div class="gallery-grid-3">
+                    <img src="{% static 'images/ration1.png' %}" alt="Ration Distribution">
+                    <img src="{% static 'images/events/poverty/50.png' %}" alt="Ration Distribution">
+                    <img src="{% static 'images/events/poverty/51.png' %}" alt="Ration Distribution">
+                </div>
+            </div>
+
+            <!-- Education for All -->
+            <div class="gallery-category">
+                <h2>EDUCATION FOR ALL</h2>
+                <div class="gallery-grid-2">
+                    <img src="{% static 'images/events/education/16.jpg' %}" alt="Education">
+                    <img src="{% static 'images/events/education/18.png' %}" alt="Education">
+                    <img src="{% static 'images/events/education/20.png' %}" alt="Education">
+                    <img src="{% static 'images/events/education/21.png' %}" alt="Education">
+                    <img src="{% static 'images/events/education/23.png' %}" alt="Education">
+                    <img src="{% static 'images/events/education/24.png' %}" alt="Education">
+                    <img src="{% static 'images/events/education/26.jpg' %}" alt="Education">
+                </div>
+            </div>
+
+            <!-- Environment Protection -->
+            <div class="gallery-category">
+                <h2>ENVIRONMENT PROTECTION</h2>
+                <div class="gallery-grid-3">
+                    <img src="{% static 'images/events/environments/2.png' %}" alt="Environment">
+                    <img src="{% static 'images/events/environments/5.png' %}" alt="Environment">
+                    <img src="{% static 'images/events/environments/12.png' %}" alt="Environment">
+                    <img src="{% static 'images/events/environments/13.png' %}" alt="Environment">
+                    <img src="{% static 'images/events/environments/14.png' %}" alt="Environment">
+                </div>
+            </div>
+
+            <!-- Pehchan Utsav -->
+            <div class="gallery-category">
+                <h2>PEHCHAN UTSAV</h2>
+                <div class="gallery-grid-3">
+                    <img src="{% static 'images/events/utsav/37.png' %}" alt="Pehchan Utsav">
+                    <img src="{% static 'images/events/utsav/40.png' %}" alt="Pehchan Utsav">
+                    <img src="{% static 'images/events/utsav/41.png' %}" alt="Pehchan Utsav">
+                    <img src="{% static 'images/events/utsav/43.png' %}" alt="Pehchan Utsav">
+                    <img src="{% static 'images/events/utsav/44.png' %}" alt="Pehchan Utsav">
+                </div>
+            </div>
+
+            <!-- Poverty Alleviation -->
+            <div class="gallery-category">
+                <h2>POVERTY ALLEVIATION</h2>
+                <div class="gallery-grid-3">
+                    <img src="{% static 'images/events/poverty/45.png' %}" alt="Poverty Alleviation">
+                    <img src="{% static 'images/events/poverty/46.png' %}" alt="Poverty Alleviation">
+                    <img src="{% static 'images/events/poverty/49.png' %}" alt="Poverty Alleviation">
+                    <img src="{% static 'images/events/poverty/50.png' %}" alt="Poverty Alleviation">
+                    <img src="{% static 'images/events/poverty/51.png' %}" alt="Poverty Alleviation">
+                    <img src="{% static 'images/events/poverty/53.png' %}" alt="Poverty Alleviation">
+                </div>
+            </div>
+
+            <!-- Your Memorable Day -->
+            <div class="gallery-category">
+                <h2>YOUR MEMORABLE DAY</h2>
+                <div class="gallery-grid-2">
+                    <img src="{% static 'images/events/memorable/8.png' %}" alt="Memorable Day">
+                    <img src="{% static 'images/events/memorable/27.png' %}" alt="Memorable Day">
+                    <img src="{% static 'images/events/memorable/28.png' %}" alt="Memorable Day">
+                    <img src="{% static 'images/events/memorable/29.png' %}" alt="Memorable Day">
+                    <img src="{% static 'images/events/memorable/32.png' %}" alt="Memorable Day">
+                    <img src="{% static 'images/events/memorable/33.png' %}" alt="Memorable Day">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <img src="{% static 'images/logos/location_logo.png' %}" alt="Pehchan Location"
+                        style="height: 80px; margin-bottom: 0.5rem;">
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'public_events' %}">Events</a></li>
+                        <li><a href="{% url 'public_volunteer' %}">Volunteer</a></li>
+                        <li><a href="{% url 'about' %}">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact Us</h4>
+                    <p>Mumbai, Maharashtra, India</p>
+                    <p>madad@pehchanyui.in</p>
+                    <p>+91 98928 87992</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <div class="footer-bottom">
+        <p>Copyright © Pehchan-Your Unique Identity. All rights reserved.</p>
+    </div>
+
+    <script src="{% static 'JS/script.js' %}"></script>
+</body>
+
+</html>

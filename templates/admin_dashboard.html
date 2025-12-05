@@ -1,0 +1,782 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - Pehchan{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Modern Admin Dashboard - Premium Design */
+    :root {
+        --admin-primary: #667eea;
+        --admin-secondary: #764ba2;
+        --admin-success: #10b981;
+        --admin-warning: #f59e0b;
+        --admin-danger: #ef4444;
+        --admin-info: #3b82f6;
+        --sidebar-width: 280px;
+        --topbar-height: 70px;
+    }
+
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        margin: 0;
+        padding: 0;
+    }
+
+    .admin-container {
+        display: flex;
+        min-height: 100vh;
+        padding-top: var(--topbar-height);
+    }
+
+    /* Sidebar */
+    .admin-sidebar {
+        position: fixed;
+        left: 0;
+        top: var(--topbar-height);
+        width: var(--sidebar-width);
+        height: calc(100vh - var(--topbar-height));
+        background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+        padding: 2rem 0;
+        overflow-y: auto;
+        z-index: 100;
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sidebar-menu-item {
+        margin: 0.5rem 1rem;
+    }
+
+    .sidebar-menu-link {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.5rem;
+        color: #94a3b8;
+        text-decoration: none;
+        border-radius: 12px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-weight: 500;
+    }
+
+    .sidebar-menu-link:hover,
+    .sidebar-menu-link.active {
+        background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary));
+        color: white;
+        transform: translateX(5px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .sidebar-menu-link .material-icons-round {
+        font-size: 1.5rem;
+    }
+
+    /* Top Bar */
+    .admin-topbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: var(--topbar-height);
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 2rem;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+        z-index: 1000;
+    }
+
+    .topbar-brand {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .topbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .topbar-user {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 1rem;
+        background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .topbar-user:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+    }
+
+    /* Main Content */
+    .admin-main {
+        margin-left: var(--sidebar-width);
+        padding: 2rem;
+        width: calc(100% - var(--sidebar-width));
+        min-height: calc(100vh - var(--topbar-height));
+    }
+
+    .admin-header {
+        margin-bottom: 2rem;
+    }
+
+    .admin-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+
+    .admin-subtitle {
+        color: #64748b;
+        font-size: 1rem;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--card-color-1), var(--card-color-2));
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .stat-card.primary {
+        --card-color-1: #667eea;
+        --card-color-2: #764ba2;
+    }
+
+    .stat-card.success {
+        --card-color-1: #10b981;
+        --card-color-2: #059669;
+    }
+
+    .stat-card.warning {
+        --card-color-1: #f59e0b;
+        --card-color-2: #d97706;
+    }
+
+    .stat-card.danger {
+        --card-color-1: #ef4444;
+        --card-color-2: #dc2626;
+    }
+
+    .stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, var(--card-color-1), var(--card-color-2));
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-icon .material-icons-round {
+        font-size: 2rem;
+        color: white;
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #1e293b;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: #64748b;
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-change {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
+    }
+
+    .stat-change.positive {
+        background: #d1fae5;
+        color: #059669;
+    }
+
+    .stat-change.negative {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    /* Charts Section */
+    .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .chart-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .chart-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .chart-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+
+    .chart-subtitle {
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+
+    .chart-placeholder {
+        height: 300px;
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #9ca3af;
+        font-weight: 600;
+    }
+
+    /* Tables */
+    .table-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+    }
+
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .table-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    .table-action-btn {
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary));
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .table-action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .data-table thead {
+        background: #f8fafc;
+    }
+
+    .data-table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 700;
+        color: #475569;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .data-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #f1f5f9;
+        color: #334155;
+    }
+
+    .data-table tbody tr {
+        transition: all 0.2s;
+    }
+
+    .data-table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.375rem 0.75rem;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .status-badge.active {
+        background: #d1fae5;
+        color: #059669;
+    }
+
+    .status-badge.pending {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .status-badge.inactive {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .admin-sidebar {
+            transform: translateX(-100%);
+        }
+
+        .admin-main {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        .charts-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .admin-main {
+            padding: 1rem;
+        }
+
+        .topbar-brand {
+            font-size: 1.2rem;
+        }
+
+        .data-table {
+            font-size: 0.85rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Top Bar -->
+<div class="admin-topbar">
+    <div class="topbar-brand">
+        <span class="material-icons-round" style="vertical-align: middle; margin-right: 0.5rem;">dashboard</span>
+        Pehchan Admin
+    </div>
+    <div class="topbar-actions">
+        <div class="topbar-user">
+            <div class="user-avatar">
+                {{ user.username|slice:":1"|upper }}
+            </div>
+            <span style="font-weight: 600; color: #1e293b;">{{ user.username }}</span>
+        </div>
+    </div>
+</div>
+
+<div class="admin-container">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <ul class="sidebar-menu">
+            <li class="sidebar-menu-item">
+                <a href="{% url 'admin_dashboard' %}" class="sidebar-menu-link active">
+                    <span class="material-icons-round">dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <span class="material-icons-round">people</span>
+                    <span>Users</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <span class="material-icons-round">volunteer_activism</span>
+                    <span>Volunteers</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <span class="material-icons-round">event</span>
+                    <span>Events</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <span class="material-icons-round">card_giftcard</span>
+                    <span>Donations</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <span class="material-icons-round">workspace_premium</span>
+                    <span>Certificates</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <span class="material-icons-round">analytics</span>
+                    <span>Reports</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="#" class="sidebar-menu-link">
+                    <span class="material-icons-round">settings</span>
+                    <span>Settings</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item" style="margin-top: 2rem;">
+                <a href="{% url 'dashboard' %}" class="sidebar-menu-link">
+                    <span class="material-icons-round">home</span>
+                    <span>User Dashboard</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="{% url 'logout' %}" class="sidebar-menu-link">
+                    <span class="material-icons-round">logout</span>
+                    <span>Logout</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <!-- Header -->
+        <div class="admin-header">
+            <h1 class="admin-title">Dashboard Overview</h1>
+            <p class="admin-subtitle">Welcome back! Here's what's happening with your organization today.</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card primary">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value">1,247</div>
+                        <div class="stat-label">Total Users</div>
+                        <div class="stat-change positive">
+                            <span class="material-icons-round" style="font-size: 1rem;">trending_up</span>
+                            +12.5%
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <span class="material-icons-round">people</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card success">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value">856</div>
+                        <div class="stat-label">Active Volunteers</div>
+                        <div class="stat-change positive">
+                            <span class="material-icons-round" style="font-size: 1rem;">trending_up</span>
+                            +8.2%
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <span class="material-icons-round">volunteer_activism</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card warning">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value">42</div>
+                        <div class="stat-label">Upcoming Events</div>
+                        <div class="stat-change positive">
+                            <span class="material-icons-round" style="font-size: 1rem;">trending_up</span>
+                            +5.3%
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <span class="material-icons-round">event</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card danger">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-value">₹2.4L</div>
+                        <div class="stat-label">Total Donations</div>
+                        <div class="stat-change positive">
+                            <span class="material-icons-round" style="font-size: 1rem;">trending_up</span>
+                            +18.7%
+                        </div>
+                    </div>
+                    <div class="stat-icon">
+                        <span class="material-icons-round">payments</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">User Growth</h3>
+                    <p class="chart-subtitle">Monthly user registration trends</p>
+                </div>
+                <div class="chart-placeholder">
+                    <span>📊 Chart: User Growth Over Time</span>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">Donation Analytics</h3>
+                    <p class="chart-subtitle">Revenue breakdown by category</p>
+                </div>
+                <div class="chart-placeholder">
+                    <span>📈 Chart: Donation Distribution</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Users Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <h3 class="table-title">Recent Users</h3>
+                <button class="table-action-btn">
+                    <span class="material-icons-round" style="font-size: 1.2rem;">add</span>
+                    Add User
+                </button>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Joined</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Aniksha Upadhyay</strong></td>
+                        <td>aniksha@pehchanyui.in</td>
+                        <td>Founder</td>
+                        <td><span class="status-badge active">Active</span></td>
+                        <td>Apr 2020</td>
+                        <td>
+                            <span class="material-icons-round" style="cursor: pointer; color: #667eea;">edit</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Aditya Jha</strong></td>
+                        <td>aditya@pehchanyui.in</td>
+                        <td>Programme Manager</td>
+                        <td><span class="status-badge active">Active</span></td>
+                        <td>May 2020</td>
+                        <td>
+                            <span class="material-icons-round" style="cursor: pointer; color: #667eea;">edit</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Pallavi Thakur</strong></td>
+                        <td>pallavi@pehchanyui.in</td>
+                        <td>Admin Manager</td>
+                        <td><span class="status-badge active">Active</span></td>
+                        <td>May 2020</td>
+                        <td>
+                            <span class="material-icons-round" style="cursor: pointer; color: #667eea;">edit</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Shilpa Dubey</strong></td>
+                        <td>shilpa@pehchanyui.in</td>
+                        <td>Treasurer</td>
+                        <td><span class="status-badge active">Active</span></td>
+                        <td>Jun 2020</td>
+                        <td>
+                            <span class="material-icons-round" style="cursor: pointer; color: #667eea;">edit</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>New Volunteer</strong></td>
+                        <td>volunteer@example.com</td>
+                        <td>Volunteer</td>
+                        <td><span class="status-badge pending">Pending</span></td>
+                        <td>Dec 2024</td>
+                        <td>
+                            <span class="material-icons-round" style="cursor: pointer; color: #667eea;">edit</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Recent Events Table -->
+        <div class="table-card">
+            <div class="table-header">
+                <h3 class="table-title">Recent Events</h3>
+                <button class="table-action-btn">
+                    <span class="material-icons-round" style="font-size: 1.2rem;">add</span>
+                    Create Event
+                </button>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Event Name</th>
+                        <th>Date</th>
+                        <th>Location</th>
+                        <th>Participants</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <img src="{% static 'images/events/environments/2.png' %}" alt="Beach Cleanup"
+                                style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
+                        </td>
+                        <td><strong>Beach Cleanup Drive</strong></td>
+                        <td>Dec 15, 2024</td>
+                        <td>Juhu Beach, Mumbai</td>
+                        <td>45</td>
+                        <td><span class="status-badge active">Active</span></td>
+                        <td>
+                            <span class="material-icons-round"
+                                style="cursor: pointer; color: #667eea;">visibility</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="{% static 'images/events/education/17.png' %}" alt="Education"
+                                style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
+                        </td>
+                        <td><strong>Education for All</strong></td>
+                        <td>Dec 20, 2024</td>
+                        <td>Navi Mumbai</td>
+                        <td>32</td>
+                        <td><span class="status-badge active">Active</span></td>
+                        <td>
+                            <span class="material-icons-round"
+                                style="cursor: pointer; color: #667eea;">visibility</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="{% static 'images/events/environments/12.png' %}" alt="Tree Plantation"
+                                style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
+                        </td>
+                        <td><strong>Tree Plantation</strong></td>
+                        <td>Dec 25, 2024</td>
+                        <td>Aarey Colony</td>
+                        <td>28</td>
+                        <td><span class="status-badge pending">Pending</span></td>
+                        <td>
+                            <span class="material-icons-round"
+                                style="cursor: pointer; color: #667eea;">visibility</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+{% endblock %}

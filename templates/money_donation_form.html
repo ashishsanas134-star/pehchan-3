@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Money Donation - Pehchan{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+    <div class="surface-card form-card">
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">
+                <span class="material-icons-round">payments</span>
+                Donate Money
+            </h2>
+        </div>
+        <div class="mdl-card__supporting-text">
+            <div style="text-align: center; padding: 20px 0; margin-bottom: 24px;">
+                <span class="material-icons-round" style="font-size: 3.5rem; color: var(--secondary-500); margin-bottom: 12px;">currency_rupee</span>
+                <h3 style="margin: 12px 0 8px; color: var(--text-primary);">Support Our Mission</h3>
+                <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">Thank you for your financial support! Your donation helps us make a difference in the community and empowers our programs.</p>
+            </div>
+            
+            <div class="highlight-card" style="border-color: var(--secondary-300); margin-bottom: 32px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                    <span class="material-icons-round" style="font-size: 2rem; color: var(--secondary-600);">account_balance</span>
+                    <h3 style="margin: 0; color: var(--text-primary);">Payment Information</h3>
+                </div>
+                
+                <div style="display: grid; gap: 12px; margin-bottom: 20px;">
+                    <div style="padding: 12px; background: var(--neutral-50); border-radius: var(--radius-md); border-left: 3px solid var(--secondary-500);">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                            <span class="material-icons-round" style="font-size: 1.1rem; color: var(--secondary-600);">payment</span>
+                            <strong style="color: var(--text-tertiary); font-size: 0.9rem;">Payment Method</strong>
+                        </div>
+                        <p style="margin: 0; font-size: 1.1rem; color: var(--text-primary); font-weight: 600;">UPI Transfer</p>
+                    </div>
+                    
+                    <div style="padding: 12px; background: var(--secondary-50); border-radius: var(--radius-md); border-left: 3px solid var(--secondary-600);">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                            <span class="material-icons-round" style="font-size: 1.1rem; color: var(--secondary-600);">qr_code</span>
+                            <strong style="color: var(--text-tertiary); font-size: 0.9rem;">UPI ID</strong>
+                        </div>
+                        <p style="margin: 0; font-family: 'Courier New', monospace; font-size: 1.2rem; color: var(--secondary-700); font-weight: 700; letter-spacing: 0.5px;">{{ upi_id }}</p>
+                    </div>
+                </div>
+                
+                <div class="info-panel" style="background: linear-gradient(135deg, var(--info-50, #e3f2fd), var(--surface-1)); border-left: 4px solid var(--info);">
+                    <div style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px;">
+                        <span class="material-icons-round" style="color: var(--info); flex-shrink: 0;">info</span>
+                        <strong style="color: var(--text-primary);">Steps to Complete Your Donation</strong>
+                    </div>
+                    <ol style="margin: 8px 0 0 30px; color: var(--text-secondary); line-height: 1.8;">
+                        <li>Transfer your donation amount to the UPI ID above using any UPI app</li>
+                        <li>Take a screenshot of the successful payment confirmation</li>
+                        <li>Upload the payment receipt screenshot in the form below</li>
+                        <li>Fill in the donation amount and submit the form</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <form method="post" enctype="multipart/form-data" class="form-shell">
+                {% csrf_token %}
+                
+                <div class="form-field">
+                    <label class="form-label" for="{{ form.amount.id_for_label }}">
+                        <span class="material-icons-round" style="vertical-align: middle; margin-right: 6px;">currency_rupee</span>
+                        Donation Amount (₹)
+                    </label>
+                    {{ form.amount }}
+                    {% if form.amount.errors %}
+                        <span style="color: var(--error); font-size: 0.9rem; margin-top: 4px; display: block;">{{ form.amount.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="form-field" style="display: grid; gap: 8px;">
+                    <label class="form-label" for="{{ form.receipt_upload.id_for_label }}">
+                        <span class="material-icons-round" style="vertical-align: middle; margin-right: 6px;">upload_file</span>
+                        Upload Payment Receipt
+                    </label>
+                    <p style="font-size: 0.9rem; color: var(--text-tertiary); margin: 0;">Upload a screenshot or photo of your payment receipt (Image or PDF, max 5MB)</p>
+                    {{ form.receipt_upload }}
+                    {% if form.receipt_upload.errors %}
+                        <span style="color: var(--error); font-size: 0.9rem; margin-top: 4px; display: block;">{{ form.receipt_upload.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="info-panel info-panel--success" style="margin-top: 24px;">
+                    <span class="material-icons-round" style="color: var(--success);">verified</span>
+                    <p style="margin: 0;">All donations are subject to verification. You will receive a confirmation email once your donation is processed. Thank you for your generous support!</p>
+                </div>
+                
+                <div class="mdl-card__actions" style="margin-top: 28px; padding: 0; display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button type="submit" class="pill-button pill-button--primary">
+                        <span class="material-icons-round">send</span> Submit Donation
+                    </button>
+                    <a href="{% url 'dashboard' %}" class="pill-button pill-button--outline">
+                        <span class="material-icons-round">close</span> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div style="text-align: center; margin-top: 32px;">
+    <a href="{% url 'dashboard' %}" class="pill-button pill-button--ghost">
+        <span class="material-icons-round">home</span> Back to Dashboard
+    </a>
+</div>
+{% endblock %}

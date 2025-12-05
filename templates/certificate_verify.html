@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Verify Certificate - Pehchan{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    <div class="surface-card verification-card">
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text georgia-brand">
+                <span class="material-icons-round">verified_user</span>
+                Verify Certificate
+            </h2>
+        </div>
+        <div class="mdl-card__supporting-text">
+            <div class="info-panel info-panel--sky" style="margin-bottom: 24px;">
+                <span class="material-icons-round" style="font-size: 2rem; color: var(--info);">info</span>
+                <p style="margin: 8px 0 0;">Enter a certificate ID to verify its authenticity and view certificate details.</p>
+            </div>
+            
+            <form method="post" style="width: 100%;">
+                {% csrf_token %}
+                
+                <div class="form-field">
+                    <label class="form-label" for="{{ form.certificate_id.id_for_label }}">
+                        <span class="material-icons-round" style="vertical-align: middle; margin-right: 6px;">tag</span>
+                        Certificate ID
+                    </label>
+                    {{ form.certificate_id }}
+                    {% if form.certificate_id.errors %}
+                        <span style="color: var(--error); font-size: 0.9rem; margin-top: 4px; display: block;">{{ form.certificate_id.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="mdl-card__actions" style="margin-top: 20px; padding: 0;">
+                    <button type="submit" class="pill-button pill-button--primary">
+                        <span class="material-icons-round">search</span> Verify Certificate
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    {% if certificate %}
+    <div class="surface-card" style="margin-top: 32px; border: 3px solid var(--success); box-shadow: 0 8px 32px rgba(46, 125, 50, 0.2);">
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text georgia-brand">
+                <span class="material-icons-round">verified</span>
+                Certificate Verified!
+            </h2>
+        </div>
+        <div class="mdl-card__supporting-text">
+            <div class="info-panel info-panel--success" style="margin-bottom: 24px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span class="material-icons-round" style="font-size: 2.5rem; color: var(--success);">check_circle</span>
+                    <div>
+                        <h3 style="margin: 0; color: var(--success);">Authentic Certificate</h3>
+                        <p style="margin: 4px 0 0; color: var(--text-secondary);">This certificate is valid and was issued by Pehchan.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                <span class="material-icons-round" style="color: var(--primary-600);">description</span>
+                Certificate Details
+            </h3>
+            
+            <div style="display: grid; gap: 16px;">
+                <div class="highlight-card" style="border-color: var(--primary-300);">
+                    <div style="display: grid; gap: 14px;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span class="material-icons-round" style="font-size: 1.1rem; color: var(--primary-600);">tag</span>
+                                <strong style="color: var(--text-tertiary); font-size: 0.9rem;">Certificate ID</strong>
+                            </div>
+                            <p style="margin: 0; font-size: 1.2rem; font-weight: 700; color: var(--primary-700);">#{{ certificate.pk }}</p>
+                        </div>
+                        
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span class="material-icons-round" style="font-size: 1.1rem; color: var(--primary-600);">person</span>
+                                <strong style="color: var(--text-tertiary); font-size: 0.9rem;">Volunteer Name</strong>
+                            </div>
+                            <p style="margin: 0; font-size: 1.1rem; color: var(--text-primary);">{{ certificate.volunteer.user.get_full_name|default:certificate.volunteer.user.username }}</p>
+                        </div>
+                        
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span class="material-icons-round" style="font-size: 1.1rem; color: var(--primary-600);">event</span>
+                                <strong style="color: var(--text-tertiary); font-size: 0.9rem;">Event</strong>
+                            </div>
+                            <p style="margin: 0; font-size: 1.1rem; color: var(--text-primary);">{{ certificate.event.name }}</p>
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                                    <span class="material-icons-round" style="font-size: 1rem; color: var(--secondary-600);">calendar_today</span>
+                                    <strong style="color: var(--text-tertiary); font-size: 0.85rem;">Event Date</strong>
+                                </div>
+                                <p style="margin: 0;">{{ certificate.event.event_date|date:"F d, Y" }}</p>
+                            </div>
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                                    <span class="material-icons-round" style="font-size: 1rem; color: var(--secondary-600);">verified</span>
+                                    <strong style="color: var(--text-tertiary); font-size: 0.85rem;">Issue Date</strong>
+                                </div>
+                                <p style="margin: 0;">{{ certificate.issue_date|date:"F d, Y" }}</p>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span class="material-icons-round" style="font-size: 1.1rem; color: var(--primary-600);">location_on</span>
+                                <strong style="color: var(--text-tertiary); font-size: 0.9rem;">Location</strong>
+                            </div>
+                            <p style="margin: 0;">{{ certificate.event.location }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if certificate.file %}
+                <div style="text-align: center; padding-top: 8px;">
+                    <a href="{{ certificate.file.url }}" target="_blank" class="pill-button pill-button--primary">
+                        <span class="material-icons-round">download</span> Download Certificate
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div style="text-align: center; margin-top: 40px;">
+    <a href="{% url 'dashboard' %}" class="pill-button pill-button--ghost">
+        <span class="material-icons-round">home</span> Back to Dashboard
+    </a>
+</div>
+{% endblock %}

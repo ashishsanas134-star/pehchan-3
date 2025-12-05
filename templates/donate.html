@@ -1,0 +1,701 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate - Pehchan</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="{% static 'CSS/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        .message-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        /* Modern form styling */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .form-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .form-section h3 {
+            color: #2e7d5f;
+            margin-bottom: 20px;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-section h3 .material-icons {
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #2e7d5f;
+            box-shadow: 0 0 0 3px rgba(46, 125, 95, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 576px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .checkbox-group input {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #2e7d5f 0%, #3d9970 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(46, 125, 95, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(46, 125, 95, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        .qr-code-container {
+            width: 220px;
+            height: 220px;
+            margin: 0 auto 20px;
+            background: white;
+            border: 3px solid #2e7d5f;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .upi-id-box {
+            background: linear-gradient(135deg, #2e7d5f 0%, #3d9970 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .note-box {
+            background: #fff8e1;
+            border: 1px solid #ffecb3;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .note-box p {
+            margin: 0;
+            color: #856404;
+            font-size: 14px;
+        }
+
+        .note-box strong {
+            color: #664d03;
+        }
+
+        /* Full page hero section */
+        .hero-banner {
+            position: relative;
+            height: 100vh;
+            min-height: 600px;
+            max-height: none;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .banner-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            text-align: center;
+            color: #fff;
+            z-index: 10;
+            padding: 3rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            background: transparent;
+            border-radius: 20px;
+            backdrop-filter: none;
+        }
+
+        .hero-buttons {
+            margin-top: 18rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn-join {
+            padding: 1rem 3rem;
+            border: 2px solid #FFA500;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #FFA500;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-decoration: none !important;
+            border-bottom: none !important;
+        }
+
+        .btn-donate-hero {
+            padding: 1rem 3rem;
+            border: 2px solid #FFA500;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: transparent;
+            color: #FFA500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-decoration: none !important;
+            border-bottom: none !important;
+        }
+
+        .btn-join:hover,
+        .btn-donate-hero:hover {
+            background: transparent !important;
+            box-shadow: none !important;
+            text-decoration: none !important;
+        }
+
+
+
+        /* Enhanced mobile responsiveness */
+        @media (max-width: 1024px) {
+            .campaigns {
+                grid-template-columns: 1fr;
+            }
+
+            .campaign-card {
+                max-width: 500px;
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-banner {
+                height: 70vh;
+                min-height: 500px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-join,
+            .btn-donate-hero {
+                width: 80%;
+                max-width: 300px;
+            }
+
+            .donate-content h2 {
+                font-size: 1.8rem;
+            }
+
+            .tab-btn {
+                padding: 10px 20px !important;
+                font-size: 14px !important;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .form-section {
+                padding: 20px;
+            }
+
+            .qr-code-container {
+                width: 180px;
+                height: 180px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-banner {
+                height: 60vh;
+                min-height: 400px;
+            }
+
+            .hero-content {
+                padding: 1.5rem 1rem;
+                background: rgba(0, 0, 0, 0.4);
+            }
+
+            .btn-join,
+            .btn-donate-hero {
+                padding: 0.8rem 2rem;
+                font-size: 1rem;
+            }
+
+            .donate-content h2 {
+                font-size: 1.5rem;
+            }
+
+            .donate-content>p {
+                font-size: 0.95rem;
+            }
+
+            .form-section h3 {
+                font-size: 18px;
+            }
+
+            .qr-code-container {
+                width: 150px;
+                height: 150px;
+            }
+
+            .upi-id-box {
+                padding: 12px;
+            }
+
+            .upi-id-box p {
+                font-size: 12px;
+            }
+        }
+
+        /* Center Navbar Content */
+        .nav-container {
+            justify-content: center !important;
+        }
+
+        .nav-links {
+            margin-left: 0 !important;
+            margin-right: 80px !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">HOME</a></li>
+                <li><a href="{% url 'public_events' %}">EVENTS</a></li>
+                <li><a href="{% url 'public_volunteer' %}">VOLUNTEER</a></li>
+                <li><a href="{% url 'about' %}">ABOUT US</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'dashboard' %}">DASHBOARD</a></li>
+                {% else %}
+                <a class="mdl-navigation__link" href="{% url 'login' %}">Login</a>
+                <a class="mdl-navigation__link" href="{% url 'signup' %}">Sign Up</a>
+                {% endif %}
+            </ul>
+            <a href="{% if user.is_authenticated %}{% url 'money_donation' %}{% else %}{% url 'public_donate' %}{% endif %}"
+                class="donate-btn">Donate Now</a>
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero section -->
+    <section class="hero-banner">
+        <img src="/static/images/Herobanner.png" alt="Hero Banner" class="banner-img">
+        <div class="hero-content">
+            <div class="hero-buttons">
+                <a href="{% if user.is_authenticated %}{% url 'lifetime_volunteer' %}{% else %}{% url 'public_volunteer' %}{% endif %}"
+                    class="btn-join">JOIN US</a>
+                <a href="{% if user.is_authenticated %}{% url 'money_donation' %}{% else %}{% url 'public_donate' %}{% endif %}"
+                    class="btn-donate-hero">DONATE</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Page Title -->
+    <section class="page-title">
+        <h1>Support Our Cause</h1>
+    </section>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="container" style="margin-top: 20px;">
+        {% for message in messages %}
+        <div class="message {% if message.tags == 'success' %}message-success{% elif message.tags == 'error' %}message-error{% else %}message-warning{% endif %}"
+            style="padding: 15px; margin: 10px 0; border-radius: 5px;">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Tabs -->
+    <section class="donate-tabs-section">
+        <div class="container">
+
+            <!-- Tab Navigation -->
+            <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; flex-wrap: wrap;">
+                <button onclick="showTab('donate')" id="tab-donate" class="tab-btn active"
+                    style="padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 500; transition: all 0.3s;">Login
+                    to Donate</button>
+                <button onclick="showTab('anonymous'); window.location.hash = 'anonymous';" id="tab-anonymous"
+                    class="tab-btn"
+                    style="padding: 12px 30px; background: #f8f9fa; color: #333; border: 2px solid #667eea; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 500; transition: all 0.3s;">Donate
+                    as Anonymous</button>
+            </div>
+
+            <!-- Donate Tab -->
+            <div id="donate" class="tab-panel active">
+                <div class="donate-content">
+                    <h2>Make a Donation</h2>
+                    <p>Your generous contribution helps us continue our mission</p>
+
+                    <!-- Login Message -->
+                    <div
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px; text-align: center; margin: 30px 0;">
+                        <i class="material-icons" style="font-size: 48px; margin-bottom: 15px;">volunteer_activism</i>
+                        <h3 style="margin: 15px 0;">Want to Make a Donation?</h3>
+                        <p style="font-size: 18px; margin: 15px 0;">Please login to your account to donate. You can
+                            choose to donate materials or money as per your wish.</p>
+                    </div>
+
+                    <!-- Donation Campaigns -->
+                    <div class="campaigns">
+                        <div class="campaign-card">
+
+                            <h3>Education Kit</h3>
+                            <p>Help provide educational materials</p>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 60%"></div>
+                            </div>
+                            <p>₹3,000 raised of ₹5,000 goal</p>
+                        </div>
+                        <div class="campaign-card">
+
+                            <h3>Poverty Alleviation Kit</h3>
+                            <p>Support families with essentials</p>
+                            <div class="progress-bar">
+                                <div class="progress" style="width: 45%"></div>
+                            </div>
+                            <p>₹1,350 raised of ₹3,000 goal</p>
+                        </div>
+                    </div>
+
+                    <!-- Donation Options Info -->
+                    <div style="background: #f8f9fa; padding: 25px; border-radius: 10px; margin-top: 30px;">
+                        <h3 style="color: #333; margin-bottom: 20px;">After Login, You Can:</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div
+                                style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                <h4 style="color: #667eea; margin-bottom: 10px;">💝 Material Donation</h4>
+                                <p style="color: #666; margin: 0;">Donate items like books, clothes, food, etc. We'll
+                                    pick up from Mumbai or you can courier from other locations.</p>
+                            </div>
+                            <div
+                                style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                <h4 style="color: #764ba2; margin-bottom: 10px;">💰 Money Donation</h4>
+                                <p style="color: #666; margin: 0;">Make monetary contributions via UPI. Upload your
+                                    payment receipt for verification.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Anonymous Donation Tab -->
+            <div id="anonymous" class="tab-panel">
+                <div class="donate-content">
+                    <h2>Donate as Anonymous</h2>
+                    <p style="color: #666; margin-bottom: 30px;">Support our cause without creating an account. Your
+                        contribution makes a difference!</p>
+
+                    <div class="form-grid">
+                        <!-- UPI Details Section -->
+                        <div class="form-section">
+                            <h3><span class="material-icons">qr_code_scanner</span> Donate via UPI</h3>
+                            <p style="color: #666; font-size: 14px; margin-bottom: 25px;">Scan the QR code or use the
+                                UPI ID to make your payment</p>
+
+                            <div class="qr-code-container">
+                                <div>
+                                    <div style="font-size: 48px; margin-bottom: 10px;">📱</div>
+                                    <p style="margin: 0;">Scan QR Code to Pay</p>
+                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #999;">Any UPI app works</p>
+                                </div>
+                            </div>
+
+                            <div class="upi-id-box">
+                                <p style="margin: 0; font-size: 14px; font-weight: 500;">UPI ID: <span
+                                        style="font-family: monospace; font-size: 16px;">pehchan@upi</span></p>
+                            </div>
+
+                            <p style="margin-top: 20px; color: #666; font-size: 14px; text-align: center;">
+                                After making the payment, please fill the form with your details
+                            </p>
+                        </div>
+
+                        <!-- Donation Form Section -->
+                        <div class="form-section">
+                            <h3><span class="material-icons">edit_note</span> Submit Donation Details</h3>
+                            <p style="color: #666; font-size: 14px; margin-bottom: 20px;">Please provide your donation
+                                details so we can acknowledge your contribution:</p>
+
+                            <form method="POST" action="{% url 'public_donate' %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="anonymous_donation">
+
+                                <div class="form-group">
+                                    <label for="{{ anon_donation_form.donor_name.id_for_label }}">Name
+                                        (Optional)</label>
+                                    {{ anon_donation_form.donor_name }}
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="{{ anon_donation_form.donor_email.id_for_label }}">Email
+                                            (Optional)</label>
+                                        {{ anon_donation_form.donor_email }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="{{ anon_donation_form.donor_phone.id_for_label }}">Phone
+                                            (Optional)</label>
+                                        {{ anon_donation_form.donor_phone }}
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="{{ anon_donation_form.amount.id_for_label }}">Donation Amount (₹)
+                                        *</label>
+                                    {{ anon_donation_form.amount }}
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="{{ anon_donation_form.transaction_id.id_for_label }}">UPI Transaction ID
+                                        (Optional)</label>
+                                    {{ anon_donation_form.transaction_id }}
+                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #999;">You can find this in
+                                        your UPI app after payment</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="{{ anon_donation_form.receipt.id_for_label }}">Payment Receipt (Optional
+                                        but recommended)</label>
+                                    {{ anon_donation_form.receipt }}
+                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #999;">Upload screenshot of
+                                        payment confirmation</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="{{ anon_donation_form.message.id_for_label }}">Message
+                                        (Optional)</label>
+                                    {{ anon_donation_form.message }}
+                                </div>
+
+                                <div class="checkbox-group">
+                                    {{ anon_donation_form.wants_receipt }}
+                                    <label for="{{ anon_donation_form.wants_receipt.id_for_label }}"
+                                        style="margin: 0; font-size: 14px; cursor: pointer;">
+                                        I want a receipt marked as "Anonymous"
+                                    </label>
+                                </div>
+
+                                <button type="submit" class="btn-primary">
+                                    Submit Donation Details
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="note-box">
+                        <p>💡 <strong>Note:</strong> For tax benefits and tracking, we recommend creating a free account
+                            and using the regular donation process.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.style.display = 'none';
+            });
+
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.style.background = '#f8f9fa';
+                btn.style.color = '#333';
+                btn.style.border = '2px solid #667eea';
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).style.display = 'block';
+
+            // Activate selected button
+            const activeBtn = document.getElementById('tab-' + tabName);
+            activeBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            activeBtn.style.color = 'white';
+            activeBtn.style.border = 'none';
+            activeBtn.classList.add('active');
+        }
+
+        // Ensure the correct tab is shown on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if there's a hash in the URL to determine which tab to show
+            const hash = window.location.hash;
+            if (hash === '#anonymous') {
+                showTab('anonymous');
+            } else {
+                showTab('donate');
+            }
+        });
+    </script>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <img src="{% static 'images/logos/location_logo.png' %}" alt="Pehchan Location"
+                        style="height: 80px; margin-bottom: 0.5rem;">
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'public_events' %}">Events</a></li>
+                        <li><a href="{% url 'public_volunteer' %}">Volunteer</a></li>
+                        <li><a href="{% url 'about' %}">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact Us</h4>
+                    <p>Mumbai, Maharashtra, India</p>
+                    <p>madad@pehchanyui.in</p>
+                    <p>8356065814, 8691829196</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <div class="footer-bottom">
+        <p>Copyright © Pehchan-Your Unique Identity. All rights reserved.</p>
+    </div>
+
+    <script src="{% static 'JS/script.js' %}"></script>
+</body>
+
+</html>

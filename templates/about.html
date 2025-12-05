@@ -1,0 +1,360 @@
+{% load static %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Pehchan</title>
+    <link rel="stylesheet" href="{% static 'CSS/style.css' %}?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Full width gallery image */
+        .about-gallery-new {
+            width: 100%;
+            padding: 20px 0;
+            margin: 0;
+            height: auto;
+            min-height: auto;
+            text-align: center;
+            background: #f9f9f9;
+        }
+
+        .gallery-bg {
+            width: 90%;
+            max-width: 1000px;
+            height: auto;
+            display: inline-block;
+            object-fit: contain;
+            max-height: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Enhanced mobile responsiveness */
+        @media (max-width: 1024px) {
+            .about-hero-title {
+                font-size: 3rem;
+            }
+
+            .about-hero-subtitle {
+                font-size: 2rem;
+            }
+
+            .team-grid-new {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .about-hero-new {
+                padding: 3rem 0;
+            }
+
+            .about-hero-logo-new {
+                max-width: 150px;
+                width: auto;
+                height: auto;
+                object-fit: contain;
+                object-position: center;
+            }
+
+            .about-hero-title {
+                font-size: 2.5rem;
+            }
+
+            .about-hero-subtitle {
+                font-size: 1.8rem;
+            }
+
+            .about-hero-text {
+                font-size: 1rem;
+                line-height: 1.8;
+                text-align: left;
+            }
+
+            .who-we-are-new h2,
+            .founder-section-new h2,
+            .team-section-new h2 {
+                font-size: 2.2rem;
+            }
+
+            .who-we-are-new h3 {
+                font-size: 1.8rem;
+            }
+
+            .who-we-are-new p {
+                font-size: 1rem;
+                line-height: 1.8;
+            }
+
+            .team-grid-new {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .team-card-new {
+                padding: 2rem 1.5rem;
+            }
+
+            .team-img-new {
+                width: 120px;
+                height: 120px;
+            }
+
+            .team-card-new h3 {
+                font-size: 1.4rem;
+            }
+
+            .team-role-new {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .about-hero-new {
+                padding: 2rem 0;
+            }
+
+            .about-hero-logo-new {
+                max-width: 120px;
+                width: auto;
+                height: auto;
+                object-fit: contain;
+                object-position: center;
+            }
+
+            .about-hero-title {
+                font-size: 2rem;
+            }
+
+            .about-hero-subtitle {
+                font-size: 1.5rem;
+            }
+
+            .about-hero-text {
+                font-size: 0.95rem;
+                line-height: 1.7;
+            }
+
+            .who-we-are-new h2,
+            .founder-section-new h2,
+            .team-section-new h2 {
+                font-size: 1.8rem;
+            }
+
+            .who-we-are-new h3 {
+                font-size: 1.5rem;
+            }
+
+            .who-we-are-new p {
+                font-size: 0.95rem;
+            }
+
+            .founder-img-new {
+                width: 180px;
+                height: 180px;
+            }
+
+            .founder-name {
+                font-size: 1.8rem;
+            }
+
+            .founder-title-new {
+                font-size: 1.3rem;
+            }
+
+            .team-card-new {
+                padding: 1.5rem;
+            }
+
+            .team-img-new {
+                width: 100px;
+                height: 100px;
+            }
+
+            .team-card-new h3 {
+                font-size: 1.2rem;
+            }
+
+            .team-role-new {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Center Navbar Content */
+        .nav-container {
+            justify-content: center !important;
+        }
+
+        .nav-links {
+            margin-left: 0 !important;
+            margin-right: 80px !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">HOME</a></li>
+                <li><a href="{% url 'public_events' %}">EVENTS</a></li>
+                <li><a href="{% url 'public_volunteer' %}">VOLUNTEER</a></li>
+                <li><a href="{% url 'about' %}" class="active">ABOUT US</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'dashboard' %}">DASHBOARD</a></li>
+                {% else %}
+                <a class="mdl-navigation__link" href="{% url 'login' %}">Login</a>
+                <a class="mdl-navigation__link" href="{% url 'signup' %}">Sign Up</a>
+                {% endif %}
+            </ul>
+            <a href="{% if user.is_authenticated %}{% url 'money_donation' %}{% else %}{% url 'public_donate' %}{% endif %}"
+                class="donate-btn">Donate Now</a>
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Hero Section -->
+    <section class="about-hero-new">
+        <div class="container">
+
+            <h1 class="about-hero-title">Pehchan</h1>
+            <h2 class="about-hero-subtitle">Your Unique Identity</h2>
+            <img src="{% static 'images/logos/roundlogo.png' %}" alt="Pehchan Logo" class="about-hero-logo-new"
+                style="display: block; margin: 20px auto; max-width: 200px; height: auto; border-radius: 50%;">
+            <p class="about-hero-text">We are a purpose-driven NGO committed to creating meaningful change at the
+                grassroots level. Our mission is to uplift underprivileged communities through access to education,
+                empower women to lead independent and dignified lives, and provide essential relief to those in need. At
+                the heart of our work lies a deep respect for nature — we actively engage in environmental preservation
+                to ensure a sustainable future for generations to come. Through compassion, collaboration, and tireless
+                dedication, we strive to build a world where equality, opportunity, and harmony with the Earth are not
+                just ideals, but realities for all.</p>
+        </div>
+    </section>
+
+    <!-- Gallery Banner -->
+    <section class="about-gallery-new">
+        <img src="{% static 'images/aboutus/39.png' %}" alt="Pehchan Team" class="gallery-bg">
+    </section>
+
+    <!-- Who We Are -->
+    <section class="who-we-are-new">
+        <div class="container">
+            <h2>Who We Are</h2>
+            <h3>Our Vision</h3>
+            <p>Here at <strong>Pehchan-Your Unique Identity</strong>, we know that sometimes all it takes to change the
+                world is a little support. Since our start in 2020, we have been determined to make an impact. The core
+                of our efforts is to bring our team's fresh ideas and passion to the range of activities we're involved
+                in. PEHCHAN-YUI is working for social welfare as a team, which was formed by <strong>Aniksha
+                    Upadhyay</strong> and team in April 2020. It works on several causes Awareness, Children Education,
+                Environment, Animals, helpless people and Community Welfare.</p>
+            <p>Our team is dedicated to service for poor public welfare and animal welfare.</p>
+            <p class="jai-hind">जय हिन्द..🇮🇳</p>
+        </div>
+    </section>
+
+
+    <!-- Founder Section -->
+    <section class="founder-section-new">
+        <div class="container">
+            <h2>Our Founder</h2>
+            <div class="founder-content-new">
+                <img src="{% static 'images/Members/Aniksha__1_-removebg-preview.png' %}" alt="Founder"
+                    class="founder-img-new">
+                <h3 class="founder-name">ANIKSHA UPADHYAY</h3>
+                <p class="founder-title-new">Founder</p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Team Section -->
+    <section class="team-section-new">
+        <div class="container">
+            <h2>OUR TEAM</h2>
+            <div class="team-grid-new">
+                <div class="team-card-new">
+                    <img src="{% static 'images/Members/ADITYA_JHA_page-0001-removebg-preview.png' %}" alt="Team Member"
+                        class="team-img-new">
+                    <h3>ADITYA JHA</h3>
+                    <p class="team-role-new">PROGRAMME<br>MANAGEMENT</p>
+                </div>
+                <div class="team-card-new">
+                    <img src="{% static 'images/Members/Pallavi .jpg' %}" alt="Team Member" class="team-img-new">
+                    <h3>PALLAVI THAKUR</h3>
+                    <p class="team-role-new">ADMINISTRATIVE<br>MANAGER</p>
+                </div>
+                <div class="team-card-new">
+                    <img src="{% static 'images/Members/shilpapg-removebg-preview.png' %}" alt="Team Member"
+                        class="team-img-new">
+                    <h3>SHILPA DUBEY</h3>
+                    <p class="team-role-new">TREASURER</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Ex-Member Section -->
+    <!-- <section class="ex-member-section">
+        <div class="container">
+            <h2>Our Ex-Member</h2>
+            <div class="ex-member-card">
+                <div class="ex-member-placeholder">
+                    <div class="placeholder-circle"></div>
+                </div>
+                <div class="ex-member-info">
+                    <h3>Information on them</h3>
+                    <p class="ex-member-name">name</p>
+                </div>
+            </div>
+        </div>
+    </section> -->
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <img src="{% static 'images/logos/location_logo.png' %}" alt="Pehchan Location"
+                        style="height: 80px; margin-bottom: 0.5rem;">
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'public_events' %}">Events</a></li>
+                        <li><a href="{% url 'public_volunteer' %}">Volunteer</a></li>
+                        <li><a href="{% url 'about' %}">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact Us</h4>
+                    <p>Mumbai, Maharashtra, India</p>
+                    <p>madad@pehchanyui.in</p>
+                    <p>+91 98928 87992</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <div class="footer-bottom">
+        <p>Copyright © Pehchan-Your Unique Identity. All rights reserved.</p>
+    </div>
+
+
+    <script src="{% static 'JS/script.js' %}"></script>
+</body>
+
+</html>

@@ -1,0 +1,480 @@
+{% load static %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pehchan - Your Unique Identity</title>
+    <link rel="stylesheet" href="{% static 'CSS/style.css' %}?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Enhanced mobile responsiveness */
+        @media (max-width: 1024px) {
+            .activity-content {
+                gap: 2rem;
+            }
+
+            .activity-text h2 {
+                font-size: 2.2rem;
+            }
+
+            .activity-images-row img {
+                height: auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .activity-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .activity-content.reverse {
+                direction: ltr;
+            }
+
+            .activity-text h2 {
+                font-size: 2rem;
+            }
+
+            .activity-text h3 {
+                font-size: 1.6rem;
+            }
+
+            .activity-images-row {
+                grid-template-columns: 1fr;
+            }
+
+            .activity-images-row img {
+                height: auto;
+            }
+
+            .contact-wrapper {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .memorable-day .memorable-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .memorable-images {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .activity-text h2 {
+                font-size: 1.8rem;
+            }
+
+            .activity-text h3 {
+                font-size: 1.4rem;
+            }
+
+            .activity-text p {
+                font-size: 0.95rem;
+            }
+
+            .memorable-images {
+                grid-template-columns: 1fr;
+            }
+
+            .memorable-text h2 {
+                font-size: 1.8rem;
+            }
+
+            .memorable-text p {
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Message styling */
+        .alert-success {
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .hero-banner {
+            background: url("{% static 'images/Herobanner.png' %}") center/cover no-repeat;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        /* Center Navbar Content */
+        .nav-container {
+            justify-content: center !important;
+        }
+
+        .nav-links {
+            margin-left: 0 !important;
+            margin-right: 80px !important;
+        }
+
+        /* Image Styling with Navy Blue Borders and Hover Effects */
+        .cause-card img,
+        .activity-images img,
+        .activity-images-row img,
+        .memorable-images img {
+            border: 3px solid #0A1A4A;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(10, 26, 74, 0.12);
+            transition: all 0.3s ease;
+            object-fit: contain;
+            width: 100%;
+            height: auto;
+        }
+
+        .cause-card img:hover,
+        .activity-images img:hover,
+        .activity-images-row img:hover,
+        .memorable-images img:hover {
+            border-color: #2b4dad;
+            box-shadow: 0 12px 40px rgba(10, 26, 74, 0.25);
+            transform: translateY(-5px) scale(1.03);
+        }
+    </style>
+</head>
+
+<body class="home">
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}" class="active">HOME</a></li>
+                <li><a href="{% url 'public_events' %}">EVENTS</a></li>
+                <li><a href="{% url 'public_volunteer' %}">VOLUNTEER</a></li>
+                <li><a href="{% url 'about' %}">ABOUT US</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'dashboard' %}">DASHBOARD</a></li>
+                {% else %}
+                <a class="mdl-navigation__link" href="{% url 'login' %}">Login</a>
+                <a class="mdl-navigation__link" href="{% url 'signup' %}">Sign Up</a>
+                {% endif %}
+            </ul>
+            <a href="{% if user.is_authenticated %}{% url 'money_donation' %}{% else %}{% url 'public_donate' %}{% endif %}"
+                class="donate-btn">Donate Now</a>
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero section -->
+    <section class="hero-banner"
+        style="display: flex; align-items: center; justify-content: center; position: relative; min-height: 100vh;">
+        <div class="hero-content" style="text-align: center; z-index: 2; position: relative; margin-top: 250px;">
+            <div class="hero-buttons" style="display: flex; gap: 30px; justify-content: center; align-items: center;">
+                <a href="{% if user.is_authenticated %}{% url 'lifetime_volunteer' %}{% else %}{% url 'public_volunteer' %}{% endif %}"
+                    class="btn-join"
+                    style="padding: 18px 40px; font-size: 16px; font-weight: 700; text-decoration: none; border-radius: 50px; background: #F9A826; color: white; border: 3px solid #F9A826; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; font-family: 'Poppins', sans-serif; box-shadow: 0 4px 15px rgba(249, 168, 38, 0.3);">JOIN
+                    US</a>
+                <a href="{% if user.is_authenticated %}{% url 'money_donation' %}{% else %}{% url 'public_donate' %}{% endif %}"
+                    class="btn-donate-hero"
+                    style="padding: 18px 40px; font-size: 16px; font-weight: 700; text-decoration: none; border-radius: 50px; background: transparent; color: #F9A826; border: 3px solid #F9A826; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; font-family: 'Poppins', sans-serif;">DONATE</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-home">
+        <img src="{% static 'images/pink leaf.png' %}" class="leaf-decor leaf-top-left" alt="">
+        <img src="{% static 'images/blue leaf.png' %}" class="leaf-decor leaf-top-right" alt="">
+        <img src="{% static 'images/pink leaf.png' %}" class="leaf-decor leaf-bottom-left" alt="">
+        <img src="{% static 'images/blue leaf.png' %}" class="leaf-decor leaf-bottom-right" alt="">
+        <div class="container">
+            <h2 class="section-title-dark georgia-brand" style="font-size: 3.5rem;">Pehchan</h2>
+            <h3 class="section-subtitle-dark georgia-brand">Your Unique Identity</h3>
+            <p class="about-intro">Established in 2020, Pehchan-your unique identity is a non-profit organisation
+                focused on the education of underprivileged children and helping the homeless.</p>
+        </div>
+    </section>
+
+    <!-- Our Cause -->
+    <section class="our-cause">
+        <img src="{% static 'images/blue leaf.png' %}" class="leaf-decor leaf-cause-left" alt="">
+        <img src="{% static 'images/pink leaf.png' %}" class="leaf-decor leaf-cause-right" alt="">
+        <div class="container">
+            <h2 class="section-title-orange">OUR CAUSE</h2>
+            <div class="cause-grid">
+                <div class="cause-card">
+                    <img src="{% static 'images/NGO images/education/Screenshot 2025-07-13 at 05.28.23.png' %}"
+                        alt="Education">
+                </div>
+                <div class="cause-card">
+                    <img src="{% static 'images/NGO images/education/Screenshot 2025-07-13 at 05.28.33.png' %}"
+                        alt="Education">
+                </div>
+                <div class="cause-card">
+                    <img src="{% static 'images/home/education/17.png' %}" alt="Community">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pehchan Utsav -->
+    <section class="activity-section">
+        <div class="container">
+            <div class="activity-content">
+                <div class="activity-text">
+                    <h2 class="section-title-orange">Celebrations</h2>
+                    <p>Throughout the year, we celebrate national and cultural festivals with underprivileged children
+                        and communities, spreading smiles and fostering togetherness.</p>
+
+                    <div class="activity-images-row">
+                        <img src="{% static 'images/events/utsav/36.png' %}" alt="Ration Distribution">
+                        <img src="{% static 'images/events/utsav/38.png' %}" alt="Ration Distribution">
+                    </div>
+                    <div class="activity-images-row">
+                        <img src="{% static 'images/events/utsav/39.png' %}" alt="Ration Distribution">
+                        <img src="{% static 'images/events/utsav/42.png' %}" alt="Ration Distribution">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Best Out of Waste -->
+    <section class="activity-section">
+        <div class="container">
+            <div class="activity-content">
+                <div class="activity-text">
+                    <h2>Environment Protection</h2>
+                    <p>At Pehchan, we believe that taking care of the environment is essential to our mission of helping
+                        the underprivileged. We organize this by planting trees and cleaning up beaches, and by
+                        promoting environmentally friendly practices in our community.</p>
+                </div>
+                <div class="activity-images">
+                    <!-- <img src="{% static 'images/environments/1.png' %}" alt="Best Out of Waste"> -->
+                    <div class="activity-images-row">
+                        <img src="{% static 'images/events/environments/11.a044af71e638.png' %}"
+                            alt="Environment Protection">
+                        <img src="{% static 'images/events/environments/12.png' %}" alt="Environment Protection">
+                    </div>
+                    <div class="activity-images-row">
+                        <img src="{% static 'images/events/environments/13.png' %}" alt="Environment Protection">
+                        <img src="{% static 'images/events/environments/14.png' %}" alt="Environment Protection">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ration Distribution Drive -->
+    <section class="activity-section">
+        <div class="container">
+            <div class="activity-content reverse">
+                <div class="activity-text">
+                    <h2>Ration Distribution Drive</h2>
+                    <p>We distributed dry ration kits among the needy and destitute people in Mumbai and Navi Mumbai.
+                        This drive aimed to provide essential food items to those who require them the most.</p>
+                </div>
+                <div class="activity-images">
+                    <div class="activity-images-row">
+                        <img src="{% static 'images/ration1.png' %}" alt="Ration Distribution">
+                        <img src="{% static 'images/events/poverty/50.png' %}" alt="Ration Distribution">
+                    </div>
+                    <div class="activity-images-row">
+                        <img src="{% static 'images/events/poverty/51.png' %}" alt="Ration Distribution">
+                        <img src="{% static 'images/events/poverty/53.png' %}" alt="Ration Distribution">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education for All -->
+    <section class="activity-section bg-light-blue">
+        <div class="container">
+            <div class="activity-content">
+                <div class="activity-text">
+                    <h2>Education for All</h2>
+                    <h3>Spreading Awareness on Importance of Education</h3>
+                    <p>We believe that education is the key to unlocking a better future for the underprivileged. We
+                        conducted a campaign to spread awareness about the importance of education and motivated parents
+                        to send their children to school. We also spent quality time with the children, teaching them
+                        the basics and providing them with educational materials as per donations received. Our aim is
+                        to distribute basic educational items such as books, stationery, and uniforms to support the
+                        education of underprivileged children.</p>
+                </div>
+                <div class="activity-images">
+                    <div class="activity-images-row">
+                        <img src="{% static 'images/events/education/17.png' %}" alt="Walk for Homeless">
+                        <img src="{% static 'images/events/education/19.png' %}" alt="Walk for Homeless">
+                    </div>
+                    <div class="activity-images-row">
+                        <img src="{% static 'images/events/education/22.png' %}" alt="Walk for Homeless">
+                        <img src="{% static 'images/events/education/25.jpg' %}" alt="Walk for Homeless">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Your Memorable Day -->
+    <section class="activity-section">
+        <div class="container">
+            <div class="activity-content reverse">
+                <div class="activity-text">
+                    <h2>Your Memorable Day</h2>
+                    <p>Make your special occasions more meaningful by celebrating with those in need. Whether it's a
+                        birthday, anniversary, or any memorable event, you can make a difference!</p>
+
+                    <div
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px; margin-top: 25px;">
+                        <h3 style="color: white; margin-bottom: 15px; font-size: 20px;">🎉 Celebrate With Us!</h3>
+                        <p style="margin-bottom: 20px; font-size: 15px; line-height: 1.6;">For your memorable day
+                            events, you can contact us through:</p>
+
+                        <div style="display: grid; gap: 12px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 20px;">📞</span>
+                                <span><strong>Phone:</strong> +91 98928 87992</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 20px;">✉️</span>
+                                <span><strong>Email:</strong> madad@pehchanyui.in</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 20px;">📱</span>
+                                <span><strong>Instagram:</strong> @pehchanyui</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 20px;">💬</span>
+                                <span><strong>Message Box:</strong> Use the contact form below</span>
+                            </div>
+                        </div>
+
+                        <a href="#contact"
+                            style="display: inline-block; margin-top: 20px; padding: 12px 30px; background: white; color: #667eea; text-decoration: none; border-radius: 8px; font-weight: 600; transition: transform 0.3s;"
+                            onmouseover="this.style.transform='scale(1.05)'"
+                            onmouseout="this.style.transform='scale(1)'">
+                            Contact Us Now →
+                        </a>
+                    </div>
+                </div>
+                <div class="activity-images">
+                    <div class="activity-images-row">
+                        <img src="{% static 'images/events/memorable/30.png' %}" alt="Memorable Day">
+                        <img src="{% static 'images/events/memorable/31.png' %}" alt="Memorable Day">
+                    </div>
+                    <div class="activity-images-row">
+                        <img src="{% static 'images/events/memorable/34.png' %}" alt="Memorable Day">
+                        <img src="{% static 'images/events/memorable/35.png' %}" alt="Memorable Day">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+        <div class="container">
+            <div class="contact-wrapper">
+                <div class="contact-map">
+                    <h3>Location</h3>
+                    <div
+                        style="background: #f0f0f0; padding: 2rem; border-radius: 8px; text-align: center; min-height: 300px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                        <p style="font-size: 1.2rem; color: #666; margin-bottom: 1rem;">📍 Mumbai, Maharashtra, India
+                        </p>
+                        <p style="color: #888;">We are located in Mumbai, working to make a difference in the community.
+                        </p>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <h3>Send us a message</h3>
+
+                    <!-- Display Messages -->
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+
+                    <form method="POST" action="{% url 'home' %}">
+                        {% csrf_token %}
+                        <input type="text" name="name" placeholder="Name" required
+                            value="{{ contact_form.name.value|default:'' }}">
+                        {% if contact_form.name.errors %}
+                        <div style="color: #dc3545; font-size: 14px; margin-top: 5px;">{{ contact_form.name.errors.0 }}
+                        </div>
+                        {% endif %}
+
+                        <input type="email" name="email" placeholder="Email" required
+                            value="{{ contact_form.email.value|default:'' }}">
+                        {% if contact_form.email.errors %}
+                        <div style="color: #dc3545; font-size: 14px; margin-top: 5px;">{{ contact_form.email.errors.0 }}
+                        </div>
+                        {% endif %}
+
+                        <textarea name="message" placeholder="Message" rows="5"
+                            required>{{ contact_form.message.value|default:'' }}</textarea>
+                        {% if contact_form.message.errors %}
+                        <div style="color: #dc3545; font-size: 14px; margin-top: 5px;">{{ contact_form.message.errors.0
+                            }}</div>
+                        {% endif %}
+
+                        <button type="submit" class="btn-submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <img src="{% static 'images/logos/location_logo.png' %}" alt="Pehchan Location"
+                        style="height: 80px; margin-bottom: 0.5rem;">
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'public_events' %}">Events</a></li>
+                        <li><a href="{% url 'public_volunteer' %}">Volunteer</a></li>
+                        <li><a href="{% url 'about' %}">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact Us</h4>
+                    <p>Mumbai, Maharashtra, India</p>
+                    <p>madad@pehchanyui.in</p>
+                    <p>+91 98928 87992</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <div class="footer-bottom">
+        <p>Copyright © Pehchan-Your Unique Identity. All rights reserved.</p>
+    </div>
+
+    <script src="{% static 'JS/script.js' %}?v=2"></script>
+</body>
+
+</html>

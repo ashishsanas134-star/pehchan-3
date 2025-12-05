@@ -1,0 +1,347 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Pehchan{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Quick Action Navigation */
+    .quick-nav {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-2xl);
+        padding: var(--spacing-lg);
+        background: var(--surface-1);
+        border-radius: var(--radius-2xl);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--neutral-200);
+    }
+    
+    .quick-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-lg) var(--spacing-md);
+        border-radius: var(--radius-lg);
+        text-decoration: none;
+        transition: all var(--transition-base);
+        background: var(--neutral-50);
+        border: 2px solid transparent;
+    }
+    
+    .quick-nav-item:hover {
+        background: var(--primary-50);
+        border-color: var(--primary-200);
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .quick-nav-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-500), var(--primary-400));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .quick-nav-item:hover .quick-nav-icon {
+        transform: scale(1.1);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .quick-nav-icon.secondary {
+        background: linear-gradient(135deg, var(--secondary-500), var(--secondary-400));
+    }
+    
+    .quick-nav-icon .material-icons-round {
+        color: white;
+        font-size: 28px;
+    }
+    
+    .quick-nav-label {
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+        text-align: center;
+    }
+    
+    @media (max-width: 768px) {
+        .quick-nav {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-hero">
+    <div class="dashboard-hero-content">
+        <span class="badge-chip"><span class="material-icons-round">eco</span> Greener Tomorrow</span>
+        <h1 class="georgia-brand">Welcome back, {{ user.get_full_name|default:user.username }}</h1>
+        <p>Your actions nourish communities and keep our planet thriving. Explore fresh opportunities to volunteer, donate, and celebrate your impact.</p>
+    </div>
+</div>
+
+<!-- Quick Action Navigation -->
+<div class="quick-nav">
+    <a href="{% url 'event_list' %}" class="quick-nav-item">
+        <div class="quick-nav-icon">
+            <span class="material-icons-round">event</span>
+        </div>
+        <span class="quick-nav-label">Browse Events</span>
+    </a>
+    
+    <a href="{% url 'material_donation' %}" class="quick-nav-item">
+        <div class="quick-nav-icon">
+            <span class="material-icons-round">inventory_2</span>
+        </div>
+        <span class="quick-nav-label">Donate Materials</span>
+    </a>
+    
+    <a href="{% url 'money_donation' %}" class="quick-nav-item">
+        <div class="quick-nav-icon secondary">
+            <span class="material-icons-round">payments</span>
+        </div>
+        <span class="quick-nav-label">Donate Money</span>
+    </a>
+    
+    <a href="{% url 'certificate_list' %}" class="quick-nav-item">
+        <div class="quick-nav-icon">
+            <span class="material-icons-round">verified</span>
+        </div>
+        <span class="quick-nav-label">My Certificates</span>
+    </a>
+    
+    <a href="{% url 'donor_certificate_list' %}" class="quick-nav-item">
+        <div class="quick-nav-icon secondary">
+            <span class="material-icons-round">workspace_premium</span>
+        </div>
+        <span class="quick-nav-label">Donor Certificates</span>
+    </a>
+    
+    {% if not is_lifetime_volunteer %}
+    <a href="{% url 'lifetime_volunteer' %}" class="quick-nav-item">
+        <div class="quick-nav-icon">
+            <span class="material-icons-round">stars</span>
+        </div>
+        <span class="quick-nav-label">Lifetime Volunteer</span>
+    </a>
+    {% endif %}
+</div>
+
+{% with upcoming_count=upcoming_events|length joined_count=joined_events|length certificate_count=certificates|length donor_cert_count=donor_certificates|length material_count=material_donations|length money_count=money_donations|length %}
+<div class="metric-strip">
+    <div class="metric-card">
+        <span class="metric-label">Upcoming Events</span>
+        <span class="metric-value">{{ upcoming_count }}</span>
+        <span class="metric-footnote">Ready to inspire change</span>
+    </div>
+    <div class="metric-card">
+        <span class="metric-label">Events Joined</span>
+        <span class="metric-value">{{ joined_count }}</span>
+        <span class="metric-footnote">Keep growing greener impact</span>
+    </div>
+    <div class="metric-card">
+        <span class="metric-label">Certificates Earned</span>
+        <span class="metric-value">{{ certificate_count|add:donor_cert_count }}</span>
+        <span class="metric-footnote">Celebrating your milestones</span>
+    </div>
+    <div class="metric-card">
+        <span class="metric-label">Donations Made</span>
+        <span class="metric-value">{{ material_count|add:money_count }}</span>
+        <span class="metric-footnote">Gratitude for your support</span>
+    </div>
+</div>
+{% endwith %}
+
+<div class="dashboard-section">
+    <div class="section-heading">Upcoming Experiences</div>
+    <div class="section-subheading">Seeds of change waiting for your presence</div>
+    <div class="dashboard-grid">
+        <div class="surface-card">
+            <div class="mdl-card__title">
+                <h2 class="mdl-card__title-text"><span class="material-icons-round">event</span> Upcoming Events</h2>
+            </div>
+            <div class="mdl-card__supporting-text">
+                {% if upcoming_events %}
+                    <ul class="list-elevated">
+                        {% for event in upcoming_events|slice:":5" %}
+                            <li>
+                                <span class="material-icons-round">calendar_today</span>
+                                <div>
+                                    <a href="{% url 'event_detail' event.pk %}">{{ event.name }}</a>
+                                    <span class="metric-footnote">{{ event.event_date }} · {{ event.location }}</span>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <div style="margin-top: 18px;">
+                        <a href="{% url 'event_list' %}" class="pill-button pill-button--primary">View All Events</a>
+                    </div>
+                {% else %}
+                    <div class="info-panel info-panel--sky">
+                        <span>No upcoming events right now. Stay tuned for fresh opportunities!</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="surface-card">
+            <div class="mdl-card__title">
+                <h2 class="mdl-card__title-text"><span class="material-icons-round">check_circle</span> My Joined Events</h2>
+            </div>
+            <div class="mdl-card__supporting-text">
+                {% if joined_events %}
+                    <ul class="list-elevated">
+                        {% for ev in joined_events|slice:":5" %}
+                            <li>
+                                <span class="material-icons-round">event_available</span>
+                                <div>
+                                    <span>{{ ev.event.name }}</span>
+                                    <span class="metric-footnote">Status: {{ ev.get_status_display }}</span>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="info-panel">
+                        <span>You haven't joined any events yet. Explore new experiences to grow the green movement.</span>
+                        <a href="{% url 'event_list' %}" class="pill-button pill-button--primary">Browse Events</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-section">
+    <div class="section-heading">Celebrate Your Journey</div>
+    <div class="section-subheading">Track recognition and contributions</div>
+    <div class="dashboard-grid">
+        <div class="surface-card certificate-card">
+            <div class="mdl-card__title">
+                <h2 class="mdl-card__title-text"><span class="material-icons-round">card_membership</span> Volunteer Certificates</h2>
+            </div>
+            <div class="mdl-card__supporting-text">
+                {% if certificates %}
+                    <ul class="list-elevated">
+                        {% for cert in certificates|slice:":3" %}
+                            <li>
+                                <span class="material-icons-round">verified</span>
+                                <div>
+                                    <span>Certificate #{{ cert.pk }} · {{ cert.event.name }}</span>
+                                    <span class="metric-footnote">Issued {{ cert.issue_date }}</span>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <div style="margin-top: 18px;">
+                        <a href="{% url 'certificate_list' %}" class="pill-button pill-button--primary">View All</a>
+                    </div>
+                {% else %}
+                    <div class="info-panel info-panel--sun">
+                        <span>Complete events to unlock certificates.</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="surface-card certificate-card">
+            <div class="mdl-card__title">
+                <h2 class="mdl-card__title-text"><span class="material-icons-round">workspace_premium</span> Donor Certificates</h2>
+            </div>
+            <div class="mdl-card__supporting-text">
+                {% if donor_certificates %}
+                    <ul class="list-elevated">
+                        {% for cert in donor_certificates|slice:":3" %}
+                            <li>
+                                <span class="material-icons-round">card_giftcard</span>
+                                <div>
+                                    <span>{{ cert.certificate_number }}</span>
+                                    <span class="metric-footnote">{{ cert.get_donation_type_display }} · {{ cert.issue_date }}</span>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <div style="margin-top: 18px;">
+                        <a href="{% url 'donor_certificate_list' %}" class="pill-button pill-button--primary">View All</a>
+                    </div>
+                {% else %}
+                    <div class="info-panel info-panel--sun">
+                        <span>Make donations to receive appreciation certificates.</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-section">
+    <div class="section-heading">Your Contributions</div>
+    <div class="section-subheading">Making a difference through donations</div>
+    <div class="dashboard-grid">
+        <div class="surface-card">
+            <div class="mdl-card__title">
+                <h2 class="mdl-card__title-text"><span class="material-icons-round">volunteer_activism</span> Donation History</h2>
+            </div>
+            <div class="mdl-card__supporting-text">
+                <div class="highlight-card">
+                    <span><strong>Material Donations</strong></span>
+                    {% if material_donations %}
+                        <ul class="list-elevated">
+                            {% for donation in material_donations|slice:":3" %}
+                                <li>
+                                    <span class="material-icons-round">inventory_2</span>
+                                    <div>
+                                        <span>{{ donation.item_name }} ({{ donation.quantity }})</span>
+                                        <span class="metric-footnote">Status: {{ donation.get_status_display }}</span>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <span class="metric-footnote">No material donations yet.</span>
+                    {% endif %}
+                </div>
+                <div class="highlight-card" style="margin-top: 22px;">
+                    <span><strong>Money Donations</strong></span>
+                    {% if money_donations %}
+                        <ul class="list-elevated">
+                            {% for donation in money_donations|slice:":3" %}
+                                <li>
+                                    <span class="material-icons-round">payments</span>
+                                    <div>
+                                        <span>₹{{ donation.amount }}</span>
+                                        <span class="metric-footnote">{{ donation.created_at|date:"M d, Y" }}</span>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <span class="metric-footnote">No money donations yet.</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if is_lifetime_volunteer %}
+<div class="surface-card" style="margin-top: 32px;">
+    <div class="mdl-card__title" style="background: linear-gradient(135deg, rgba(46, 125, 50, 0.95), rgba(76, 175, 80, 0.9));">
+        <h2 class="mdl-card__title-text"><span class="material-icons-round">emoji_events</span> Lifetime Volunteer</h2>
+    </div>
+    <div class="mdl-card__supporting-text">
+        <div class="lifetime-highlight">
+            <span class="material-icons-round">local_florist</span>
+            <div>
+                <h3>Thank you for nurturing hope!</h3>
+                <p>Your lifetime commitment keeps Pehchan rooted in purpose and flourishing with possibilities.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

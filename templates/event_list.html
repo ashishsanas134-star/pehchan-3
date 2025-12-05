@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Events - Pehchan{% endblock %}
+
+{% block content %}
+<div class="dashboard-hero" style="padding: 48px 40px;">
+    <div class="dashboard-hero-content">
+        <span class="badge-chip"><span class="material-icons-round">event</span> Volunteer Opportunities</span>
+        <h1>Upcoming Events</h1>
+        <p>Choose a gathering that lets you plant new hope and make a lasting impact in the community.</p>
+    </div>
+</div>
+
+<div class="dashboard-section">
+    {% if events %}
+        <div class="dashboard-grid">
+            {% for event in events %}
+            <div class="surface-card" style="transition: all 0.3s ease;">
+                {% if event.image %}
+                <div class="event-card__media">
+                    <img src="{{ event.image.url }}" alt="{{ event.name }}">
+                </div>
+                {% endif %}
+                <div class="mdl-card__title">
+                    <h2 class="mdl-card__title-text">
+                        <span class="material-icons-round">celebration</span>
+                        {{ event.name }}
+                    </h2>
+                </div>
+                <div class="mdl-card__supporting-text">
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
+                        <div style="display: flex; align-items: center; gap: 10px; color: var(--text-secondary);">
+                            <span class="material-icons-round" style="color: var(--primary-600);">event</span>
+                            <span>{{ event.event_date|date:"F d, Y" }}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px; color: var(--text-secondary);">
+                            <span class="material-icons-round" style="color: var(--primary-600);">location_on</span>
+                            <span>{{ event.location }}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span class="badge-chip" style="font-size: 0.75rem; padding: 4px 12px;">
+                                {{ event.get_status_display }}
+                            </span>
+                        </div>
+                    </div>
+                    <p style="line-height: 1.6; color: var(--text-secondary);">{{ event.description|truncatewords:24 }}</p>
+                </div>
+                <div class="mdl-card__actions">
+                    <a href="{% url 'event_detail' event.pk %}" class="pill-button pill-button--primary">
+                        <span class="material-icons-round">arrow_forward</span> View Details
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="surface-card">
+            <div class="mdl-card__supporting-text">
+                <div class="info-panel info-panel--sky">
+                    <span class="material-icons-round" style="font-size: 3rem; color: var(--info); margin-bottom: 12px;">event_busy</span>
+                    <h3 style="margin: 8px 0;">No Upcoming Events</h3>
+                    <p style="color: var(--text-secondary);">New experiences will bloom soon. Check back later for exciting volunteer opportunities!</p>
+                    <a href="{% url 'dashboard' %}" class="pill-button pill-button--outline" style="margin-top: 16px;">
+                        <span class="material-icons-round">arrow_back</span> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<div style="text-align: center; margin-top: 40px;">
+    <a href="{% url 'dashboard' %}" class="pill-button pill-button--ghost">
+        <span class="material-icons-round">home</span> Back to Dashboard
+    </a>
+</div>
+{% endblock %}

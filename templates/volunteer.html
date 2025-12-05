@@ -1,0 +1,482 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer - Pehchan</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="{% static 'CSS/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Enhanced mobile responsiveness */
+        @media (max-width: 1024px) {
+            .volunteer-hero-content {
+                gap: 2rem;
+            }
+
+            .volunteer-hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .benefits-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+
+            .volunteer-hero-info ul {
+                padding-left: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .volunteer-hero-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .volunteer-hero-text {
+                text-align: center;
+            }
+
+            .volunteer-hero-img {
+                max-width: 300px;
+                margin: 0 auto;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .benefit-item {
+                padding: 1.5rem;
+            }
+
+            /* Volunteer Login Message Section */
+            .container>div[style*="background: linear-gradient"] {
+                padding: 40px 20px;
+            }
+
+            .container>div[style*="background: linear-gradient"] h2 {
+                font-size: 28px;
+            }
+
+            .container>div[style*="background: linear-gradient"] p {
+                font-size: 18px;
+            }
+
+            .container>div[style*="background: rgba"] {
+                padding: 20px;
+            }
+
+            .container>div[style*="background: rgba"] h3 {
+                font-size: 20px;
+            }
+
+            .container>div[style*="background: rgba"] li {
+                font-size: 16px;
+            }
+
+            .container>div[style*="margin-top: 40px"] {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .container>div[style*="margin-top: 40px"]>div {
+                padding: 20px;
+            }
+
+            .container>div[style*="display: inline-block"] {
+                display: block !important;
+                margin: 10px auto !important;
+                width: 80%;
+                max-width: 250px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .volunteer-hero-text h1 {
+                font-size: 2rem;
+            }
+
+            .volunteer-hero-text p {
+                font-size: 1.2rem;
+            }
+
+            .volunteer-hero-info h3 {
+                font-size: 1.5rem;
+            }
+
+            .volunteer-hero-info ul {
+                padding-left: 0.5rem;
+            }
+
+            .volunteer-hero-info li {
+                font-size: 0.9rem;
+            }
+
+            .benefit-item h4 {
+                font-size: 1.1rem;
+            }
+
+            .benefit-item p {
+                font-size: 0.9rem;
+            }
+
+            /* Volunteer Login Message Section */
+            .container>div[style*="background: linear-gradient"] {
+                padding: 30px 15px;
+            }
+
+            .container>div[style*="background: linear-gradient"] h2 {
+                font-size: 24px;
+            }
+
+            .container>div[style*="background: linear-gradient"] p {
+                font-size: 16px;
+            }
+
+            .container>div[style*="background: linear-gradient"] .material-icons {
+                font-size: 60px;
+            }
+
+            .container>div[style*="background: rgba"] h3 {
+                font-size: 18px;
+            }
+
+            .container>div[style*="background: rgba"] li {
+                font-size: 14px;
+                margin: 8px 0;
+            }
+
+            .container>div[style*="margin-top: 40px"]>div h4 {
+                font-size: 1.1rem;
+            }
+
+            .container>div[style*="margin-top: 40px"]>div p {
+                font-size: 0.9rem;
+            }
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Center Navbar Content */
+        .nav-container {
+            justify-content: center !important;
+        }
+
+        .nav-links {
+            margin-left: 0 !important;
+            margin-right: 80px !important;
+        }
+
+        /* Volunteer Image Styling with Navy Blue Border */
+        .volunteer-hero {
+            background: var(--primary-800);
+            color: var(--text-on-primary);
+            padding: 60px 0;
+        }
+
+        .volunteer-hero h1,
+        .volunteer-hero p {
+            color: var(--text-on-primary);
+        }
+
+        .volunteer-hero-img,
+        .volunteer-img {
+            border: 3px solid var(--primary-800);
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(10, 26, 74, 0.12);
+            transition: all 0.3s ease;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .benefit-icon {
+            color: var(--primary-500);
+            font-size: 2.5rem;
+        }
+
+        .volunteer-form-section {
+            background: var(--primary-600);
+            color: var(--text-on-primary);
+            padding: 60px 40px;
+            border-radius: 15px;
+        }
+
+        .volunteer-form-section a {
+            background: var(--surface-1);
+            color: var(--primary-800);
+            border: 2px solid var(--primary-800);
+        }
+
+        .volunteer-hero-img:hover,
+        .volunteer-img:hover {
+            border-color: #2b4dad;
+            box-shadow: 0 12px 40px rgba(10, 26, 74, 0.25);
+            transform: translateY(-5px) scale(1.03);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">HOME</a></li>
+                <li><a href="{% url 'public_events' %}">EVENTS</a></li>
+                <li><a href="{% url 'public_volunteer' %}" class="active">VOLUNTEER</a></li>
+                <li><a href="{% url 'about' %}">ABOUT US</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'dashboard' %}">DASHBOARD</a></li>
+                {% else %}
+                <a class="mdl-navigation__link" href="{% url 'login' %}">Login</a>
+                <a class="mdl-navigation__link" href="{% url 'signup' %}">Sign Up</a>
+                {% endif %}
+            </ul>
+            <a href="{% if user.is_authenticated %}{% url 'money_donation' %}{% else %}{% url 'public_donate' %}{% endif %}"
+                class="donate-btn">Donate Now</a>
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="volunteer-hero"
+        style="background: var(--primary-800); color: var(--text-on-primary); padding: 40px 0;">
+        <div class="container">
+            <div class="volunteer-hero-content">
+                <div class="volunteer-hero-text">
+                    <h1>Become a Volunteer</h1>
+                    <p>Join your team and change lives</p>
+                    <a href="{% url 'login' %}" class="join-us-btn" style="
+                        display: inline-block;
+                        margin-top: 30px;
+                        padding: 20px 50px;
+                        font-size: 24px;
+                        font-weight: 700;
+                        text-decoration: none;
+                        border-radius: 50px;
+                        background: linear-gradient(135deg, #F9A826 0%, #FF6B4A 100%);
+                        color: white;
+                        border: none;
+                        cursor: pointer;
+                        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                        box-shadow: 0 10px 30px rgba(249, 168, 38, 0.4);
+                        text-transform: uppercase;
+                        letter-spacing: 2px;
+                        font-family: 'Poppins', sans-serif;
+                        position: relative;
+                        overflow: hidden;
+                    " onmouseover="
+                        this.style.transform='translateY(-8px) scale(1.05)';
+                        this.style.boxShadow='0 20px 50px rgba(249, 168, 38, 0.6)';
+                        this.style.background='linear-gradient(135deg, #FF6B4A 0%, #F9A826 100%)';
+                    " onmouseout="
+                        this.style.transform='translateY(0) scale(1)';
+                        this.style.boxShadow='0 10px 30px rgba(249, 168, 38, 0.4)';
+                        this.style.background='linear-gradient(135deg, #F9A826 0%, #FF6B4A 100%)';
+                    ">
+                        <span style="display: inline-flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 28px; animation: pulse 2s infinite;">🚀</span>
+                            JOIN US
+                        </span>
+                    </a>
+                    <style>
+                        @keyframes pulse {
+
+                            0%,
+                            100% {
+                                transform: scale(1);
+                            }
+
+                            50% {
+                                transform: scale(1.2);
+                            }
+                        }
+
+                        .join-us-btn::before {
+                            content: '';
+                            position: absolute;
+                            top: 50%;
+                            left: 50%;
+                            width: 0;
+                            height: 0;
+                            border-radius: 50%;
+                            background: rgba(255, 255, 255, 0.3);
+                            transform: translate(-50%, -50%);
+                            transition: width 0.6s, height 0.6s;
+                        }
+
+                        .join-us-btn:hover::before {
+                            width: 300px;
+                            height: 300px;
+                        }
+                    </style>
+                </div>
+                <div class="volunteer-hero-info">
+                    <h3>Why Volunteer with us?</h3>
+                    <ul>
+                        <li>Make a real impact in your community</li>
+                        <li>Gain valuable experience</li>
+                        <li>Meet like-minded people</li>
+                        <li>Develop new skills</li>
+                        <li>Be part of social change</li>
+                        <li>Personal growth opportunities</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="volunteer-benefits">
+        <div class="container">
+            <div class="benefits-grid">
+                <div class="benefit-item">
+                    <div class="benefit-icon">🎯</div>
+                    <h4>Make an Impact</h4>
+                    <p>Create positive change</p>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">👥</div>
+                    <h4>Meet People</h4>
+                    <p>Connect with community</p>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">📚</div>
+                    <h4>Learn Skills</h4>
+                    <p>Develop new abilities</p>
+                </div>
+                <div class="benefit-item">
+                    <div class="benefit-icon">⭐</div>
+                    <h4>Personal Growth</h4>
+                    <p>Grow as a person</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Volunteer Login Message Section -->
+    <section class="volunteer-form-section">
+        <div class="container">
+            <div
+                style="background: #E1F5FE; color: #0A1A4A; padding: 60px 40px; border-radius: 15px; text-align: center; box-shadow: 0 10px 30px rgba(10, 26, 74, 0.1);">
+                <i class="material-icons"
+                    style="font-size: 80px; margin-bottom: 20px; animation: bounce 2s infinite;">volunteer_activism</i>
+                <h2 style="font-size: 36px; margin: 20px 0; font-weight: bold;">Join Our Volunteer Community!</h2>
+                <p style="font-size: 20px; margin: 25px auto; max-width: 800px; line-height: 1.6;">Want to make a
+                    difference in your community? Login to your account to join as a volunteer and be part of our
+                    mission to empower communities and change lives.</p>
+
+                <div
+                    style="background: rgba(255,255,255,0.6); padding: 25px; border-radius: 10px; margin: 30px auto; max-width: 700px; box-shadow: 0 4px 15px rgba(10, 26, 74, 0.05);">
+                    <h3 style="font-size: 24px; margin-bottom: 15px;">As a Volunteer, You Can:</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="font-size: 18px; margin: 12px 0;">✓ Join upcoming events and activities</li>
+                        <li style="font-size: 18px; margin: 12px 0;">✓ Become a lifetime volunteer</li>
+                        <li style="font-size: 18px; margin: 12px 0;">✓ Earn certificates for your contributions</li>
+                        <li style="font-size: 18px; margin: 12px 0;">✓ Track your volunteer history</li>
+                        <li style="font-size: 18px; margin: 12px 0;">✓ Make a real impact in the community</li>
+                    </ul>
+                </div>
+
+                <div style="margin-top: 40px;">
+                    <a href="{% url 'login' %}"
+                        style="background: var(--primary-500); color: var(--text-on-primary); padding: 15px 40px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 18px; margin: 0 15px; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s;">Login
+                        to Join</a>
+                    <a href="{% url 'signup' %}"
+                        style="background: transparent; color: var(--primary-500); padding: 15px 40px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 18px; border: 3px solid var(--primary-500); margin: 0 15px; display: inline-block; transition: all 0.3s;">Sign
+                        Up Now</a>
+                </div>
+
+                <p style="margin-top: 30px; font-size: 16px; opacity: 0.9;">Don't have an account? Sign up to get
+                    started!</p>
+            </div>
+
+            <!-- Additional Info Cards -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-top: 40px;">
+                <div
+                    style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 15px;">🎯</div>
+                    <h4 style="color: #333; margin-bottom: 10px;">Event Volunteering</h4>
+                    <p style="color: #666;">Participate in specific events and activities that match your interests and
+                        schedule.</p>
+                </div>
+                <div
+                    style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 15px;">⭐</div>
+                    <h4 style="color: #333; margin-bottom: 10px;">Lifetime Volunteer</h4>
+                    <p style="color: #666;">Commit to our cause long-term and become a core member of the Pehchan
+                        family.</p>
+                </div>
+                <div
+                    style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 15px;">🏆</div>
+                    <h4 style="color: #333; margin-bottom: 10px;">Earn Certificates</h4>
+                    <p style="color: #666;">Receive official certificates for your volunteer work that you can download
+                        and verify.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Volunteer Illustration -->
+    <section class="volunteer-illustration">
+        <div class="container">
+            <img src="{% static 'images/volunteer.png' %}" alt="Volunteers" class="volunteer-img">
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <img src="{% static 'images/logos/location_logo.png' %}" alt="Pehchan Location"
+                        style="height: 80px; margin-bottom: 0.5rem;">
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'public_events' %}">Events</a></li>
+                        <li><a href="{% url 'public_volunteer' %}">Volunteer</a></li>
+                        <li><a href="{% url 'about' %}">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact Us</h4>
+                    <p>Mumbai, Maharashtra, India</p>
+                    <p>madad@pehchanyui.in</p>
+                    <p>+91 98928 87992</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <div class="footer-bottom">
+        <p>Copyright © Pehchan-Your Unique Identity. All rights reserved.</p>
+    </div>
+
+    <script src="{% static 'JS/script.js' %}"></script>
+</body>
+
+</html>

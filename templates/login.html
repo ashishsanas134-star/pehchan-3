@@ -1,0 +1,309 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Pehchan{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, var(--peach-50) 0%, var(--surface-2) 50%, var(--peach-100) 100%);
+        min-height: 100vh;
+    }
+
+    .auth-page {
+        min-height: calc(100vh - 140px);
+        /* Adjust for navbar/footer */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Soft decorative elements */
+    .auth-page::before {
+        content: '';
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(255, 173, 150, 0.15) 0%, transparent 70%);
+        border-radius: 50%;
+        top: -150px;
+        right: -150px;
+        animation: float 8s ease-in-out infinite;
+        z-index: 0;
+    }
+
+    .auth-page::after {
+        content: '';
+        position: absolute;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(10, 26, 74, 0.05) 0%, transparent 70%);
+        border-radius: 50%;
+        bottom: -100px;
+        left: -100px;
+        animation: float 10s ease-in-out infinite reverse;
+        z-index: 0;
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translate(0, 0) scale(1);
+        }
+
+        50% {
+            transform: translate(20px, -20px) scale(1.05);
+        }
+    }
+
+    .auth-container {
+        max-width: 450px;
+        width: 100%;
+        position: relative;
+        z-index: 2;
+    }
+
+    .auth-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 48px 40px;
+        box-shadow: 0 20px 40px rgba(10, 26, 74, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .auth-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--primary-800), var(--primary-600));
+        color: white;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+        box-shadow: 0 10px 20px rgba(10, 26, 74, 0.2);
+        transform: rotate(-5deg);
+        transition: transform 0.3s ease;
+    }
+
+    .auth-card:hover .auth-icon {
+        transform: rotate(0deg) scale(1.05);
+    }
+
+    .auth-title {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--primary-900);
+        margin-bottom: 8px;
+        letter-spacing: -0.5px;
+    }
+
+    .auth-subtitle {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 16px 20px 16px 60px !important;
+        border: 2px solid var(--neutral-200);
+        border-radius: 16px;
+        font-size: 1rem;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.2s ease;
+        background: var(--surface-1);
+        color: var(--text-primary);
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--primary-500);
+        box-shadow: 0 0 0 4px var(--primary-100);
+        background: white;
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 20px;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        height: 22px;
+        color: var(--neutral-500);
+        transition: color 0.2s ease;
+        pointer-events: none;
+        z-index: 10;
+    }
+
+    .form-input:focus+.input-icon,
+    .form-group:focus-within .input-icon {
+        color: var(--primary-600);
+    }
+
+    .btn-login {
+        width: 100%;
+        padding: 16px;
+        background: var(--primary-800);
+        color: white;
+        border: none;
+        border-radius: 16px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 12px rgba(10, 26, 74, 0.2);
+        margin-top: 8px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-login:hover {
+        background: var(--primary-700);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(10, 26, 74, 0.25);
+    }
+
+    .btn-login:active {
+        transform: translateY(0);
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 1px solid var(--neutral-200);
+    }
+
+    .auth-footer a {
+        color: var(--primary-700);
+        font-weight: 700;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .auth-footer a:hover {
+        color: var(--primary-900);
+        text-decoration: underline;
+    }
+
+    .error-message {
+        background: #fff5f5;
+        color: #c53030;
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 1px solid #feb2b2;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="white">
+                        <path
+                            d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z" />
+                    </svg>
+                </div>
+                <h1 class="auth-title georgia-brand">Welcome Back!</h1>
+                <p class="auth-subtitle">Login to access your dashboard and continue making a difference</p>
+            </div>
+
+            <form method="post" class="auth-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="error-message">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <div class="form-group">
+                    {{ form.username.as_hidden }}
+                    <div class="input-wrapper" style="position: relative;">
+                        <input type="text" name="username" class="form-input" placeholder="Enter your username"
+                            value="{{ form.username.value|default:'' }}" required>
+                        <svg class="input-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                        </svg>
+                    </div>
+                    {% if form.username.errors %}
+                    <span class="field-error">{{ form.username.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {{ form.password.as_hidden }}
+                    <div class="input-wrapper" style="position: relative;">
+                        <input type="password" name="password" class="form-input" placeholder="Enter your password"
+                            required>
+                        <svg class="input-icon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
+                        </svg>
+                    </div>
+                    {% if form.password.errors %}
+                    <span class="field-error">{{ form.password.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn-login">
+                    <span style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="white"
+                            style="display: inline-block; margin-right: 8px;">
+                            <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+                        </svg>
+                        Login to Dashboard
+                    </span>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="{% url 'signup' %}">Sign up here</a></p>
+                <p style="margin-top: 16px;"><a href="{% url 'forgot_password' %}">Forgot Password?</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

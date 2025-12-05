@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Material Donation - Pehchan{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 0 auto;">
+    <div class="surface-card form-card">
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">
+                <span class="material-icons-round">inventory_2</span>
+                Donate Material
+            </h2>
+        </div>
+        <div class="mdl-card__supporting-text">
+            <div style="text-align: center; padding: 20px 0; margin-bottom: 24px;">
+                <span class="material-icons-round" style="font-size: 3.5rem; color: var(--primary-600); margin-bottom: 12px;">volunteer_activism</span>
+                <h3 style="margin: 12px 0 8px; color: var(--text-primary);">Share Your Resources</h3>
+                <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">Thank you for your generosity! Your material donations help us serve the community better. Please fill out the form below with your donation details.</p>
+            </div>
+            
+            <form method="post" class="form-shell">
+                {% csrf_token %}
+                
+                <div class="form-field">
+                    <label class="form-label" for="{{ form.item_name.id_for_label }}">
+                        <span class="material-icons-round" style="vertical-align: middle; margin-right: 6px;">category</span>
+                        Item Name
+                    </label>
+                    {{ form.item_name }}
+                    {% if form.item_name.errors %}
+                        <span style="color: var(--error); font-size: 0.9rem; margin-top: 4px; display: block;">{{ form.item_name.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="form-field">
+                    <label class="form-label" for="{{ form.quantity.id_for_label }}">
+                        <span class="material-icons-round" style="vertical-align: middle; margin-right: 6px;">numbers</span>
+                        Quantity
+                    </label>
+                    {{ form.quantity }}
+                    {% if form.quantity.errors %}
+                        <span style="color: var(--error); font-size: 0.9rem; margin-top: 4px; display: block;">{{ form.quantity.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="form-field">
+                    <label class="form-label" for="{{ form.location.id_for_label }}">
+                        <span class="material-icons-round" style="vertical-align: middle; margin-right: 6px;">location_on</span>
+                        Your Location
+                    </label>
+                    {{ form.location }}
+                    {% if form.location.errors %}
+                        <span style="color: var(--error); font-size: 0.9rem; margin-top: 4px; display: block;">{{ form.location.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="info-panel" style="background: linear-gradient(135deg, var(--primary-50), var(--surface-1)); border-left: 4px solid var(--primary-500); margin: 24px 0;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                        <span class="material-icons-round" style="color: var(--primary-600);">local_shipping</span>
+                        <strong style="color: var(--text-primary);">Pickup Information</strong>
+                    </div>
+                    <ul style="margin: 8px 0 0 20px; color: var(--text-secondary); line-height: 1.7;">
+                        <li>If you're in <strong style="color: var(--primary-700);">Mumbai</strong>, the Pehchan team will pick up your material at your convenience.</li>
+                        <li>If you're <strong>outside Mumbai</strong>, please courier your material to our office address (we'll provide details after submission).</li>
+                    </ul>
+                </div>
+                
+                <div class="form-field">
+                    <label class="form-label" for="{{ form.message.id_for_label }}">
+                        <span class="material-icons-round" style="vertical-align: middle; margin-right: 6px;">message</span>
+                        Additional Message <span style="font-weight: 400; color: var(--text-tertiary);">(Optional)</span>
+                    </label>
+                    <p style="font-size: 0.9rem; color: var(--text-tertiary); margin: 4px 0 12px;">Any special notes or instructions about the donation.</p>
+                    {{ form.message }}
+                    {% if form.message.errors %}
+                        <span style="color: var(--error); font-size: 0.9rem; margin-top: 4px; display: block;">{{ form.message.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                
+                <div class="info-panel info-panel--success" style="margin-top: 24px;">
+                    <span class="material-icons-round" style="color: var(--success);">verified</span>
+                    <p style="margin: 0;">After submission, our team will contact you within 24-48 hours to coordinate the pickup or provide shipping instructions. Thank you for your support!</p>
+                </div>
+                
+                <div class="mdl-card__actions" style="margin-top: 28px; padding: 0; display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button type="submit" class="pill-button pill-button--primary">
+                        <span class="material-icons-round">send</span> Submit Donation
+                    </button>
+                    <a href="{% url 'dashboard' %}" class="pill-button pill-button--outline">
+                        <span class="material-icons-round">close</span> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div style="text-align: center; margin-top: 32px;">
+    <a href="{% url 'dashboard' %}" class="pill-button pill-button--ghost">
+        <span class="material-icons-round">home</span> Back to Dashboard
+    </a>
+</div>
+{% endblock %}
