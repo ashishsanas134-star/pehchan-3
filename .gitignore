@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 staticfiles/
 __pycache__/
-db.sqlite3
 *.pyc
-=======
 venv/
->>>>>>> 88fa06c259b083eca68adc96400e0f8047bf2d79
