@@ -19,56 +19,38 @@
             </div>
             
             <div class="info-panel" style="background: linear-gradient(135deg, var(--secondary-50), var(--surface-1)); border-left: 4px solid var(--secondary-500); margin-bottom: 32px;">
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
-                    <span class="material-icons-round" style="color: var(--secondary-600); font-size: 1.5rem;">star</span>
-                    <h4 style="margin: 0; color: var(--text-primary);">Benefits & Opportunities</h4>
+                <span class="material-icons-round" style="font-size: 2rem; color: var(--secondary-600);">info</span>
+                <div>
+                    <h4 style="margin: 0 0 8px;">Application Process</h4>
+                    <p style="margin: 0;">Your application will be reviewed by our team. You will receive an email notification once a decision has been made. Approved lifetime volunteers gain special privileges and recognition within our organization.</p>
                 </div>
-                <ul style="margin: 12px 0 0 20px; color: var(--text-secondary); line-height: 1.8;">
-                    <li><strong>Priority Access:</strong> Get first access to all events and programs</li>
-                    <li><strong>Special Recognition:</strong> Receive exclusive certificates and badges</li>
-                    <li><strong>Decision Making:</strong> Be part of planning and strategy discussions</li>
-                    <li><strong>Exclusive Training:</strong> Access to specialized volunteer training sessions</li>
-                    <li><strong>Lasting Impact:</strong> Make a long-term commitment to social change</li>
-                    <li><strong>Community Network:</strong> Connect with like-minded changemakers</li>
-                </ul>
             </div>
             
-            <form method="post" class="form-shell">
+            <form method="post">
                 {% csrf_token %}
                 
                 <div class="form-field">
                     <label class="form-label" for="{{ form.motivation.id_for_label }}">
-                        <span class="material-icons-round" style="vertical-align: middle; margin-right: 6px;">edit_note</span>
+                        <span class="material-icons-round" style="vertical-align: middle; margin-right: 6px;">question_answer</span>
                         Why do you want to become a lifetime volunteer?
                     </label>
-                    <p style="font-size: 0.9rem; color: var(--text-tertiary); margin: 4px 0 12px;">Share your motivation and vision for creating positive change in the community.</p>
                     {{ form.motivation }}
                     {% if form.motivation.errors %}
                         <span style="color: var(--error); font-size: 0.9rem; margin-top: 4px; display: block;">{{ form.motivation.errors.0 }}</span>
                     {% endif %}
+                    <p style="margin: 6px 0 0; color: var(--text-secondary); font-size: 0.9rem;">Please share your motivation for wanting to become a lifetime volunteer. This helps us understand your commitment to our cause.</p>
                 </div>
                 
-                <div class="info-panel info-panel--sky" style="margin-top: 20px;">
-                    <span class="material-icons-round" style="color: var(--info);">info</span>
-                    <p style="margin: 0;">By submitting this form, you're taking the first step towards becoming a core member of our volunteer family. We'll review your application and get back to you soon!</p>
-                </div>
-                
-                <div class="mdl-card__actions" style="margin-top: 28px; padding: 0; display: flex; gap: 12px; flex-wrap: wrap;">
-                    <button type="submit" class="pill-button pill-button--secondary">
+                <div class="mdl-card__actions" style="margin-top: 32px; padding: 0; display: flex; gap: 16px;">
+                    <button type="submit" class="pill-button pill-button--primary">
                         <span class="material-icons-round">send</span> Submit Application
                     </button>
-                    <a href="{% url 'dashboard' %}" class="pill-button pill-button--outline">
+                    <a href="{% url 'dashboard' %}" class="pill-button pill-button--ghost">
                         <span class="material-icons-round">close</span> Cancel
                     </a>
                 </div>
             </form>
         </div>
     </div>
-</div>
-
-<div style="text-align: center; margin-top: 32px;">
-    <a href="{% url 'dashboard' %}" class="pill-button pill-button--ghost">
-        <span class="material-icons-round">home</span> Back to Dashboard
-    </a>
 </div>
 {% endblock %}

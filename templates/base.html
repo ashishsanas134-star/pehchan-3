@@ -1312,6 +1312,10 @@
                     <span class="material-icons-round">home</span>
                     Home
                 </a>
+                <a class="mdl-navigation__link" href="{% url 'public_certificate_verify' %}">
+                    <span class="material-icons-round">verified_user</span>
+                    Verify Certificate
+                </a>
                 {% if user.is_authenticated %}
                 <a class="mdl-navigation__link" href="{% url 'dashboard' %}">
                     <span class="material-icons-round">dashboard</span>

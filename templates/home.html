@@ -164,6 +164,7 @@
                 <li><a href="{% url 'public_events' %}">EVENTS</a></li>
                 <li><a href="{% url 'public_volunteer' %}">VOLUNTEER</a></li>
                 <li><a href="{% url 'about' %}">ABOUT US</a></li>
+                <li><a href="{% url 'public_certificate_verify' %}">VERIFY CERTIFICATE</a></li>
                 {% if user.is_authenticated %}
                 <li><a href="{% url 'dashboard' %}">DASHBOARD</a></li>
                 {% else %}

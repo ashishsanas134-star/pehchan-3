@@ -8,6 +8,7 @@ urlpatterns = [
     path('gallery/', views.public_events, name='public_events'),
     path('volunteer-info/', views.public_volunteer, name='public_volunteer'),
     path('donate-info/', views.public_donate, name='public_donate'),
+    path('verify-certificate/', views.certificate_verify, name='public_certificate_verify'),
     
     # Authentication
     path('signup/', views.signup_view, name='signup'),
@@ -40,4 +41,9 @@ urlpatterns = [
     # Donations (Login Required)
     path('donate/material/', views.MaterialDonationCreateView.as_view(), name='material_donation'),
     path('donate/money/', views.MoneyDonationCreateView.as_view(), name='money_donation'),
+    
+    # Admin Certificate Issuance (Staff Only)
+    path('admin/issue-volunteer-certificate/<int:volunteer_id>/', views.issue_volunteer_certificate, name='issue_volunteer_certificate'),
+    path('admin/issue-material-donation-certificate/<int:donation_id>/', views.issue_material_donation_certificate, name='issue_material_donation_certificate'),
+    path('admin/issue-money-donation-certificate/<int:donation_id>/', views.issue_money_donation_certificate, name='issue_money_donation_certificate'),
 ]

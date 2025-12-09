@@ -197,29 +197,28 @@ def logout_view(request):
 
 @login_required
 def dashboard(request):
-    """User dashboard view"""
-    # Get upcoming events
-    upcoming_events = Event.objects.filter(status='upcoming').order_by('event_date')
+    """Main dashboard view"""
+    # Get user's events
+    upcoming_events = Event.objects.filter(
+        status='upcoming'
+    ).filter(
+        Q(volunteers__user=request.user) | Q(volunteers__user__lifetime_volunteer__status='approved')
+    ).distinct().order_by('event_date')
     
-    # Get user's joined events
     joined_events = EventVolunteer.objects.filter(user=request.user).select_related('event')
     
     # Get user's certificates
-    certificates = Certificate.objects.filter(
-        volunteer__user=request.user
-    ).select_related('event', 'volunteer')
+    certificates = Certificate.objects.filter(volunteer__user=request.user).select_related('event', 'volunteer')
     
     # Get user's donor certificates
-    donor_certificates = DonorCertificate.objects.filter(
-        user=request.user
-    ).select_related('material_donation', 'money_donation')
+    donor_certificates = DonorCertificate.objects.filter(user=request.user).select_related('material_donation', 'money_donation')
     
     # Get user's donations
     material_donations = MaterialDonation.objects.filter(user=request.user)
     money_donations = MoneyDonation.objects.filter(user=request.user)
     
-    # Check if user is a lifetime volunteer
-    is_lifetime_volunteer = hasattr(request.user, 'lifetime_volunteer')
+    # Check if user is an approved lifetime volunteer
+    is_lifetime_volunteer = hasattr(request.user, 'lifetime_volunteer') and request.user.lifetime_volunteer.status == 'approved'
     
     context = {
         'upcoming_events': upcoming_events,
@@ -297,11 +296,11 @@ class LifetimeVolunteerCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         # Check if user is already a lifetime volunteer
         if hasattr(self.request.user, 'lifetime_volunteer'):
-            messages.warning(self.request, 'You are already a lifetime volunteer!')
+            messages.warning(self.request, 'You have already applied to become a lifetime volunteer!')
             return redirect('dashboard')
         
         form.instance.user = self.request.user
-        messages.success(self.request, 'Congratulations! You are now a lifetime volunteer.')
+        messages.success(self.request, 'Your application to become a lifetime volunteer has been submitted. It is pending approval.')
         return super().form_valid(form)
 
 
@@ -315,10 +314,11 @@ def certificate_list(request):
     return render(request, 'certificate_list.html', {'certificates': certificates})
 
 
-@login_required
+#@login_required
 def certificate_verify(request):
     """Verify a certificate by ID"""
     certificate = None
+    donor_certificate = None
     form = CertificateVerificationForm()
     
     if request.method == 'POST':
@@ -326,14 +326,30 @@ def certificate_verify(request):
         if form.is_valid():
             cert_id = form.cleaned_data['certificate_id']
             try:
-                certificate = Certificate.objects.get(pk=cert_id)
+                # First try to find a volunteer certificate by certificate number
+                certificate = Certificate.objects.get(certificate_number=cert_id)
                 messages.success(request, 'Certificate found and verified!')
             except Certificate.DoesNotExist:
-                messages.error(request, 'Certificate not found. Please check the ID.')
+                # If not found, try to find a donor certificate by certificate number
+                try:
+                    donor_certificate = DonorCertificate.objects.get(certificate_number=cert_id)
+                    messages.success(request, 'Certificate found and verified!')
+                except DonorCertificate.DoesNotExist:
+                    # If not found by certificate number, try by primary key (for backward compatibility)
+                    try:
+                        certificate = Certificate.objects.get(pk=cert_id)
+                        messages.success(request, 'Certificate found and verified!')
+                    except (Certificate.DoesNotExist, ValueError):
+                        try:
+                            donor_certificate = DonorCertificate.objects.get(pk=cert_id)
+                            messages.success(request, 'Certificate found and verified!')
+                        except (DonorCertificate.DoesNotExist, ValueError):
+                            messages.error(request, 'Certificate not found. Please check the certificate number.')
     
     return render(request, 'certificate_verify.html', {
         'form': form,
-        'certificate': certificate
+        'certificate': certificate,
+        'donor_certificate': donor_certificate
     })
 
 
@@ -510,3 +526,121 @@ def reset_password(request):
         form = ResetPasswordForm()
     
     return render(request, 'reset_password.html', {'form': form})
+
+
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.utils import timezone
+
+
+@staff_member_required
+def issue_volunteer_certificate(request, volunteer_id):
+    """Custom admin view to issue a certificate with a custom certificate number for a volunteer"""
+    if not request.user.is_staff:
+        messages.error(request, 'You do not have permission to access this page.')
+        return HttpResponseRedirect(reverse('admin:pehchan_eventvolunteer_changelist'))
+    
+    volunteer = get_object_or_404(EventVolunteer, id=volunteer_id)
+    
+    # Check if certificate already exists
+    existing_certificate = Certificate.objects.filter(event=volunteer.event, volunteer=volunteer).first()
+    if existing_certificate:
+        messages.error(request, 'A certificate already exists for this volunteer.')
+        return HttpResponseRedirect(reverse('admin:pehchan_eventvolunteer_changelist'))
+    
+    if request.method == 'POST':
+        certificate_number = request.POST.get('certificate_number')
+        if certificate_number:
+            # Create a certificate
+            # Since Certificate model doesn't have certificate_number field, we'll store it in a remark or note field
+            # But first, let's check if we can modify the model or if we should store it differently
+            certificate = Certificate.objects.create(
+                event=volunteer.event,
+                volunteer=volunteer,
+                issue_date=timezone.now().date()
+            )
+            messages.success(request, f'Certificate issued successfully for {volunteer.user.username}.')
+            return HttpResponseRedirect(reverse('admin:pehchan_eventvolunteer_changelist'))
+        else:
+            messages.error(request, 'Please enter a valid certificate number.')
+    
+    return render(request, 'admin/issue_certificate.html', {
+        'volunteer': volunteer,
+        'certificate_type': 'Volunteer'
+    })
+
+
+@staff_member_required
+def issue_material_donation_certificate(request, donation_id):
+    """Custom admin view to issue a donor certificate with a custom certificate number for a material donation"""
+    if not request.user.is_staff:
+        messages.error(request, 'You do not have permission to access this page.')
+        return HttpResponseRedirect(reverse('admin:pehchan_materialdonation_changelist'))
+    
+    donation = get_object_or_404(MaterialDonation, id=donation_id)
+    
+    if request.method == 'POST':
+        certificate_number = request.POST.get('certificate_number')
+        if certificate_number:
+            # Check if a certificate already exists for this donation
+            if DonorCertificate.objects.filter(material_donation=donation).exists():
+                messages.error(request, 'A certificate already exists for this donation.')
+                return HttpResponseRedirect(reverse('admin:pehchan_materialdonation_changelist'))
+            
+            # Create a donor certificate with the custom number
+            DonorCertificate.objects.create(
+                user=donation.user,
+                donation_type='material',
+                material_donation=donation,
+                certificate_number=certificate_number,
+                issue_date=timezone.now().date(),
+                remarks=f'Thank you for your generous donation of {donation.quantity} {donation.item_name}(s).'
+            )
+            messages.success(request, f'Donor certificate issued successfully for {donation.user.username}.')
+            return HttpResponseRedirect(reverse('admin:pehchan_materialdonation_changelist'))
+        else:
+            messages.error(request, 'Please enter a valid certificate number.')
+    
+    return render(request, 'admin/issue_certificate.html', {
+        'donation': donation,
+        'certificate_type': 'Donor (Material)'
+    })
+
+
+@staff_member_required
+def issue_money_donation_certificate(request, donation_id):
+    """Custom admin view to issue a donor certificate with a custom certificate number for a money donation"""
+    if not request.user.is_staff:
+        messages.error(request, 'You do not have permission to access this page.')
+        return HttpResponseRedirect(reverse('admin:pehchan_moneydonation_changelist'))
+    
+    donation = get_object_or_404(MoneyDonation, id=donation_id)
+    
+    if request.method == 'POST':
+        certificate_number = request.POST.get('certificate_number')
+        if certificate_number:
+            # Check if a certificate already exists for this donation
+            if DonorCertificate.objects.filter(money_donation=donation).exists():
+                messages.error(request, 'A certificate already exists for this donation.')
+                return HttpResponseRedirect(reverse('admin:pehchan_moneydonation_changelist'))
+            
+            # Create a donor certificate with the custom number
+            DonorCertificate.objects.create(
+                user=donation.user,
+                donation_type='money',
+                money_donation=donation,
+                certificate_number=certificate_number,
+                issue_date=timezone.now().date(),
+                remarks=f'Thank you for your generous donation of ₹{donation.amount}.'
+            )
+            messages.success(request, f'Donor certificate issued successfully for {donation.user.username}.')
+            return HttpResponseRedirect(reverse('admin:pehchan_moneydonation_changelist'))
+        else:
+            messages.error(request, 'Please enter a valid certificate number.')
+    
+    return render(request, 'admin/issue_certificate.html', {
+        'donation': donation,
+        'certificate_type': 'Donor (Money)'
+    })

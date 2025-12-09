@@ -14,7 +14,7 @@
         <div class="mdl-card__supporting-text">
             <div class="info-panel info-panel--sky" style="margin-bottom: 24px;">
                 <span class="material-icons-round" style="font-size: 2rem; color: var(--info);">info</span>
-                <p style="margin: 8px 0 0;">Enter a certificate ID to verify its authenticity and view certificate details.</p>
+                <p style="margin: 8px 0 0;">Enter a certificate number to verify its authenticity and view certificate details.</p>
             </div>
             
             <form method="post" style="width: 100%;">
@@ -23,7 +23,7 @@
                 <div class="form-field">
                     <label class="form-label" for="{{ form.certificate_id.id_for_label }}">
                         <span class="material-icons-round" style="vertical-align: middle; margin-right: 6px;">tag</span>
-                        Certificate ID
+                        Certificate Number
                     </label>
                     {{ form.certificate_id }}
                     {% if form.certificate_id.errors %}
@@ -61,7 +61,7 @@
             
             <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
                 <span class="material-icons-round" style="color: var(--primary-600);">description</span>
-                Certificate Details
+                Volunteer Certificate Details
             </h3>
             
             <div style="display: grid; gap: 16px;">
@@ -70,9 +70,9 @@
                         <div>
                             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
                                 <span class="material-icons-round" style="font-size: 1.1rem; color: var(--primary-600);">tag</span>
-                                <strong style="color: var(--text-tertiary); font-size: 0.9rem;">Certificate ID</strong>
+                                <strong style="color: var(--text-tertiary); font-size: 0.9rem;">Certificate Number</strong>
                             </div>
-                            <p style="margin: 0; font-size: 1.2rem; font-weight: 700; color: var(--primary-700);">#{{ certificate.pk }}</p>
+                            <p style="margin: 0; font-size: 1.2rem; font-weight: 700; color: var(--primary-700);">{{ certificate.certificate_number }}</p>
                         </div>
                         
                         <div>
@@ -128,12 +128,126 @@
             </div>
         </div>
     </div>
+    {% elif donor_certificate %}
+    <div class="surface-card" style="margin-top: 32px; border: 3px solid var(--success); box-shadow: 0 8px 32px rgba(46, 125, 50, 0.2);">
+        <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text georgia-brand">
+                <span class="material-icons-round">verified</span>
+                Certificate Verified!
+            </h2>
+        </div>
+        <div class="mdl-card__supporting-text">
+            <div class="info-panel info-panel--success" style="margin-bottom: 24px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span class="material-icons-round" style="font-size: 2.5rem; color: var(--success);">check_circle</span>
+                    <div>
+                        <h3 style="margin: 0; color: var(--success);">Authentic Certificate</h3>
+                        <p style="margin: 4px 0 0; color: var(--text-secondary);">This certificate is valid and was issued by Pehchan.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                <span class="material-icons-round" style="color: var(--primary-600);">description</span>
+                Donor Certificate Details
+            </h3>
+            
+            <div style="display: grid; gap: 16px;">
+                <div class="highlight-card" style="border-color: var(--primary-300);">
+                    <div style="display: grid; gap: 14px;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span class="material-icons-round" style="font-size: 1.1rem; color: var(--primary-600);">tag</span>
+                                <strong style="color: var(--text-tertiary); font-size: 0.9rem;">Certificate Number</strong>
+                            </div>
+                            <p style="margin: 0; font-size: 1.2rem; font-weight: 700; color: var(--primary-700);">{{ donor_certificate.certificate_number }}</p>
+                        </div>
+                        
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span class="material-icons-round" style="font-size: 1.1rem; color: var(--primary-600);">person</span>
+                                <strong style="color: var(--text-tertiary); font-size: 0.9rem;">Donor Name</strong>
+                            </div>
+                            <p style="margin: 0; font-size: 1.1rem; color: var(--text-primary);">{{ donor_certificate.user.get_full_name|default:donor_certificate.user.username }}</p>
+                        </div>
+                        
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span class="material-icons-round" style="font-size: 1.1rem; color: var(--primary-600);">volunteer_activism</span>
+                                <strong style="color: var(--text-tertiary); font-size: 0.9rem;">Donation Type</strong>
+                            </div>
+                            <p style="margin: 0; font-size: 1.1rem; color: var(--text-primary);">{{ donor_certificate.get_donation_type_display }}</p>
+                        </div>
+                        
+                        {% if donor_certificate.donation_type == 'material' and donor_certificate.material_donation %}
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span class="material-icons-round" style="font-size: 1.1rem; color: var(--primary-600);">inventory</span>
+                                <strong style="color: var(--text-tertiary); font-size: 0.9rem;">Item Donated</strong>
+                            </div>
+                            <p style="margin: 0; font-size: 1.1rem; color: var(--text-primary);">{{ donor_certificate.material_donation.item_name }} (Qty: {{ donor_certificate.material_donation.quantity }})</p>
+                        </div>
+                        {% elif donor_certificate.donation_type == 'money' and donor_certificate.money_donation %}
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span class="material-icons-round" style="font-size: 1.1rem; color: var(--primary-600);">currency_rupee</span>
+                                <strong style="color: var(--text-tertiary); font-size: 0.9rem;">Amount Donated</strong>
+                            </div>
+                            <p style="margin: 0; font-size: 1.1rem; color: var(--text-primary);">₹{{ donor_certificate.money_donation.amount }}</p>
+                        </div>
+                        {% endif %}
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                                    <span class="material-icons-round" style="font-size: 1rem; color: var(--secondary-600);">calendar_today</span>
+                                    <strong style="color: var(--text-tertiary); font-size: 0.85rem;">Donation Date</strong>
+                                </div>
+                                <p style="margin: 0;">
+                                    {% if donor_certificate.donation_type == 'material' and donor_certificate.material_donation %}
+                                        {{ donor_certificate.material_donation.created_at|date:"F d, Y" }}
+                                    {% elif donor_certificate.donation_type == 'money' and donor_certificate.money_donation %}
+                                        {{ donor_certificate.money_donation.created_at|date:"F d, Y" }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                                    <span class="material-icons-round" style="font-size: 1rem; color: var(--secondary-600);">verified</span>
+                                    <strong style="color: var(--text-tertiary); font-size: 0.85rem;">Issue Date</strong>
+                                </div>
+                                <p style="margin: 0;">{{ donor_certificate.issue_date|date:"F d, Y" }}</p>
+                            </div>
+                        </div>
+                        
+                        {% if donor_certificate.remarks %}
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                <span class="material-icons-round" style="font-size: 1.1rem; color: var(--primary-600);">comment</span>
+                                <strong style="color: var(--text-tertiary); font-size: 0.9rem;">Remarks</strong>
+                            </div>
+                            <p style="margin: 0;">{{ donor_certificate.remarks }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if donor_certificate.file %}
+                <div style="text-align: center; padding-top: 8px;">
+                    <a href="{{ donor_certificate.file.url }}" target="_blank" class="pill-button pill-button--primary">
+                        <span class="material-icons-round">download</span> Download Certificate
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
     {% endif %}
 </div>
 
 <div style="text-align: center; margin-top: 40px;">
-    <a href="{% url 'dashboard' %}" class="pill-button pill-button--ghost">
-        <span class="material-icons-round">home</span> Back to Dashboard
+    <a href="{% url 'home' %}" class="pill-button pill-button--ghost">
+        <span class="material-icons-round">home</span> Back to Home
     </a>
 </div>
 {% endblock %}

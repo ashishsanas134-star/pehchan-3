@@ -1,0 +1,89 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <style>
+        .quick-reply-fieldset {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        
+        .quick-reply-fieldset h2 {
+            margin-top: 0;
+            color: #333;
+            font-size: 1.2em;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .quick-reply-textarea {
+            width: 100%;
+            max-width: 800px;
+            min-height: 100px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            resize: vertical;
+        }
+        
+        .quick-reply-help {
+            color: #666;
+            font-size: 12px;
+            margin: 5px 0 15px 0;
+        }
+        
+        .quick-reply-button {
+            background: #205067;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .quick-reply-button:hover {
+            background: #173a4a;
+        }
+        
+        .submit-row {
+            border-top: 1px solid #eee;
+            margin-top: 20px;
+            padding-top: 20px;
+        }
+    </style>
+{% endblock %}
+
+{% block submit_buttons_bottom %}
+    {{ block.super }}
+    
+    <div class="submit-row">
+        <fieldset class="quick-reply-fieldset">
+            <h2>📧 Quick Reply</h2>
+            <div class="form-row">
+                <div>
+                    <label for="id_reply_message">Reply Message:</label>
+                    <textarea 
+                        id="id_reply_message" 
+                        name="reply_message" 
+                        class="quick-reply-textarea" 
+                        placeholder="Enter your reply to the sender here...&#10;&#10;Dear {{ original.name|default:'Valued Visitor' }},&#10;&#10;Thank you for contacting us.&#10;&#10;Best regards,&#10;Pehchan Team"
+                    ></textarea>
+                    <div class="quick-reply-help">
+                        Enter your reply here. It will be sent directly to <strong>{{ original.email|default:'the sender' }}</strong> and saved as the response.
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <input type="submit" value="💾 Save and Send Reply" class="quick-reply-button" name="_save_and_send_reply">
+            </div>
+        </fieldset>
+    </div>
+{% endblock %}

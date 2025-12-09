@@ -109,12 +109,12 @@ class MoneyDonationForm(forms.ModelForm):
 
 
 class CertificateVerificationForm(forms.Form):
-    certificate_id = forms.IntegerField(
-        label='Certificate ID',
-        widget=forms.NumberInput(attrs={
+    certificate_id = forms.CharField(
+        label='Certificate Number',
+        max_length=50,
+        widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'Enter Certificate ID',
-            'min': 1
+            'placeholder': 'Enter Certificate Number (e.g., PH-1)',
         })
     )
 

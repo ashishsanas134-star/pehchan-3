@@ -50,21 +50,32 @@ class EventVolunteer(models.Model):
 
 class LifetimeVolunteer(models.Model):
     """Model for lifetime volunteers"""
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+    
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='lifetime_volunteer')
     joined_at = models.DateTimeField(auto_now_add=True)
     motivation = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    approved_at = models.DateTimeField(null=True, blank=True)
+    rejected_at = models.DateTimeField(null=True, blank=True)
+    reviewed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='reviewed_lifetime_volunteers')
     
     class Meta:
         ordering = ['-joined_at']
     
     def __str__(self):
-        return f"{self.user.username} - Lifetime Volunteer"
+        return f"{self.user.username} - Lifetime Volunteer ({self.get_status_display()})"
 
 
 class Certificate(models.Model):
     """Model for volunteer certificates"""
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='certificates')
     volunteer = models.ForeignKey(EventVolunteer, on_delete=models.CASCADE, related_name='certificates')
+    certificate_number = models.CharField(max_length=50, unique=True, null=True, blank=True)
     issue_date = models.DateField(default=timezone.now)
     file = models.FileField(upload_to='certificates/', blank=True, null=True)
     
@@ -72,8 +83,18 @@ class Certificate(models.Model):
         unique_together = ['event', 'volunteer']
         ordering = ['-issue_date']
     
+    def save(self, *args, **kwargs):
+        # Auto-generate certificate number if not exists
+        if not self.certificate_number:
+            import random
+            import string
+            year = timezone.now().year
+            random_str = ''.join(random.choices(string.digits, k=6))
+            self.certificate_number = f"CERT-{year}-{random_str}"
+        super().save(*args, **kwargs)
+    
     def __str__(self):
-        return f"Certificate #{self.pk} - {self.volunteer.user.username} - {self.event.name}"
+        return f"Certificate {self.certificate_number or f'#{self.pk}'} - {self.volunteer.user.username} - {self.event.name}"
 
 
 class MaterialDonation(models.Model):
@@ -364,3 +385,131 @@ class PasswordResetOTP(models.Model):
     
     def __str__(self):
         return f"OTP for {self.user.username}"
+
+
+class PehchanWallet(models.Model):
+    """Model for Pehchan Wallet to track organization funds"""
+    balance = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        verbose_name = 'Pehchan Wallet'
+        verbose_name_plural = 'Pehchan Wallet'
+    
+    def __str__(self):
+        return f"Pehchan Wallet - Balance: ₹{self.balance}"
+    
+    @classmethod
+    def get_wallet(cls):
+        """Get or create the single wallet instance"""
+        wallet, created = cls.objects.get_or_create(id=1)
+        return wallet
+    
+    def deposit(self, amount, description="", transaction_type="donation"):
+        """Deposit money to wallet"""
+        if amount <= 0:
+            raise ValueError("Deposit amount must be positive")
+        
+        self.balance += amount
+        self.save()
+        
+        # Create transaction record
+        return WalletTransaction.objects.create(
+            wallet=self,
+            amount=amount,
+            transaction_type=transaction_type,
+            description=description,
+            balance_after_transaction=self.balance
+        )
+    
+    def withdraw(self, amount, description="", transaction_type="expense"):
+        """Withdraw money from wallet"""
+        if amount <= 0:
+            raise ValueError("Withdrawal amount must be positive")
+        
+        if amount > self.balance:
+            raise ValueError("Insufficient funds in wallet")
+        
+        self.balance -= amount
+        self.save()
+        
+        # Create transaction record
+        return WalletTransaction.objects.create(
+            wallet=self,
+            amount=-amount,  # Negative for withdrawals
+            transaction_type=transaction_type,
+            description=description,
+            balance_after_transaction=self.balance
+        )
+
+
+class WalletTransaction(models.Model):
+    """Model to track all wallet transactions"""
+    TRANSACTION_TYPES = [
+        ('donation', 'Donation'),
+        ('expense', 'Expense'),
+        ('adjustment', 'Adjustment'),
+    ]
+    
+    wallet = models.ForeignKey(PehchanWallet, on_delete=models.CASCADE, related_name='transactions')
+    amount = models.DecimalField(max_digits=12, decimal_places=2, help_text="Positive for deposits, negative for withdrawals")
+    transaction_type = models.CharField(max_length=20, choices=TRANSACTION_TYPES)
+    description = models.TextField(blank=True)
+    related_donation = models.ForeignKey(
+        MoneyDonation, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name='wallet_transactions'
+    )
+    related_expense = models.ForeignKey(
+        'Expense', 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name='wallet_transactions'
+    )
+    balance_after_transaction = models.DecimalField(max_digits=12, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Wallet Transaction'
+        verbose_name_plural = 'Wallet Transactions'
+    
+    def __str__(self):
+        return f"{self.get_transaction_type_display()} - ₹{abs(self.amount)} - {self.created_at.strftime('%Y-%m-%d')}"
+
+
+class Expense(models.Model):
+    """Model for tracking organization expenses"""
+    CATEGORY_CHOICES = [
+        ('office', 'Office Supplies'),
+        ('travel', 'Travel'),
+        ('salary', 'Salary'),
+        ('marketing', 'Marketing'),
+        ('utilities', 'Utilities'),
+        ('maintenance', 'Maintenance'),
+        ('other', 'Other'),
+    ]
+    
+    title = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='other')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateField()
+    receipt = models.FileField(upload_to='expenses/', blank=True, null=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='expenses_created')
+    approved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='expenses_approved')
+    approved_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-date', '-created_at']
+        verbose_name = 'Expense'
+        verbose_name_plural = 'Expenses'
+    
+    def __str__(self):
+        return f"{self.title} - ₹{self.amount} - {self.date}"

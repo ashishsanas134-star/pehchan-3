@@ -1,0 +1,71 @@
+{% extends "admin/base_site.html" %}
+
+{% block title %}Issue {{ certificate_type }} Certificate{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Issue {{ certificate_type }} Certificate</h1>
+    
+    {% if volunteer %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Volunteer Details</h2>
+        </div>
+        <div class="card-body">
+            <p><strong>User:</strong> {{ volunteer.user.get_full_name }} ({{ volunteer.user.username }})</p>
+            <p><strong>Event:</strong> {{ volunteer.event.name }}</p>
+            <p><strong>Status:</strong> {{ volunteer.get_status_display }}</p>
+            <p><strong>Joined Date:</strong> {{ volunteer.joined_at|date:"F d, Y" }}</p>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if donation %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Donation Details</h2>
+        </div>
+        <div class="card-body">
+            {% if donation.item_name %}
+            <!-- Material Donation -->
+            <p><strong>Donor:</strong> {{ donation.user.get_full_name }} ({{ donation.user.username }})</p>
+            <p><strong>Item:</strong> {{ donation.item_name }}</p>
+            <p><strong>Quantity:</strong> {{ donation.quantity }}</p>
+            <p><strong>Location:</strong> {{ donation.location }}</p>
+            <p><strong>Status:</strong> {{ donation.get_status_display }}</p>
+            <p><strong>Donation Date:</strong> {{ donation.created_at|date:"F d, Y" }}</p>
+            {% else %}
+            <!-- Money Donation -->
+            <p><strong>Donor:</strong> {{ donation.user.get_full_name }} ({{ donation.user.username }})</p>
+            <p><strong>Amount:</strong> ₹{{ donation.amount }}</p>
+            <p><strong>Payment Method:</strong> {{ donation.get_payment_method_display }}</p>
+            <p><strong>Donation Date:</strong> {{ donation.created_at|date:"F d, Y" }}</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="card">
+        <div class="card-header">
+            <h2>Certificate Information</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="certificate_number">Certificate Number:</label>
+                    <input type="text" class="form-control" id="certificate_number" name="certificate_number" required>
+                    <small class="form-text text-muted">Enter a unique certificate number</small>
+                </div>
+                <div class="form-group">
+                    <label for="certificate_file">Certificate File (Optional):</label>
+                    <input type="file" class="form-control-file" id="certificate_file" name="certificate_file">
+                    <small class="form-text text-muted">Upload a certificate file (PDF, JPG, PNG)</small>
+                </div>
+                <button type="submit" class="btn btn-primary">Issue Certificate</button>
+                <a href="{% if volunteer %}{% url 'admin:pehchan_eventvolunteer_changelist' %}{% elif donation.item_name %}{% url 'admin:pehchan_materialdonation_changelist' %}{% else %}{% url 'admin:pehchan_moneydonation_changelist' %}{% endif %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

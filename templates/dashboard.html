@@ -328,6 +328,48 @@
     </div>
 </div>
 
+{% if not is_lifetime_volunteer %}
+<div class="surface-card" style="margin-top: 32px;">
+    <div class="mdl-card__title" style="background: linear-gradient(135deg, rgba(46, 125, 50, 0.95), rgba(76, 175, 80, 0.9));">
+        <h2 class="mdl-card__title-text"><span class="material-icons-round">stars</span> Lifetime Volunteer</h2>
+    </div>
+    <div class="mdl-card__supporting-text">
+        {% if user.lifetime_volunteer %}
+            {% if user.lifetime_volunteer.status == 'pending' %}
+                <div class="info-panel info-panel--warning">
+                    <span class="material-icons-round">hourglass_empty</span>
+                    <div>
+                        <h3>Your Application is Pending Review</h3>
+                        <p>Thank you for applying to become a lifetime volunteer. Your application is currently under review and will be processed soon.</p>
+                    </div>
+                </div>
+            {% elif user.lifetime_volunteer.status == 'rejected' %}
+                <div class="info-panel info-panel--error">
+                    <span class="material-icons-round">cancel</span>
+                    <div>
+                        <h3>Application Not Approved</h3>
+                        <p>We regret to inform you that your lifetime volunteer application has not been approved at this time. If you have any questions, please contact our team.</p>
+                    </div>
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="lifetime-highlight">
+                <span class="material-icons-round">local_florist</span>
+                <div>
+                    <h3>Become a Lifetime Volunteer</h3>
+                    <p>Join our core team and make a lasting commitment to creating positive change in our community.</p>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 24px;">
+                <a href="{% url 'lifetime_volunteer' %}" class="pill-button pill-button--primary">
+                    <span class="material-icons-round">stars</span> Apply Now
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
 {% if is_lifetime_volunteer %}
 <div class="surface-card" style="margin-top: 32px;">
     <div class="mdl-card__title" style="background: linear-gradient(135deg, rgba(46, 125, 50, 0.95), rgba(76, 175, 80, 0.9));">
