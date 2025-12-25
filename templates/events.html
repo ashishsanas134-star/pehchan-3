@@ -10,6 +10,34 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <style>
+        /* Page Title Header - Full Width */
+        section.page-title {
+            width: 100vw !important;
+            position: relative !important;
+            left: 50% !important;
+            right: 50% !important;
+            margin-left: -50vw !important;
+            margin-right: -50vw !important;
+            text-align: center !important;
+            padding: 2.5rem 0 !important;
+            background: #FFF9F0 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+        }
+
+        section.page-title h1 {
+            color: #333 !important;
+            font-size: 3rem !important;
+            font-weight: 700 !important;
+            margin: 0 !important;
+        }
+        
+        /* Prevent horizontal scroll */
+        body, html {
+            overflow-x: hidden !important;
+            max-width: 100% !important;
+        }
+
         /* Enhanced mobile responsiveness */
         @media (max-width: 1024px) {
             .gallery-grid-3 {
@@ -26,8 +54,12 @@
         }
 
         @media (max-width: 768px) {
-            .page-title h1 {
-                font-size: 2.5rem;
+            section.page-title {
+                padding: 2rem 0 !important;
+            }
+
+            section.page-title h1 {
+                font-size: 2.5rem !important;
             }
 
             .gallery-grid-3,
@@ -41,15 +73,17 @@
                 text-align: center;
             }
 
-            .gallery-grid-3 img,
-            .gallery-grid-2 img {
-                height: auto;
-            }
+            /* Uniform height maintained via global CSS */
+
         }
 
         @media (max-width: 480px) {
-            .page-title h1 {
-                font-size: 2rem;
+            section.page-title {
+                padding: 1.5rem 0 !important;
+            }
+
+            section.page-title h1 {
+                font-size: 2rem !important;
             }
 
             .gallery-category {
@@ -61,10 +95,8 @@
                 margin-bottom: 1.5rem;
             }
 
-            .gallery-grid-3 img,
-            .gallery-grid-2 img {
-                height: auto;
-            }
+            /* Uniform height maintained via global CSS */
+
         }
 
         /* Center Navbar Content */
@@ -77,25 +109,9 @@
             margin-right: 80px !important;
         }
 
-        /* Image Styling with Navy Blue Borders and Hover Effects */
-        .gallery-grid-3 img,
-        .gallery-grid-2 img {
-            border: 3px solid #0A1A4A;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(10, 26, 74, 0.12);
-            transition: all 0.3s ease;
-            object-fit: contain;
-            width: 100%;
-            height: auto;
-        }
-
-        .gallery-grid-3 img:hover,
-        .gallery-grid-2 img:hover {
-            border-color: #2b4dad;
-            box-shadow: 0 12px 40px rgba(10, 26, 74, 0.25);
-            transform: translateY(-5px) scale(1.03);
-        }
+        /* Removed redundant local image styles - handled globally by style.css */
     </style>
+
 </head>
 
 <body>

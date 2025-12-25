@@ -21,9 +21,8 @@
                 font-size: 2.2rem;
             }
 
-            .activity-images-row img {
-                height: auto;
-            }
+            /* Uniform height maintained via global CSS */
+
         }
 
         @media (max-width: 768px) {
@@ -48,9 +47,8 @@
                 grid-template-columns: 1fr;
             }
 
-            .activity-images-row img {
-                height: auto;
-            }
+            /* Uniform height maintained via global CSS */
+
 
             .contact-wrapper {
                 grid-template-columns: 1fr;
@@ -129,29 +127,9 @@
             margin-right: 80px !important;
         }
 
-        /* Image Styling with Navy Blue Borders and Hover Effects */
-        .cause-card img,
-        .activity-images img,
-        .activity-images-row img,
-        .memorable-images img {
-            border: 3px solid #0A1A4A;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(10, 26, 74, 0.12);
-            transition: all 0.3s ease;
-            object-fit: contain;
-            width: 100%;
-            height: auto;
-        }
-
-        .cause-card img:hover,
-        .activity-images img:hover,
-        .activity-images-row img:hover,
-        .memorable-images img:hover {
-            border-color: #2b4dad;
-            box-shadow: 0 12px 40px rgba(10, 26, 74, 0.25);
-            transform: translateY(-5px) scale(1.03);
-        }
+        /* Removed redundant local image styles - handled globally by style.css */
     </style>
+
 </head>
 
 <body class="home">

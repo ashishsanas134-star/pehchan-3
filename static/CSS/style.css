@@ -5,143 +5,16 @@
     box-sizing: border-box;
 }
 
-/* Georgia Font for Branding */
-.georgia-brand {
-    font-family: Georgia, serif;
-}
-
-/* Apply Georgia to homepage headings */
-.hero-banner h1,
-.about-home h2,
-.about-home h3,
-.activity-text h2,
-.memorable-text h2,
-.section-title-dark,
-.section-subtitle-dark,
-.footer-logo,
-.footer h1,
-.footer h2,
-.footer h3,
-.organization-name {
-    font-family: Georgia, serif !important;
-}
-
-/* Consistent Logo Styling */
-.logo img,
-.footer-logo img,
-.navbar .logo img {
-    height: 50px;
-    width: auto;
-    object-fit: contain;
-}
-
-/* Responsive Logo Sizes */
-@media (max-width: 768px) {
-    .logo img,
-    .footer-logo img,
-    .navbar .logo img {
-        height: 40px;
-    }
-}
-
-@media (max-width: 480px) {
-    .logo img,
-    .footer-logo img,
-    .navbar .logo img {
-        height: 35px;
-    }
-}
-
-/* Consistent Font Hierarchy */
-h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    line-height: 1.2;
-}
-
-h2 {
-    font-size: 2rem;
-    font-weight: 600;
-    line-height: 1.3;
-}
-
-h3 {
-    font-size: 1.5rem;
-    font-weight: 500;
-    line-height: 1.4;
-}
-
-/* Global Image Settings - Ensure all images show faces fully without cropping */
-img {
-    object-fit: contain;
-    object-position: center;
-    max-width: 100%;
-    height: auto;
-}
-
-/* Hero and Banner Images - Ensure faces are always visible */
-.hero-banner img,
-.banner img,
-.slider img,
-.gallery img,
-.event-card img,
-.cause-card img,
-.activity-images img,
-.memorable-day img {
-    object-fit: contain !important;
-    object-position: center top !important;
-    width: 100%;
-}
-
-/* Thumbnail containers - maintain aspect ratios */
-.thumbnail-container,
-.image-thumbnail,
-.card-image {
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 200px;
-}
-
-.thumbnail-container img,
-.image-thumbnail img,
-.card-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: center;
-}
-
-/* Ensure containers maintain proper aspect ratios for images */
-.image-container {
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Responsive image improvements */
-@media (max-width: 480px) {
-    .activity-images-row img {
-        height: 180px;
-    }
-    
-    .event-card img {
-        height: 220px;
-    }
-    
-    .waste-item img {
-        height: 220px;
-    }
-}
-
 body {
     font-family: 'Poppins', sans-serif;
     line-height: 1.6;
     color: #333;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+html {
     overflow-x: hidden;
 }
 
@@ -149,7 +22,6 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
-    overflow: visible; /* prevent container from clipping footer logo */
 }
 
 /* Navbar */
@@ -172,10 +44,7 @@ body {
 
 .logo img {
     height: 50px;
-    width: auto;
     cursor: pointer;
-    object-fit: contain;
-    object-position: center;
 }
 
 .nav-links {
@@ -216,20 +85,33 @@ body {
 }
 
 .donate-btn {
-    background: #F9A826;
-    color: #fff;
+    background: #F9A826 !important;
+    color: #fff !important;
     padding: 0.7rem 1.8rem;
     border-radius: 25px;
-    text-decoration: none;
+    text-decoration: none !important;
     font-weight: 600;
-    transition: all 0.3s;
+    transition: transform 0.2s, box-shadow 0.2s;
     display: inline-block;
+    border: none !important;
+    opacity: 1 !important;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.donate-btn:hover {
+.donate-btn:hover,
+.donate-btn:active,
+.donate-btn:focus,
+.donate-btn:focus-visible,
+.donate-btn:visited,
+.donate-btn:link {
+    background: #F9A826 !important;
+    color: #fff !important;
     transform: translateY(-2px);
-    background: #ff8c00;
     box-shadow: 0 5px 15px rgba(249, 168, 38, 0.3);
+    text-decoration: none !important;
+    outline: none !important;
+    opacity: 1 !important;
+    border: none !important;
 }
 
 /* Home-specific navbar over hero */
@@ -287,26 +169,30 @@ body {
 /* Hero Banner */
 .hero-banner {
     position: relative;
-    height: 100vh;
+    width: 100vw;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    height: 85vh;
     min-height: 600px;
     max-height: 900px;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 0;
 }
 
 .banner-img {
     width: 100%;
     height: 100%;
-    /* Ensure hero image keeps subject centered and visible */
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
-    filter: brightness(1.05) contrast(1.05);
     position: absolute;
     top: 0;
     left: 0;
-    z-index: -1;
+    z-index: 1;
 }
 
 .hero-content {
@@ -327,8 +213,6 @@ body {
     height: 150px;
     margin: 0 auto 2rem;
     display: block;
-    object-fit: contain;
-    object-position: center;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
@@ -372,7 +256,7 @@ body {
 
 
 .hero-buttons {
-    margin-top: 2rem; /* Space between title and buttons */
+    margin-top: 20rem; /* Adjust this value to move buttons lower */
     display: flex;
     gap: 1rem; /* keeps some space between the buttons */
     justify-content: center; /* centers the buttons horizontally */
@@ -382,25 +266,42 @@ body {
 .btn-join,
 .btn-donate-hero {
     padding: 1rem 3rem;
-    border: 3px solid #fff;
+    border: 3px solid #fff !important;
     border-radius: 50px;
     font-weight: 600;
     font-size: 1.1rem;
     cursor: pointer;
-    transition: all 0.3s;
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
     text-transform: uppercase;
     letter-spacing: 1px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-decoration: none !important;
+    opacity: 1 !important;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .btn-join:hover,
-.btn-donate-hero:hover {
-    background: #fff;
-    color: #333;
+.btn-join:active,
+.btn-join:focus,
+.btn-join:focus-visible,
+.btn-join:visited,
+.btn-join:link,
+.btn-donate-hero:hover,
+.btn-donate-hero:active,
+.btn-donate-hero:focus,
+.btn-donate-hero:focus-visible,
+.btn-donate-hero:visited,
+.btn-donate-hero:link {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+    border: 3px solid #fff !important;
     transform: scale(1.05);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    text-decoration: none !important;
+    outline: none !important;
+    opacity: 1 !important;
 }
 
 @keyframes fadeInDown {
@@ -581,643 +482,10 @@ body {
 
 .cause-card img {
     width: 100%;
-    height: 400px;
-    /* Keep faces fully visible and centered */
-    object-fit: contain;
-    object-position: center;
-    border-radius: 25px;
-    filter: brightness(1.05) contrast(1.05);
-    display: block;
-}
-
-/* Pehchan Utsav Section - Enhanced */
-.pehchan-utsav {
-    padding: 8rem 0;
-    position: relative;
-    overflow: hidden;
-}
-
-.utsav-decorative-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    overflow: hidden;
-}
-
-.floating-shape {
-    position: absolute;
-    border-radius: 50%;
-    background: linear-gradient(135deg, rgba(249, 168, 38, 0.1), rgba(255, 152, 0, 0.15));
-    animation: floatShape 20s infinite ease-in-out;
-}
-
-.floating-shape.shape-1 {
-    width: 300px;
-    height: 300px;
-    top: 10%;
-    left: -5%;
-    animation-delay: 0s;
-}
-
-.floating-shape.shape-2 {
-    width: 200px;
-    height: 200px;
-    top: 60%;
-    right: -3%;
-    animation-delay: 7s;
-}
-
-.floating-shape.shape-3 {
-    width: 150px;
-    height: 150px;
-    bottom: 15%;
-    left: 50%;
-    animation-delay: 14s;
-}
-
-@keyframes floatShape {
-    0%, 100% {
-        transform: translate(0, 0) rotate(0deg);
-    }
-    25% {
-        transform: translate(30px, -30px) rotate(90deg);
-    }
-    50% {
-        transform: translate(-20px, -50px) rotate(180deg);
-    }
-    75% {
-        transform: translate(-40px, -20px) rotate(270deg);
-    }
-}
-
-.section-header-utsav {
-    text-align: center;
-    margin-bottom: 4rem;
-}
-
-.section-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, #F9A826, #FF9800);
-    color: #fff;
-    padding: 0.6rem 1.5rem;
-    border-radius: 50px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 4px 15px rgba(249, 168, 38, 0.3);
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
-        box-shadow: 0 4px 15px rgba(249, 168, 38, 0.3);
-    }
-    50% {
-        transform: scale(1.05);
-        box-shadow: 0 6px 20px rgba(249, 168, 38, 0.4);
-    }
-}
-
-.gradient-text {
-    background: linear-gradient(135deg, #F9A826, #FF6B35, #F9A826);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: gradientShift 3s ease infinite;
-}
-
-@keyframes gradientShift {
-    0%, 100% {
-        background-position: 0% center;
-    }
-    50% {
-        background-position: 100% center;
-    }
-}
-
-.leaf-utsav-left {
-    top: 20%;
-    left: 3%;
-    animation: leafFloat 6s ease-in-out infinite;
-}
-
-.leaf-utsav-right {
-    bottom: 15%;
-    right: 5%;
-    animation: leafFloat 8s ease-in-out infinite;
-    animation-delay: 2s;
-}
-
-@keyframes leafFloat {
-    0%, 100% {
-        transform: translateY(0) rotate(0deg);
-    }
-    50% {
-        transform: translateY(-20px) rotate(5deg);
-    }
-}
-
-.utsav-intro {
-    text-align: center;
-    font-size: 1.35rem;
-    color: #333;
-    max-width: 900px;
-    margin: 0 auto 0rem;
-    line-height: 1.9;
-    font-weight: 400;
-}
-
-.utsav-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 3rem;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.utsav-card {
-    background: #fff;
-    padding: 3rem 2.5rem;
-    border-radius: 30px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    border: 2px solid transparent;
-    overflow: hidden;
-}
-
-.card-glow {
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(249, 168, 38, 0.1) 0%, transparent 70%);
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    pointer-events: none;
-}
-
-.utsav-card:hover .card-glow {
-    opacity: 1;
-}
-
-.utsav-card:hover {
-    transform: translateY(-20px) scale(1.02);
-    box-shadow: 0 25px 60px rgba(0,0,0,0.15);
-}
-
-.card-patriotic:hover {
-    border-color: #FF9933;
-}
-
-.card-diwali:hover {
-    border-color: #FFD700;
-}
-
-.card-christmas:hover {
-    border-color: #DC143C;
-}
-
-.utsav-icon-wrapper {
-    position: relative;
-    display: inline-block;
-    margin-bottom: 2rem;
-}
-
-.icon-ring {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100px;
-    height: 100px;
-    border: 3px solid rgba(249, 168, 38, 0.3);
-    border-radius: 50%;
-    animation: ringPulse 2s infinite;
-}
-
-@keyframes ringPulse {
-    0%, 100% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: translate(-50%, -50%) scale(1.3);
-        opacity: 0;
-    }
-}
-
-.utsav-icon {
-    font-size: 4.5rem;
-    text-align: center;
-    display: block;
-    animation: float 3s ease-in-out infinite;
-    position: relative;
-    z-index: 1;
-}
-
-.utsav-card h3 {
-    font-size: 1.9rem;
-    color: #1E3A8A;
-    margin-bottom: 1.5rem;
-    font-weight: 700;
-    text-align: center;
-    line-height: 1.3;
-}
-
-.card-divider {
-    width: 60px;
-    height: 4px;
-    background: linear-gradient(90deg, #F9A826, #FF6B35);
-    margin: 0 auto 1.5rem;
-    border-radius: 10px;
-}
-
-.utsav-card p {
-    font-size: 1.08rem;
-    line-height: 1.9;
-    color: #555;
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.card-footer {
-    display: flex;
-    gap: 0.8rem;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.tag {
-    background: linear-gradient(135deg, #FFF5E6, #FFE5CC);
-    color: #F9A826;
-    padding: 0.5rem 1.2rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    border: 1px solid rgba(249, 168, 38, 0.2);
-    transition: all 0.3s ease;
-}
-
-.tag:hover {
-    background: #F9A826;
-    color: #fff;
-    transform: translateY(-2px);
-}
-
-/* Your Memorable Day Section - Enhanced */
-.memorable-day-new {
-    padding: 8rem 0;
-    background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 50%, #A5D6A7 100%);
-    position: relative;
-    overflow: hidden;
-}
-
-.memorable-decorative-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    overflow: hidden;
-}
-
-.floating-circle {
-    position: absolute;
-    border-radius: 50%;
-    background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(56, 142, 60, 0.1));
-    animation: floatCircle 25s infinite ease-in-out;
-}
-
-.floating-circle.circle-1 {
-    width: 350px;
     height: 350px;
-    top: 5%;
-    right: -10%;
-    animation-delay: 0s;
-}
-
-.floating-circle.circle-2 {
-    width: 250px;
-    height: 250px;
-    bottom: 10%;
-    left: -8%;
-    animation-delay: 8s;
-}
-
-.floating-circle.circle-3 {
-    width: 180px;
-    height: 180px;
-    top: 50%;
-    left: 45%;
-    animation-delay: 16s;
-}
-
-@keyframes floatCircle {
-    0%, 100% {
-        transform: translate(0, 0) scale(1);
-    }
-    33% {
-        transform: translate(40px, -40px) scale(1.1);
-    }
-    66% {
-        transform: translate(-30px, 30px) scale(0.9);
-    }
-}
-
-.leaf-memorable-left {
-    top: 15%;
-    left: 2%;
-    animation: leafFloat 7s ease-in-out infinite;
-}
-
-.leaf-memorable-right {
-    bottom: 10%;
-    right: 3%;
-    animation: leafFloat 9s ease-in-out infinite;
-    animation-delay: 3s;
-}
-
-.section-header-memorable {
-    text-align: center;
-    margin-bottom: 4rem;
-}
-
-.badge-memorable {
-    background: linear-gradient(135deg, #4CAF50, #66BB6A);
-    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
-}
-
-.gradient-text-blue {
-    background: linear-gradient(135deg, #1E3A8A, #3B82F6, #1E88E5);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: gradientShift 3s ease infinite;
-}
-
-.memorable-subtitle {
-    text-align: center;
-    font-size: 1.7rem;
-    color: #1E3A8A;
-    margin: 1rem auto 3rem;
-    font-weight: 500;
-    font-style: italic;
-    opacity: 0.9;
-}
-
-.memorable-content-new {
-    max-width: 1100px;
-    margin: 0 auto;
-}
-
-.memorable-text-new {
-    text-align: center;
-}
-
-.memorable-intro {
-    font-size: 1.3rem;
-    line-height: 2;
-    color: #2c3e50;
-    margin-bottom: 4rem;
-    font-weight: 400;
-    padding: 0 20px;
-}
-
-.memorable-occasions {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 3rem;
-    margin-bottom: 4rem;
-}
-
-.occasion-item {
-    background: #fff;
-    padding: 3rem 2rem;
-    border-radius: 25px;
-    box-shadow: 0 10px 35px rgba(0,0,0,0.08);
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 2px solid transparent;
-    position: relative;
-    overflow: hidden;
-}
-
-.occasion-hover-effect {
-    position: absolute;
-    bottom: -100%;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to top, rgba(76, 175, 80, 0.1), transparent);
-    transition: bottom 0.5s ease;
-    pointer-events: none;
-}
-
-.occasion-item:hover .occasion-hover-effect {
-    bottom: 0;
-}
-
-.occasion-item:hover {
-    transform: translateY(-15px) scale(1.03);
-    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-}
-
-.occasion-birthday:hover {
-    border-color: #FF6B9D;
-}
-
-.occasion-achievement:hover {
-    border-color: #FFD700;
-}
-
-.occasion-memory:hover {
-    border-color: #CE93D8;
-}
-
-.occasion-icon-wrapper {
-    position: relative;
-    display: inline-block;
-    margin-bottom: 1.8rem;
-}
-
-.occasion-bg-circle {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90px;
-    height: 90px;
-    background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(56, 142, 60, 0.15));
-    border-radius: 50%;
-    animation: circleExpand 2s infinite;
-}
-
-@keyframes circleExpand {
-    0%, 100% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: translate(-50%, -50%) scale(1.4);
-        opacity: 0;
-    }
-}
-
-.occasion-icon {
-    font-size: 4rem;
-    margin-bottom: 0;
-    animation: float 3s ease-in-out infinite;
-    position: relative;
-    z-index: 1;
+    object-fit: cover;
+    object-position: center top;
     display: block;
-}
-
-.occasion-item h4 {
-    font-size: 1.6rem;
-    color: #1E3A8A;
-    margin-bottom: 1.2rem;
-    font-weight: 700;
-    line-height: 1.3;
-}
-
-.occasion-divider {
-    width: 50px;
-    height: 3px;
-    background: linear-gradient(90deg, #4CAF50, #66BB6A);
-    margin: 0 auto 1.5rem;
-    border-radius: 10px;
-}
-
-.occasion-item p {
-    font-size: 1.05rem;
-    line-height: 1.8;
-    color: #555;
-}
-
-.memorable-impact-box {
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(76, 175, 80, 0.3);
-    border-radius: 25px;
-    padding: 2.5rem 3rem;
-    margin: 3rem auto;
-    max-width: 950px;
-    position: relative;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-}
-
-.impact-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    animation: sparkle 2s infinite;
-}
-
-@keyframes sparkle {
-    0%, 100% {
-        transform: scale(1) rotate(0deg);
-        opacity: 1;
-    }
-    50% {
-        transform: scale(1.2) rotate(180deg);
-        opacity: 0.8;
-    }
-}
-
-.memorable-cta-text {
-    font-size: 1.18rem;
-    line-height: 2;
-    color: #2c3e50;
-    margin-bottom: 0;
-    font-weight: 400;
-}
-
-.memorable-cta-buttons {
-    display: flex;
-    gap: 2rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 3rem;
-}
-
-.btn-memorable-contact,
-.btn-memorable-donate {
-    padding: 1.2rem 3rem;
-    border-radius: 50px;
-    font-weight: 600;
-    font-size: 1.1rem;
-    text-decoration: none;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    display: inline-flex;
-    align-items: center;
-    gap: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-memorable-contact::before,
-.btn-memorable-donate::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-}
-
-.btn-memorable-contact:hover::before,
-.btn-memorable-donate:hover::before {
-    width: 300px;
-    height: 300px;
-}
-
-.btn-icon {
-    font-size: 1.3rem;
-    transition: transform 0.3s ease;
-}
-
-.btn-memorable-contact:hover .btn-icon,
-.btn-memorable-donate:hover .btn-icon {
-    transform: scale(1.2) rotate(10deg);
-}
-
-.btn-memorable-contact {
-    background: linear-gradient(135deg, #4CAF50, #66BB6A);
-    color: #fff;
-    border: 2px solid #4CAF50;
-    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3);
-}
-
-.btn-memorable-contact:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 35px rgba(76, 175, 80, 0.4);
-}
-
-.btn-memorable-donate {
-    background: transparent;
-    color: #F9A826;
-    border: 2px solid #F9A826;
-    box-shadow: 0 6px 20px rgba(249, 168, 38, 0.2);
-}
-
-.btn-memorable-donate:hover {
-    background: linear-gradient(135deg, #F9A826, #FF9800);
-    color: #fff;
-    transform: translateY(-5px);
-    box-shadow: 0 12px 35px rgba(249, 168, 38, 0.4);
 }
 
 /* Activity Sections */
@@ -1304,9 +572,6 @@ body {
 
 .activity-images > img {
     width: 100%;
-    height: auto;
-    object-fit: contain;
-    object-position: center;
     border-radius: 20px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
@@ -1314,22 +579,16 @@ body {
 .activity-images-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
+    gap: 1rem;
 }
 
 .activity-images-row img {
     width: 100%;
-    height: 250px;
-    object-fit: contain;
-    object-position: center;
-    filter: brightness(1.05) contrast(1.05);
+    height: 200px;
+    object-fit: cover;
+    object-position: center top;
     border-radius: 20px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    transition: transform 0.3s ease;
-}
-
-.activity-images-row img:hover {
-    transform: scale(1.05);
 }
 
 /* Upcoming Events */
@@ -1369,10 +628,9 @@ body {
 
 .event-card img {
     width: 100%;
-    height: 320px;
-    object-fit: contain;
-    object-position: center;
-    filter: brightness(1.05) contrast(1.05);
+    height: 280px;
+    object-fit: cover;
+    object-position: center top;
 }
 
 .event-card h3 {
@@ -1418,9 +676,8 @@ body {
 .waste-item img {
     width: 100%;
     height: 280px;
-    object-fit: contain;
-    object-position: center;
-    filter: brightness(1.05) contrast(1.05);
+    object-fit: cover;
+    object-position: center top;
     border-radius: 20px;
     box-shadow: 0 8px 25px rgba(0,0,0,0.12);
     transition: all 0.3s ease;
@@ -1453,9 +710,6 @@ body {
 
 .memorable-images img {
     width: 100%;
-    height: auto;
-    object-fit: contain;
-    object-position: center;
     border-radius: 15px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
@@ -1501,9 +755,8 @@ body {
 .update-card img {
     width: 100%;
     height: 200px;
-    object-fit: contain;
-    object-position: center;
-    filter: brightness(1.05) contrast(1.05);
+    object-fit: cover;
+    object-position: center top;
 }
 
 .update-card p {
@@ -1547,9 +800,6 @@ body {
 
 .contact-map img {
     width: 100%;
-    height: auto;
-    object-fit: contain;
-    object-position: center;
     border-radius: 15px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     margin-top: 1.5rem;
@@ -1611,15 +861,29 @@ body {
 
 /* Gallery Page */
 .page-title {
-    text-align: center;
-    padding: 3rem 0;
-    background: #FFF9F0;
+    position: relative;
+    width: 100%;
+    left: 0;
+    right: 0;
+    height: 50vh;
+    min-height: 400px;
+    max-height: 600px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    margin: 0;
+    padding: 0;
 }
 
 .page-title h1 {
-    font-size: 3rem;
-    color: #333;
+    position: relative;
+    z-index: 10;
+    font-size: 3.5rem;
+    color: #fff !important;
     font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
 .gallery-section {
@@ -1653,8 +917,8 @@ body {
 .gallery-grid-2 img {
     width: 100%;
     height: 300px;
-    object-fit: contain;
-    object-position: center;
+    object-fit: cover;
+    object-position: center top;
     border-radius: 15px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     transition: transform 0.3s;
@@ -1857,20 +1121,15 @@ body {
 /* New About Page Styles */
 .about-hero-new {
     padding: 5rem 0;
-    background: #fff;
+    background: #FFF9F0;
     text-align: center;
 }
 
 .about-hero-logo-new {
-    max-width: 180px;
-    width: auto;
-    height: auto;
+    width: 180px;
+    height: 180px;
     margin: 0 auto 2rem;
     display: block;
-    object-fit: contain;
-    object-position: center;
-    background: transparent;
-    filter: drop-shadow(0 0 2px rgba(0,0,0,0.1));
 }
 
 .about-hero-title {
@@ -1905,9 +1164,7 @@ body {
 .gallery-bg {
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    object-position: center;
-    filter: brightness(1.05) contrast(1.05);
+    object-fit: cover;
 }
 
 .gallery-overlay {
@@ -1955,10 +1212,8 @@ body {
 .gallery-bg-second {
     width: 100%;
     height: 100%;
-    /* Keep background centered but visible; preserve blur effect */
-    object-fit: contain;
-    object-position: center;
-    filter: blur(2px) brightness(1.05) contrast(1.05);
+    object-fit: cover;
+    filter: blur(2px);
 }
 
 .gallery-overlay-second {
@@ -2056,10 +1311,7 @@ body {
     width: 250px;
     height: 250px;
     border-radius: 50%;
-    /* Ensure faces are centered and not cropped */
-    object-fit: contain;
-    object-position: center;
-    filter: brightness(1.05) contrast(1.05);
+    object-fit: cover;
     border: 5px solid #F9A826;
     margin-bottom: 2rem;
 }
@@ -2116,10 +1368,7 @@ body {
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    /* Center team portraits and avoid cropping faces */
-    object-fit: contain;
-    object-position: center;
-    filter: brightness(1.05) contrast(1.05);
+    object-fit: cover;
     border: 4px solid #F9A826;
     margin: 0 auto 1.5rem;
     display: block;
@@ -2170,9 +1419,7 @@ body {
 .about-gallery img {
     width: 100%;
     height: 450px;
-    object-fit: contain;
-    object-position: center;
-    filter: brightness(1.05) contrast(1.05);
+    object-fit: cover;
     display: block;
 }
 
@@ -2232,9 +1479,8 @@ body {
     width: 200px;
     height: 200px;
     border-radius: 50%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
-    filter: brightness(1.05) contrast(1.05);
     margin-bottom: 1.5rem;
     box-shadow: 0 5px 20px rgba(0,0,0,0.2);
     display: block;
@@ -2287,9 +1533,8 @@ body {
 .team-card-blue img {
     width: 100%;
     height: 300px;
-    object-fit: contain;
-    object-position: center;
-    filter: brightness(1.05) contrast(1.05);
+    object-fit: cover;
+    object-position: center top;
     display: block;
     background: #f0f0f0;
 }
@@ -2360,6 +1605,13 @@ body {
 /* Donate Page */
 .donate-tabs-section {
     padding: 4rem 0;
+    width: 100%;
+    max-width: 100%;
+}
+
+.donate-tabs-section .container {
+    max-width: 100%;
+    padding: 0 40px;
 }
 
 .tabs-nav {
@@ -2410,8 +1662,10 @@ body {
 .campaigns {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
+    gap: 3rem;
     margin-bottom: 3rem;
+    padding: 0 40px;
+    max-width: 100%;
 }
 
 .campaign-card {
@@ -2423,10 +1677,9 @@ body {
 
 .campaign-card img {
     width: 100%;
-    height: 200px;
-    object-fit: contain;
-    object-position: center;
-    filter: brightness(1.05) contrast(1.05);
+    height: 250px;
+    object-fit: cover;
+    object-position: center top;
 }
 
 .campaign-card h3 {
@@ -2517,40 +1770,18 @@ body {
     background: #1d1844;
     color: #fff;
     padding: 3rem 0 1rem;
-    overflow: visible; /* ensure footer doesn't clip content */
 }
 
 .footer-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 3rem;
-    align-items: start; /* align items to start to prevent clipping */
-}
-
-.footer-col {
-    overflow: visible; /* ensure nothing is cut off */
-    padding: 10px; /* add padding to footer column for extra space */
-}
-
-.footer-col:first-child {
-    padding: 20px 15px; /* extra padding for logo column */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 240px; /* ensure enough space for medium logo */
 }
 
 .footer-logo {
-    display: block;
-    width: 150px;
-    height: 150px;
-    max-width: none;
-    object-fit: contain;
-    object-position: center;
+    width: 60px;
+    height: 60px;
     margin-bottom: 1rem;
-    mix-blend-mode: multiply;
-    filter: brightness(1.2) hue-rotate(200deg) saturate(1.5);
 }
 
 .footer-col h3 {
@@ -2762,6 +1993,15 @@ body {
         max-height: 700px;
     }
     
+    .page-title {
+        height: 40vh;
+        min-height: 350px;
+    }
+    
+    .page-title h1 {
+        font-size: 2.5rem;
+    }
+    
     .hero-content {
         padding: 2rem 1.5rem;
         max-width: 90%;
@@ -2814,143 +2054,6 @@ body {
     
     .cause-card img {
         height: 300px;
-    }
-    
-    /* Pehchan Utsav Responsive */
-    .pehchan-utsav {
-        padding: 5rem 0;
-    }
-    
-    .section-header-utsav {
-        margin-bottom: 3rem;
-    }
-    
-    .section-badge {
-        font-size: 0.85rem;
-        padding: 0.5rem 1.2rem;
-    }
-    
-    .section-title-orange {
-        font-size: 2.2rem;
-    }
-    
-    .utsav-grid {
-        grid-template-columns: 1fr;
-        gap: 2.5rem;
-    }
-    
-    .utsav-intro {
-        font-size: 1.1rem;
-        padding: 0 15px;
-        margin-bottom: 3rem;
-    }
-    
-    .utsav-card {
-        padding: 2.5rem 2rem;
-    }
-    
-    .utsav-icon {
-        font-size: 3.5rem;
-    }
-    
-    .utsav-card h3 {
-        font-size: 1.6rem;
-    }
-    
-    .utsav-card p {
-        font-size: 1rem;
-        margin-bottom: 1.5rem;
-    }
-    
-    .card-footer {
-        gap: 0.6rem;
-    }
-    
-    .tag {
-        font-size: 0.8rem;
-        padding: 0.4rem 1rem;
-    }
-    
-    /* Your Memorable Day Responsive */
-    .memorable-day-new {
-        padding: 5rem 0;
-    }
-    
-    .section-header-memorable {
-        margin-bottom: 3rem;
-    }
-    
-    .section-title-dark {
-        font-size: 2.2rem;
-    }
-    
-    .memorable-subtitle {
-        font-size: 1.3rem;
-        padding: 0 15px;
-        margin: 0.5rem auto 2rem;
-    }
-    
-    .memorable-intro {
-        font-size: 1.1rem;
-        padding: 0 15px;
-        margin-bottom: 3rem;
-    }
-    
-    .memorable-occasions {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-        margin-bottom: 3rem;
-    }
-    
-    .occasion-item {
-        padding: 2.5rem 1.8rem;
-    }
-    
-    .occasion-icon {
-        font-size: 3rem;
-    }
-    
-    .occasion-item h4 {
-        font-size: 1.4rem;
-    }
-    
-    .occasion-item p {
-        font-size: 1rem;
-    }
-    
-    .memorable-impact-box {
-        padding: 2rem 1.5rem;
-        margin: 2rem 15px;
-    }
-    
-    .impact-icon {
-        font-size: 2.5rem;
-    }
-    
-    .memorable-cta-text {
-        font-size: 1.05rem;
-        line-height: 1.8;
-    }
-    
-    .memorable-cta-buttons {
-        flex-direction: column;
-        align-items: center;
-        gap: 1.2rem;
-        margin-top: 2rem;
-    }
-    
-    .btn-memorable-contact,
-    .btn-memorable-donate {
-        padding: 1rem 2.5rem;
-        font-size: 1rem;
-        width: 90%;
-        max-width: 320px;
-        text-align: center;
-        justify-content: center;
-    }
-    
-    .btn-icon {
-        font-size: 1.2rem;
     }
     
     .activity-content {
@@ -3009,31 +2112,13 @@ body {
         text-align: center;
     }
     
-    .footer-col:first-child {
-        min-height: 150px; /* reduce min-height for tablet */
-        padding: 15px 10px;
-    }
-    
-    .footer-logo {
-        width: auto;
-        height: 70px;
-        max-width: 150px;
-        min-height: 60px;
-        padding: 12px; /* increased padding for tablet */
-        box-sizing: content-box;
-        overflow: visible;
-    }
-    
     .about-hero-new {
         padding: 4rem 0;
     }
     
     .about-hero-logo-new {
-        max-width: 140px;
-        width: auto;
-        height: auto;
-        object-fit: contain;
-        object-position: center;
+        width: 140px;
+        height: 140px;
     }
     
     .about-hero-title {
@@ -3193,6 +2278,15 @@ body {
         max-height: 600px;
     }
     
+    .page-title {
+        height: 35vh;
+        min-height: 300px;
+    }
+    
+    .page-title h1 {
+        font-size: 2rem;
+    }
+    
     .hero-content {
         padding: 1.5rem 1rem;
         max-width: 95%;
@@ -3289,22 +2383,11 @@ body {
     
     .footer {
         padding: 2rem 0 1rem;
-        overflow: visible;
-    }
-    
-    .footer-col:first-child {
-        min-height: 130px; /* reduce min-height for mobile */
-        padding: 10px;
     }
     
     .footer-logo {
-        width: auto;
-        height: 60px;
-        max-width: 120px;
-        min-height: 50px;
-        padding: 12px; /* increased padding for mobile */
-        box-sizing: content-box;
-        overflow: visible;
+        width: 50px;
+        height: 50px;
     }
     
     .footer-col h3 {
@@ -3320,11 +2403,8 @@ body {
     }
     
     .about-hero-logo-new {
-        max-width: 100px;
-        width: auto;
-        height: auto;
-        object-fit: contain;
-        object-position: center;
+        width: 100px;
+        height: 100px;
     }
     
     .about-hero-title {
@@ -3387,8 +2467,13 @@ body {
         font-size: 0.95rem;
     }
     
+    .page-title {
+        height: 40vh;
+        min-height: 300px;
+    }
+    
     .page-title h1 {
-        font-size: 2rem;
+        font-size: 2.5rem;
     }
     
     .volunteer-form,
@@ -3439,3 +2524,4 @@ body {
         font-size: 0.85rem;
     }
 }
+

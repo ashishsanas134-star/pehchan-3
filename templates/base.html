@@ -1100,9 +1100,15 @@
         .event-card__media {
             position: relative;
             width: 100%;
-            height: 220px;
+            height: 280px;
             overflow: hidden;
             border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        @media (max-width: 768px) {
+            .event-card__media {
+                height: 220px;
+            }
         }
 
         /* Consistent Logo Styling */
@@ -1163,8 +1169,6 @@
             border-radius: var(--radius-md);
             box-shadow: var(--shadow-sm);
             transition: all var(--transition-base);
-            object-fit: contain;
-            object-position: center;
         }
 
         img:not(.footer-logo):not(.logo img):not(.navbar img):not(.about-hero-logo-new):hover {
