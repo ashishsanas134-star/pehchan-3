@@ -5,7 +5,8 @@
 {% block content %}
 <div style="max-width: 800px; margin: 0 auto;">
     <div class="surface-card">
-        <div class="mdl-card__title" style="background: linear-gradient(135deg, var(--primary-600), var(--primary-400));">
+        <div class="mdl-card__title"
+            style="background: linear-gradient(135deg, var(--primary-600), var(--primary-400));">
             <h2 class="mdl-card__title-text georgia-brand">
                 <span class="material-icons-round">verified_user</span>
                 Certificate Verification
@@ -13,12 +14,16 @@
         </div>
         <div class="mdl-card__supporting-text">
             <div style="text-align: center; padding: 20px 0; margin-bottom: 24px;">
-                <span class="material-icons-round" style="font-size: 4rem; color: var(--primary-500); margin-bottom: 12px;">verified</span>
-                <h3 style="margin: 12px 0 8px; color: var(--text-primary);">Verify Authenticity of Pehchan Certificates</h3>
-                <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">Check if a certificate is genuine by entering its unique certificate number below.</p>
+                <span class="material-icons-round"
+                    style="font-size: 4rem; color: var(--primary-500); margin-bottom: 12px;">verified</span>
+                <h3 style="margin: 12px 0 8px; color: var(--text-primary);">Verify Authenticity of Pehchan Certificates
+                </h3>
+                <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">Check if a certificate is
+                    genuine by entering its unique certificate number below.</p>
             </div>
-            
-            <div class="info-panel" style="background: linear-gradient(135deg, var(--surface-1), var(--primary-50)); border-left: 4px solid var(--primary-500); margin-bottom: 32px;">
+
+            <div class="info-panel"
+                style="background: linear-gradient(135deg, var(--surface-1), var(--primary-50)); border-left: 4px solid var(--primary-500); margin-bottom: 32px;">
                 <span class="material-icons-round" style="font-size: 2rem; color: var(--primary-600);">info</span>
                 <div>
                     <h4 style="margin: 0 0 8px;">How to Verify a Certificate</h4>
@@ -30,18 +35,21 @@
                     </ol>
                 </div>
             </div>
-            
+
             <div style="text-align: center; margin: 32px 0;">
-                <a href="{% url 'public_certificate_verify' %}" class="pill-button pill-button--primary" style="padding: 12px 32px; font-size: 1.1rem;">
+                <a href="{% url 'public_certificate_verify' %}" class="pill-button pill-button--primary"
+                    style="padding: 12px 32px; font-size: 1.1rem;">
                     <span class="material-icons-round">search</span> Verify Certificate Now
                 </a>
             </div>
-            
+
             <div class="info-panel info-panel--sky">
                 <span class="material-icons-round" style="font-size: 2rem; color: var(--info);">help</span>
                 <div>
                     <h4 style="margin: 0 0 8px;">Need Help?</h4>
-                    <p style="margin: 0;">If you're having trouble finding your certificate number or verifying your certificate, please contact our support team at <a href="mailto:support@pehchan.org" style="color: var(--primary-600); text-decoration: underline;">support@pehchan.org</a>.</p>
+                    <p style="margin: 0;">If you're having trouble finding your certificate number or verifying your
+                        certificate, please contact our support team at <a href="mailto:support@pehchan.org"
+                            style="color: var(--primary-600); text-decoration: underline;">support@pehchan.org</a>.</p>
                 </div>
             </div>
         </div>

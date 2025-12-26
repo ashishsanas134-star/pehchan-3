@@ -193,14 +193,10 @@
         /* Full page hero section - FULL WIDTH */
         .hero-banner {
             position: relative;
-            width: 100vw;
-            left: 50%;
-            right: 50%;
-            margin-left: -50vw;
-            margin-right: -50vw;
-            height: 100vh;
-            min-height: 600px;
-            max-height: none;
+            width: 100%;
+            height: 90vh;
+            /* Taller look as requested */
+            min-height: 500px;
             overflow: hidden;
             display: flex;
             align-items: center;
@@ -211,14 +207,16 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: center;
+            object-position: top center;
+            /* Protects logo at the top */
             position: absolute;
             top: 0;
             left: 0;
             z-index: 1;
         }
-        
-        body, html {
+
+        body,
+        html {
             overflow-x: hidden;
             max-width: 100%;
         }
@@ -237,10 +235,12 @@
         }
 
         .hero-buttons {
-            margin-top: 18rem;
+            margin-top: 22rem;
+            /* Clear logo space */
             display: flex;
             gap: 1rem;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         .btn-join {
@@ -314,18 +314,15 @@
 
         @media (max-width: 768px) {
             .hero-banner {
-                width: 100vw;
-                left: 50%;
-                right: 50%;
-                margin-left: -50vw;
-                margin-right: -50vw;
-                height: 70vh;
-                min-height: 500px;
+                width: 100%;
+                height: 60vh;
+                min-height: 400px;
             }
 
             .hero-buttons {
                 flex-direction: column;
                 align-items: center;
+                margin-top: 12rem;
             }
 
             .btn-join,
@@ -360,18 +357,18 @@
 
         @media (max-width: 480px) {
             .hero-banner {
-                width: 100vw;
-                left: 50%;
-                right: 50%;
-                margin-left: -50vw;
-                margin-right: -50vw;
+                width: 100%;
                 height: 60vh;
-                min-height: 400px;
+                min-height: 350px;
             }
 
             .hero-content {
                 padding: 1.5rem 1rem;
                 background: rgba(0, 0, 0, 0.4);
+            }
+
+            .hero-buttons {
+                margin-top: 8rem;
             }
 
             .btn-join,
@@ -414,6 +411,24 @@
         .nav-links {
             margin-left: 0 !important;
             margin-right: 80px !important;
+        }
+
+        /* Fix Page Title for Donate Page - Compact & Centered */
+        section.page-title {
+            width: 100% !important;
+            left: 0 !important;
+            right: 0 !important;
+            margin: 0 !important;
+            height: auto !important;
+            min-height: 0 !important;
+            padding: 1.5rem 0 !important;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            text-align: center !important;
+        }
+
+        section.page-title h1 {
+            color: #ffffff !important;
+            margin: 0 !important;
         }
     </style>
 </head>
