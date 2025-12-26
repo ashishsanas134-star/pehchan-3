@@ -27,7 +27,7 @@ html {
 /* Navbar */
 .navbar {
     background: #fff;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -134,8 +134,8 @@ html {
 }
 
 .home .donate-btn {
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.7);
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(2px);
 }
 
@@ -143,13 +143,22 @@ html {
 .navbar.navbar-solid {
     position: sticky;
     background: #fff;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.navbar.navbar-solid .nav-links a { color: #333; }
+.navbar.navbar-solid .nav-links a {
+    color: #333;
+}
+
 .navbar.navbar-solid .nav-links a:hover,
-.navbar.navbar-solid .nav-links a.active { color: #F9A826; }
-.navbar.navbar-solid .donate-btn { background: #F9A826; border: none; }
+.navbar.navbar-solid .nav-links a.active {
+    color: #F9A826;
+}
+
+.navbar.navbar-solid .donate-btn {
+    background: #F9A826;
+    border: none;
+}
 
 .mobile-menu-toggle {
     display: none;
@@ -228,7 +237,9 @@ html {
     padding-top: 2rem;
 }
 
-.home .hero-title-green { margin-top: 0.5rem; }
+.home .hero-title-green {
+    margin-top: 0.5rem;
+}
 
 .hero-title-green {
     font-size: 5.5rem;
@@ -256,10 +267,13 @@ html {
 
 
 .hero-buttons {
-    margin-top: 20rem; /* Adjust this value to move buttons lower */
+    margin-top: 20rem;
+    /* Adjust this value to move buttons lower */
     display: flex;
-    gap: 1rem; /* keeps some space between the buttons */
-    justify-content: center; /* centers the buttons horizontally */
+    gap: 1rem;
+    /* keeps some space between the buttons */
+    justify-content: center;
+    /* centers the buttons horizontally */
 }
 
 
@@ -309,6 +323,7 @@ html {
         opacity: 0;
         transform: translateY(-30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -320,6 +335,7 @@ html {
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -472,7 +488,7 @@ html {
     position: relative;
     border-radius: 25px;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     transition: transform 0.3s ease;
 }
 
@@ -540,7 +556,7 @@ html {
     direction: rtl;
 }
 
-.activity-content.reverse > * {
+.activity-content.reverse>* {
     direction: ltr;
 }
 
@@ -570,10 +586,10 @@ html {
     gap: 1rem;
 }
 
-.activity-images > img {
+.activity-images>img {
     width: 100%;
     border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .activity-images-row {
@@ -588,7 +604,7 @@ html {
     object-fit: cover;
     object-position: center top;
     border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 /* Upcoming Events */
@@ -616,14 +632,14 @@ html {
     background: #fff;
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
     transition: all 0.3s ease;
     border: 1px solid #f0f0f0;
 }
 
 .event-card:hover {
     transform: translateY(-12px);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.18);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18);
 }
 
 .event-card img {
@@ -679,13 +695,13 @@ html {
     object-fit: cover;
     object-position: center top;
     border-radius: 20px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
     transition: all 0.3s ease;
 }
 
 .waste-item img:hover {
     transform: scale(1.08);
-    box-shadow: 0 12px 35px rgba(0,0,0,0.18);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
 }
 
 /* Memorable Day */
@@ -711,7 +727,7 @@ html {
 .memorable-images img {
     width: 100%;
     border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .memorable-text h2 {
@@ -749,7 +765,7 @@ html {
     background: #fff;
     border-radius: 15px;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .update-card img {
@@ -801,7 +817,7 @@ html {
 .contact-map img {
     width: 100%;
     border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     margin-top: 1.5rem;
 }
 
@@ -862,7 +878,7 @@ html {
 /* Gallery Page */
 .page-title {
     position: relative;
-    width: 100%;
+    width: 200%;
     left: 0;
     right: 0;
     height: 50vh;
@@ -883,7 +899,7 @@ html {
     font-size: 3.5rem;
     color: #fff !important;
     font-weight: 700;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .gallery-section {
@@ -897,6 +913,8 @@ html {
 .gallery-category h2 {
     font-size: 2rem;
     margin-bottom: 2rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
     color: #333;
     font-weight: 600;
 }
@@ -920,7 +938,7 @@ html {
     object-fit: cover;
     object-position: center top;
     border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s;
 }
 
@@ -1037,7 +1055,7 @@ html {
     background: #fff;
     padding: 3rem;
     border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
 }
 
 .form-section {
@@ -1482,7 +1500,7 @@ html {
     object-fit: cover;
     object-position: center;
     margin-bottom: 1.5rem;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
     display: block;
 }
 
@@ -1652,7 +1670,7 @@ html {
     color: #333;
 }
 
-.donate-content > p {
+.donate-content>p {
     text-align: center;
     font-size: 1.1rem;
     margin-bottom: 3rem;
@@ -1672,7 +1690,7 @@ html {
     background: #fff;
     border-radius: 15px;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .campaign-card img {
@@ -1712,7 +1730,7 @@ html {
     background: #fff;
     padding: 3rem;
     border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
 }
 
 .donate-form h3 {
@@ -1728,7 +1746,7 @@ html {
     background: #fff;
     padding: 3rem;
     border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
 }
 
 .auth-form-wrapper h2 {
@@ -1835,16 +1853,16 @@ html {
         max-width: 1200px;
         padding: 0 30px;
     }
-    
+
     .hero-banner {
         height: 80vh;
         min-height: 550px;
     }
-    
+
     .hero-content {
         max-width: 750px;
     }
-    
+
     .section-title-dark,
     .section-title-orange {
         font-size: 2.8rem;
@@ -1857,80 +1875,80 @@ html {
         max-width: 960px;
         padding: 0 25px;
     }
-    
+
     .nav-links {
         gap: 1.5rem;
     }
-    
+
     .nav-links a {
         font-size: 0.85rem;
     }
-    
+
     .hero-banner {
         height: 75vh;
         min-height: 500px;
     }
-    
+
     .hero-content {
         max-width: 650px;
         padding: 2.5rem 2rem;
     }
-    
+
     .hero-logo {
         width: 120px;
         height: 120px;
         margin-bottom: 1.5rem;
     }
-    
+
     .hero-title-green {
         font-size: 3rem;
     }
-    
+
     .hero-title-blue {
         font-size: 1.8rem;
         margin-bottom: 2.5rem;
     }
-    
+
     .btn-join,
     .btn-donate-hero {
         padding: 0.9rem 2.5rem;
         font-size: 1rem;
     }
-    
+
     .section-title-dark,
     .section-title-orange {
         font-size: 2.5rem;
     }
-    
+
     .section-subtitle-dark {
         font-size: 1.8rem;
     }
-    
+
     .about-intro {
         font-size: 1.1rem;
     }
-    
+
     .cause-grid {
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 2.5rem;
     }
-    
+
     .activity-content {
         gap: 3rem;
     }
-    
+
     .activity-text h2 {
         font-size: 2.2rem;
     }
-    
+
     .activity-text h3 {
         font-size: 1.6rem;
     }
-    
+
     .activity-text p {
         font-size: 1rem;
     }
-    
+
     .events-slider,
     .waste-grid,
     .updates-grid,
@@ -1941,11 +1959,11 @@ html {
         grid-template-columns: repeat(2, 1fr);
         gap: 2rem;
     }
-    
+
     .contact-wrapper {
         gap: 3rem;
     }
-    
+
     .footer-grid {
         gap: 2.5rem;
     }
@@ -1957,11 +1975,11 @@ html {
         max-width: 720px;
         padding: 0 20px;
     }
-    
+
     .mobile-menu-toggle {
         display: flex;
     }
-    
+
     .nav-links {
         position: fixed;
         top: 70px;
@@ -1974,113 +1992,113 @@ html {
         padding: 2rem;
         gap: 2rem;
         transition: left 0.3s ease;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         z-index: 999;
     }
-    
+
     .nav-links.active {
         left: 0;
     }
-    
+
     .donate-btn {
         padding: 0.6rem 1.5rem;
         font-size: 0.9rem;
     }
-    
+
     .hero-banner {
         height: 70vh;
         min-height: 500px;
         max-height: 700px;
     }
-    
+
     .page-title {
         height: 40vh;
         min-height: 350px;
     }
-    
+
     .page-title h1 {
         font-size: 2.5rem;
     }
-    
+
     .hero-content {
         padding: 2rem 1.5rem;
         max-width: 90%;
         background: rgba(0, 0, 0, 0.4);
     }
-    
+
     .hero-logo {
         width: 100px;
         height: 100px;
         margin-bottom: 1.5rem;
     }
-    
+
     .hero-title-green {
         font-size: 2.5rem;
         margin-bottom: 1rem;
         letter-spacing: 1px;
     }
-    
+
     .hero-title-blue {
         font-size: 1.5rem;
         margin-bottom: 2rem;
         letter-spacing: 0.5px;
     }
-    
+
     .btn-join,
     .btn-donate-hero {
         padding: 0.8rem 2rem;
         font-size: 0.95rem;
         border-width: 2px;
     }
-    
+
     .section-title-dark,
     .section-title-orange {
         font-size: 2.2rem;
     }
-    
+
     .section-subtitle-dark {
         font-size: 1.5rem;
     }
-    
+
     .about-intro {
         font-size: 1rem;
         padding: 0 15px;
     }
-    
+
     .cause-grid {
         grid-template-columns: 1fr;
         gap: 2rem;
     }
-    
+
     .cause-card img {
         height: 300px;
     }
-    
+
     .activity-content {
         grid-template-columns: 1fr;
         gap: 2.5rem;
     }
-    
+
     .activity-content.reverse {
         direction: ltr;
     }
-    
+
     .activity-text h2 {
         font-size: 2rem;
     }
-    
+
     .activity-text h3 {
         font-size: 1.5rem;
     }
-    
+
     .activity-text p {
         font-size: 1rem;
     }
-    
+
     .activity-images-row img {
         height: 180px;
     }
-    
+
     .about-content-home,
     .memorable-content,
     .contact-wrapper,
@@ -2088,7 +2106,7 @@ html {
         grid-template-columns: 1fr;
         gap: 2rem;
     }
-    
+
     .events-slider,
     .waste-grid,
     .updates-grid,
@@ -2101,106 +2119,106 @@ html {
         grid-template-columns: 1fr;
         gap: 2rem;
     }
-    
+
     .form-row {
         grid-template-columns: 1fr;
     }
-    
+
     .footer-grid {
         grid-template-columns: 1fr;
         gap: 2rem;
         text-align: center;
     }
-    
+
     .about-hero-new {
         padding: 4rem 0;
     }
-    
+
     .about-hero-logo-new {
         width: 140px;
         height: 140px;
     }
-    
+
     .about-hero-title {
         font-size: 2.8rem;
     }
-    
+
     .about-hero-subtitle {
         font-size: 1.8rem;
     }
-    
+
     .about-hero-text {
         font-size: 1rem;
         line-height: 1.8;
     }
-    
+
     .who-we-are-new h2,
     .founder-section-new h2,
     .team-section-new h2 {
         font-size: 2.2rem;
     }
-    
+
     .who-we-are-new h3 {
         font-size: 1.8rem;
     }
-    
+
     .founder-img-new {
         width: 200px;
         height: 200px;
     }
-    
+
     .founder-name {
         font-size: 2rem;
     }
-    
+
     .founder-title-new {
         font-size: 1.5rem;
     }
-    
+
     .team-img-new {
         width: 130px;
         height: 130px;
     }
-    
+
     .about-hero h1 {
         font-size: 2.5rem;
     }
-    
+
     .about-hero p {
         font-size: 1.2rem;
     }
-    
+
     .about-hero-logo {
         width: 90px;
         height: 90px;
     }
-    
+
     .who-we-are h2,
     .founder-section h2,
     .team-section h2,
     .ex-member-section h2 {
         font-size: 2rem;
     }
-    
+
     .ex-member-card {
         flex-direction: column;
         text-align: center;
         padding: 2rem;
     }
-    
+
     .about-gallery img {
         height: 300px;
     }
-    
+
     .founder-img {
         width: 150px;
         height: 150px;
     }
-    
+
     .team-card-blue img {
         height: 250px;
     }
-    
+
     .leaf-decor,
     .star-decor,
     .bulb-decor,
@@ -2212,41 +2230,41 @@ html {
     .deco-balloon {
         display: none;
     }
-    
+
     .gallery-overlay {
         width: 280px;
         height: 280px;
         padding: 2rem 3rem;
     }
-    
+
     .gallery-logo {
         width: 80px;
         height: 80px;
     }
-    
+
     .gallery-overlay h2 {
         font-size: 2rem;
     }
-    
+
     .gallery-overlay p {
         font-size: 1.1rem;
     }
-    
+
     .gallery-overlay-second {
         width: 250px;
         height: 250px;
         padding: 2rem 2.5rem;
     }
-    
+
     .gallery-logo-second {
         width: 70px;
         height: 70px;
     }
-    
+
     .gallery-overlay-second h2 {
         font-size: 1.8rem;
     }
-    
+
     .gallery-overlay-second p {
         font-size: 1rem;
     }
@@ -2258,65 +2276,65 @@ html {
         max-width: 100%;
         padding: 0 15px;
     }
-    
+
     .logo img {
         height: 40px;
     }
-    
+
     .nav-container {
         padding: 0.8rem 15px;
     }
-    
+
     .donate-btn {
         padding: 0.5rem 1.2rem;
         font-size: 0.85rem;
     }
-    
+
     .hero-banner {
         height: 60vh;
         min-height: 450px;
         max-height: 600px;
     }
-    
+
     .page-title {
         height: 35vh;
         min-height: 300px;
     }
-    
+
     .page-title h1 {
         font-size: 2rem;
     }
-    
+
     .hero-content {
         padding: 1.5rem 1rem;
         max-width: 95%;
         background: rgba(0, 0, 0, 0.45);
     }
-    
+
     .hero-logo {
         width: 80px;
         height: 80px;
         margin-bottom: 1rem;
     }
-    
+
     .hero-title-green {
         font-size: 2rem;
         margin-bottom: 0.8rem;
         letter-spacing: 0.5px;
     }
-    
+
     .hero-title-blue {
         font-size: 1.2rem;
         margin-bottom: 1.5rem;
         letter-spacing: 0.3px;
     }
-    
+
     .hero-buttons {
         flex-direction: column;
         gap: 1rem;
         align-items: center;
     }
-    
+
     .btn-join,
     .btn-donate-hero {
         width: 100%;
@@ -2324,204 +2342,627 @@ html {
         padding: 0.8rem 2rem;
         font-size: 0.9rem;
     }
-    
+
     .about-home,
     .our-cause,
     .activity-section {
         padding: 3rem 0;
     }
-    
+
     .section-title-dark,
     .section-title-orange {
         font-size: 1.8rem;
         margin-bottom: 1rem;
     }
-    
+
     .section-subtitle-dark {
         font-size: 1.3rem;
         margin-bottom: 1.5rem;
     }
-    
+
     .about-intro {
         font-size: 0.95rem;
         line-height: 1.7;
     }
-    
+
     .cause-card img {
         height: 250px;
     }
-    
+
     .activity-text h2 {
         font-size: 1.6rem;
         margin-bottom: 1rem;
     }
-    
+
     .activity-text h3 {
         font-size: 1.3rem;
     }
-    
+
     .activity-text p {
         font-size: 0.95rem;
     }
-    
+
     .activity-images-row {
         grid-template-columns: 1fr;
     }
-    
+
     .activity-images-row img {
         height: 200px;
     }
-    
+
     .contact-section {
         padding: 3rem 0;
     }
-    
+
     .contact-map h3,
     .contact-form h3 {
         font-size: 1.5rem;
     }
-    
+
     .footer {
         padding: 2rem 0 1rem;
     }
-    
+
     .footer-logo {
         width: 50px;
         height: 50px;
     }
-    
+
     .footer-col h3 {
         font-size: 1.3rem;
     }
-    
+
     .footer-col h4 {
         font-size: 1.1rem;
     }
-    
+
     .about-hero-new {
         padding: 3rem 0;
     }
-    
+
     .about-hero-logo-new {
         width: 100px;
         height: 100px;
     }
-    
+
     .about-hero-title {
         font-size: 2rem;
         margin-bottom: 0.8rem;
     }
-    
+
     .about-hero-subtitle {
         font-size: 1.4rem;
         margin-bottom: 2rem;
     }
-    
+
     .about-hero-text {
         font-size: 0.9rem;
         line-height: 1.7;
         text-align: left;
     }
-    
+
     .who-we-are-new h2,
     .founder-section-new h2,
     .team-section-new h2 {
         font-size: 1.8rem;
     }
-    
+
     .who-we-are-new h3 {
         font-size: 1.5rem;
     }
-    
+
     .who-we-are-new p {
         font-size: 0.95rem;
     }
-    
+
     .founder-img-new {
         width: 180px;
         height: 180px;
     }
-    
+
     .founder-name {
         font-size: 1.8rem;
     }
-    
+
     .founder-title-new {
         font-size: 1.3rem;
     }
-    
+
     .team-card-new {
         padding: 2rem 1.5rem;
     }
-    
+
     .team-img-new {
         width: 120px;
         height: 120px;
     }
-    
+
     .team-card-new h3 {
         font-size: 1.4rem;
     }
-    
+
     .team-role-new {
         font-size: 0.95rem;
     }
-    
+
     .page-title {
         height: 40vh;
         min-height: 300px;
     }
-    
+
     .page-title h1 {
         font-size: 2.5rem;
     }
-    
+
     .volunteer-form,
     .donate-form,
     .auth-form-wrapper {
         padding: 2rem 1.5rem;
     }
-    
+
     .event-card img {
         height: 220px;
     }
-    
+
     .gallery-overlay {
         width: 220px;
         height: 220px;
         padding: 1.5rem 2rem;
     }
-    
+
     .gallery-logo {
         width: 60px;
         height: 60px;
     }
-    
+
     .gallery-overlay h2 {
         font-size: 1.5rem;
     }
-    
+
     .gallery-overlay p {
         font-size: 0.9rem;
     }
-    
+
     .gallery-overlay-second {
         width: 200px;
         height: 200px;
         padding: 1.5rem 2rem;
     }
-    
+
     .gallery-logo-second {
         width: 55px;
         height: 55px;
     }
-    
+
     .gallery-overlay-second h2 {
         font-size: 1.4rem;
     }
-    
+
     .gallery-overlay-second p {
         font-size: 0.85rem;
     }
 }
 
+/* ========================================
+   MOBILE RESPONSIVENESS ENHANCEMENTS
+   Desktop layout remains unchanged
+   ======================================== */
+
+/* Tablet Landscape - Additional Mobile Improvements */
+@media (max-width: 1024px) {
+
+    /* Gallery heading spacing */
+    .gallery-category h2 {
+        padding-top: 0.4rem;
+        padding-bottom: 0.4rem;
+        margin-bottom: 1.8rem;
+    }
+
+    /* Ensure images don't overflow */
+    .gallery-grid-3 img,
+    .gallery-grid-2 img {
+        width: 100%;
+        height: auto;
+        min-height: 250px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* Event cards */
+    .event-card img {
+        height: auto;
+        min-height: 220px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* Cause cards */
+    .cause-card img {
+        height: auto;
+        min-height: 280px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+}
+
+/* Tablet Portrait - 768px */
+@media (max-width: 768px) {
+
+    /* Gallery heading - more compact on mobile */
+    .gallery-category {
+        margin-bottom: 3rem;
+    }
+
+    .gallery-category h2 {
+        font-size: 1.6rem;
+        margin-bottom: 1.5rem;
+        padding-top: 0.3rem;
+        padding-bottom: 0.3rem;
+        text-align: center;
+    }
+
+    /* Gallery grids - single column on mobile */
+    .gallery-grid-3,
+    .gallery-grid-2 {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem;
+    }
+
+    /* Gallery images - proper mobile sizing */
+    .gallery-grid-3 img,
+    .gallery-grid-2 img {
+        width: 100%;
+        height: auto;
+        min-height: 200px;
+        max-height: 400px;
+        object-fit: contain;
+        background: #f5f5f5;
+        border-radius: 15px;
+    }
+
+    /* Event cards - mobile friendly */
+    .event-card img {
+        width: 100%;
+        height: auto;
+        min-height: 200px;
+        max-height: 350px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* Cause cards - mobile friendly */
+    .cause-card img {
+        width: 100%;
+        height: auto;
+        min-height: 250px;
+        max-height: 400px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* Waste grid images */
+    .waste-item img {
+        width: 100%;
+        height: auto;
+        min-height: 200px;
+        max-height: 350px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* Update cards */
+    .update-card img {
+        width: 100%;
+        height: auto;
+        min-height: 180px;
+        max-height: 300px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* Activity images */
+    .activity-images-row img {
+        width: 100%;
+        height: auto;
+        min-height: 180px;
+        max-height: 300px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* Campaign cards */
+    .campaign-card img {
+        width: 100%;
+        height: auto;
+        min-height: 200px;
+        max-height: 350px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* Team cards */
+    .team-card-blue img {
+        width: 100%;
+        height: auto;
+        min-height: 220px;
+        max-height: 350px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* Memorable images grid */
+    .memorable-images {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .memorable-images img {
+        width: 100%;
+        height: auto;
+        min-height: 200px;
+        max-height: 350px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* About gallery */
+    .about-gallery img {
+        width: 100%;
+        height: auto;
+        min-height: 250px;
+        max-height: 400px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* Ensure no horizontal overflow */
+    body,
+    html {
+        overflow-x: hidden;
+        max-width: 100%;
+    }
+
+    .container {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    /* Hero banner mobile adjustments */
+    .hero-banner {
+        height: 70vh;
+        min-height: 500px;
+        max-height: 700px;
+    }
+
+    .banner-img {
+        object-fit: cover;
+        object-position: center;
+    }
+
+    /* Buttons remain readable */
+    .btn-join,
+    .btn-donate-hero {
+        padding: 0.8rem 2rem;
+        font-size: 0.95rem;
+        white-space: nowrap;
+    }
+}
+
+/* Mobile - 480px */
+@media (max-width: 480px) {
+
+    /* Gallery heading - most compact */
+    .gallery-category {
+        margin-bottom: 2.5rem;
+    }
+
+    .gallery-category h2 {
+        font-size: 1.4rem;
+        margin-bottom: 1.2rem;
+        padding-top: 0.2rem;
+        padding-bottom: 0.2rem;
+    }
+
+    /* Gallery images - optimized for small screens */
+    .gallery-grid-3 img,
+    .gallery-grid-2 img {
+        width: 100%;
+        height: auto;
+        min-height: 180px;
+        max-height: 350px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* Event cards */
+    .event-card img {
+        width: 100%;
+        height: auto;
+        min-height: 180px;
+        max-height: 300px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* Cause cards */
+    .cause-card img {
+        width: 100%;
+        height: auto;
+        min-height: 200px;
+        max-height: 350px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* Waste items */
+    .waste-item img {
+        width: 100%;
+        height: auto;
+        min-height: 180px;
+        max-height: 300px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* Update cards */
+    .update-card img {
+        width: 100%;
+        height: auto;
+        min-height: 160px;
+        max-height: 280px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* Activity images */
+    .activity-images-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .activity-images-row img {
+        width: 100%;
+        height: auto;
+        min-height: 180px;
+        max-height: 300px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* Campaign cards */
+    .campaign-card img {
+        width: 100%;
+        height: auto;
+        min-height: 180px;
+        max-height: 300px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* Team cards */
+    .team-card-blue img {
+        width: 100%;
+        height: auto;
+        min-height: 200px;
+        max-height: 300px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* Memorable images */
+    .memorable-images img {
+        width: 100%;
+        height: auto;
+        min-height: 180px;
+        max-height: 300px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* About gallery */
+    .about-gallery img {
+        width: 100%;
+        height: auto;
+        min-height: 200px;
+        max-height: 350px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* Hero buttons stack vertically */
+    .hero-buttons {
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-join,
+    .btn-donate-hero {
+        width: 100%;
+        max-width: 280px;
+        padding: 0.8rem 2rem;
+        font-size: 0.9rem;
+    }
+
+    /* Container padding */
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    /* Page sections spacing */
+    .about-home,
+    .our-cause,
+    .activity-section,
+    .upcoming-events,
+    .best-waste,
+    .memorable-day,
+    .updates,
+    .gallery-section {
+        padding: 3rem 0;
+    }
+
+    /* Hero banner mobile */
+    .hero-banner {
+        height: 60vh;
+        min-height: 450px;
+        max-height: 600px;
+    }
+
+    /* Ensure text remains readable */
+    .section-title-dark,
+    .section-title-orange {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .section-subtitle-dark {
+        font-size: 1.3rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* Extra Small Mobile - 360px and below */
+@media (max-width: 360px) {
+
+    /* Gallery heading - ultra compact */
+    .gallery-category h2 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        padding-top: 0.1rem;
+        padding-bottom: 0.1rem;
+    }
+
+    /* All images - optimized for very small screens */
+    .gallery-grid-3 img,
+    .gallery-grid-2 img,
+    .event-card img,
+    .cause-card img,
+    .waste-item img,
+    .update-card img,
+    .activity-images-row img,
+    .campaign-card img,
+    .team-card-blue img,
+    .memorable-images img,
+    .about-gallery img {
+        width: 100%;
+        height: auto;
+        min-height: 150px;
+        max-height: 300px;
+        object-fit: contain;
+        background: #f5f5f5;
+    }
+
+    /* Container padding */
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    /* Buttons */
+    .btn-join,
+    .btn-donate-hero {
+        padding: 0.7rem 1.5rem;
+        font-size: 0.85rem;
+    }
+}
