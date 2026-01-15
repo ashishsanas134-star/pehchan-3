@@ -11,11 +11,13 @@ from .models import (
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ['name', 'event_date', 'location', 'status', 'created_at']
-    list_filter = ['status', 'event_date']
-    search_fields = ['name', 'location', 'description']
-    date_hierarchy = 'event_date'
-    ordering = ['-event_date']
+    list_display = ('name', 'event_date', 'status')
+    
+    # This line tells Django to load your fix on the "Add Event" page
+    class Media:
+        css = {
+            'all': ('CSS/admin_patch.css',)
+        }
 
 
 @admin.register(EventVolunteer)

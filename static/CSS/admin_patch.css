@@ -1,0 +1,31 @@
+/* Fix the squashed Django Admin Calendar */
+.calendarbox {
+    width: 300px !important; /* Makes it wider */
+    border: 1px solid #ddd !important;
+    border-radius: 8px !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important;
+    padding: 10px !important;
+    background: #fff !important;
+    z-index: 9999 !important;
+}
+
+.calendar table {
+    width: 100% !important;
+}
+
+.calendar td {
+    padding: 5px !important;
+    text-align: center !important;
+}
+
+.calendar th {
+    background: #2b5d8f !important; /* Matches your blue theme */
+    color: white !important;
+}
+
+.calendar caption {
+    background: #333 !important;
+    color: white !important;
+    font-weight: bold !important;
+    padding: 10px !important;
+}
