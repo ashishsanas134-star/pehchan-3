@@ -35,7 +35,7 @@ urlpatterns = [
     
     # Certificates (Login Required)
     path('certificates/', views.certificate_list, name='certificate_list'),
-    path('certificates/verify/', views.certificate_verify, name='certificate_verify'),
+    path('verify-certificate/', views.certificate_verify, name='certificate_verify'),
     path('certificates/donor/', views.donor_certificate_list, name='donor_certificate_list'),
     
     # Donations (Login Required)

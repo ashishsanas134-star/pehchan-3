@@ -316,43 +316,32 @@ def certificate_list(request):
 
 #@login_required
 def certificate_verify(request):
-    """Verify a certificate by ID"""
     certificate = None
     donor_certificate = None
     form = CertificateVerificationForm()
-    
+    searched = False # Added flag
+
     if request.method == 'POST':
         form = CertificateVerificationForm(request.POST)
         if form.is_valid():
-            cert_id = form.cleaned_data['certificate_id']
-            try:
-                # First try to find a volunteer certificate by certificate number
-                certificate = Certificate.objects.get(certificate_number=cert_id)
-                messages.success(request, 'Certificate found and verified!')
-            except Certificate.DoesNotExist:
-                # If not found, try to find a donor certificate by certificate number
-                try:
-                    donor_certificate = DonorCertificate.objects.get(certificate_number=cert_id)
-                    messages.success(request, 'Certificate found and verified!')
-                except DonorCertificate.DoesNotExist:
-                    # If not found by certificate number, try by primary key (for backward compatibility)
-                    try:
-                        certificate = Certificate.objects.get(pk=cert_id)
-                        messages.success(request, 'Certificate found and verified!')
-                    except (Certificate.DoesNotExist, ValueError):
-                        try:
-                            donor_certificate = DonorCertificate.objects.get(pk=cert_id)
-                            messages.success(request, 'Certificate found and verified!')
-                        except (DonorCertificate.DoesNotExist, ValueError):
-                            messages.error(request, 'Certificate not found. Please check the certificate number.')
-    
+            searched = True
+            cert_id = form.cleaned_data['certificate_id'].strip()
+            
+            # Using __iexact to prevent case-sensitivity issues
+            certificate = Certificate.objects.filter(certificate_number__iexact=cert_id).first()
+            
+            if not certificate:
+                donor_certificate = DonorCertificate.objects.filter(certificate_number__iexact=cert_id).first()
+            
+            if not certificate and not donor_certificate:
+                messages.error(request, "No certificate found with that ID.")
+
     return render(request, 'certificate_verify.html', {
         'form': form,
         'certificate': certificate,
-        'donor_certificate': donor_certificate
+        'donor_certificate': donor_certificate,
+        'searched': searched
     })
-
-
 @login_required
 def donor_certificate_list(request):
     """List user's donor certificates"""
@@ -537,7 +526,7 @@ from django.utils import timezone
 
 @staff_member_required
 def issue_volunteer_certificate(request, volunteer_id):
-    """Custom admin view to issue a certificate with a custom certificate number for a volunteer"""
+    """Custom admin view to issue a certificate with a custom certificate number"""
     if not request.user.is_staff:
         messages.error(request, 'You do not have permission to access this page.')
         return HttpResponseRedirect(reverse('admin:pehchan_eventvolunteer_changelist'))
@@ -551,17 +540,16 @@ def issue_volunteer_certificate(request, volunteer_id):
         return HttpResponseRedirect(reverse('admin:pehchan_eventvolunteer_changelist'))
     
     if request.method == 'POST':
-        certificate_number = request.POST.get('certificate_number')
-        if certificate_number:
-            # Create a certificate
-            # Since Certificate model doesn't have certificate_number field, we'll store it in a remark or note field
-            # But first, let's check if we can modify the model or if we should store it differently
-            certificate = Certificate.objects.create(
+        cert_num = request.POST.get('certificate_number') # Get the number from the form
+        if cert_num:
+            # Create the certificate with the provided number
+            Certificate.objects.create(
                 event=volunteer.event,
                 volunteer=volunteer,
+                certificate_number=cert_num, # Make sure this field exists in models.py!
                 issue_date=timezone.now().date()
             )
-            messages.success(request, f'Certificate issued successfully for {volunteer.user.username}.')
+            messages.success(request, f'Certificate {cert_num} issued successfully for {volunteer.user.username}.')
             return HttpResponseRedirect(reverse('admin:pehchan_eventvolunteer_changelist'))
         else:
             messages.error(request, 'Please enter a valid certificate number.')

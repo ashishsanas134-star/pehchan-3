@@ -1,11 +1,54 @@
 {% extends 'base.html' %}
-<!-- PEHCHAN_CERT_VERIFY_V4_FINAL -->
 {% block title %}Verify Certificate - Pehchan{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Print Logic */
+    @media print {
+        body { background: white !important; }
+        .no-print, .verification-card, .mdl-layout__header, .mdl-layout__drawer { 
+            display: none !important; 
+        }
+        .surface-card {
+            margin: 0 !important;
+            box-shadow: none !important;
+            border: 2px solid #2e7d32 !important;
+            width: 100% !important;
+        }
+        .pill-button { display: none !important; }
+    }
+    
+    .alert-error { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; padding: 15px; border-radius: 8px; margin-top: 20px; }
+    .alert-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; padding: 15px; border-radius: 8px; margin-top: 20px; }
+    
+    .verification-note {
+        margin-top: 25px;
+        padding: 15px;
+        border-top: 1px dashed #ccc;
+        color: #555;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        background: #fdfdfd;
+        border-radius: 8px;
+    }
+
+    .copy-link {
+        color: #0284c7;
+        text-decoration: underline;
+        cursor: pointer;
+        font-weight: 600;
+        background: none;
+        border: none;
+        padding: 0;
+        font-family: inherit;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
 <div style="max-width: 800px; margin: 0 auto; padding: 0 15px;">
-    <!-- Verification Search Card -->
-    <div class="surface-card verification-card" style="margin-bottom: 30px;">
+    
+    <div class="surface-card verification-card no-print" style="margin-bottom: 30px;">
         <div class="mdl-card__title">
             <h2 class="mdl-card__title-text georgia-brand">
                 <span class="material-icons-round">verified_user</span>
@@ -13,247 +56,193 @@
             </h2>
         </div>
         <div class="mdl-card__supporting-text">
-            <div class="info-panel info-panel--sky"
-                style="margin-bottom: 24px; padding: 15px; background: var(--primary-50); border-radius: 12px; border-left: 4px solid var(--primary-500);">
+            <div class="info-panel info-panel--sky" style="margin-bottom: 24px; padding: 15px; background: #e0f2fe; border-radius: 12px; border-left: 4px solid #0284c7;">
                 <div style="display: flex; align-items: flex-start; gap: 12px;">
-                    <span class="material-icons-round" style="font-size: 2rem; color: var(--primary-600);">info</span>
-                    <p style="margin: 0; color: var(--text-secondary);">Enter a certificate number to verify its
-                        authenticity and view official details.</p>
+                    <span class="material-icons-round" style="font-size: 2rem; color: #0284c7;">info</span>
+                    <p style="margin: 0; color: #0369a1;">Enter a certificate number to verify its authenticity. This search is <strong>case-sensitive</strong>.</p>
                 </div>
             </div>
 
-            <form method="post" style="width: 100%;">
+            <form method="post" action="{% url 'certificate_verify' %}" style="width: 100%;">
                 {% csrf_token %}
                 <div class="form-field" style="margin-bottom: 20px;">
-                    <label class="form-label" for="{{ form.certificate_id.id_for_label }}"
-                        style="display: block; margin-bottom: 8px; font-weight: 600;">
-                        <span class="material-icons-round"
-                            style="vertical-align: middle; margin-right: 6px; font-size: 1.2rem;">tag</span>
+                    <label class="form-label" for="{{ form.certificate_id.id_for_label }}" style="display: block; margin-bottom: 8px; font-weight: 600;">
+                        <span class="material-icons-round" style="vertical-align: middle; margin-right: 6px; font-size: 1.2rem;">tag</span>
                         Certificate Number
                     </label>
-                    <div class="input-wrapper" style="position: relative; width: 100%;">
+                    <div class="input-wrapper">
                         {{ form.certificate_id }}
                     </div>
-                    {% if form.certificate_id.errors %}
-                    <span style="color: var(--error); font-size: 0.9rem; margin-top: 4px; display: block;">{{
-                        form.certificate_id.errors.0 }}</span>
-                    {% endif %}
                 </div>
 
                 <div class="mdl-card__actions" style="padding: 0;">
-                    <button type="submit" class="pill-button pill-button--primary"
-                        style="width: 100%; justify-content: center; padding: 14px;">
+                    <button type="submit" class="pill-button pill-button--primary" style="width: 100%; justify-content: center; padding: 14px; display: flex; align-items: center; gap: 8px;">
                         <span class="material-icons-round">search</span> Verify Certificate
                     </button>
                 </div>
             </form>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="verification-note">
+                <strong>Note:</strong> For verification of the final certificate, please 
+                <a href="mailto:madad@pehchanyui.in" style="color: #0284c7; font-weight: 600;">mail us at madad@pehchanyui.in</a> 
+                or <button class="copy-link" onclick="copyEmail()">click here to copy the email address</button> 
+                from the official mail id of your organization.
+            </div>
         </div>
     </div>
 
-    <!-- Results for Volunteer Certificate -->
     {% if certificate %}
-    <div class="surface-card"
-        style="margin-top: 32px; border: 3px solid var(--success); box-shadow: 0 8px 32px rgba(46, 125, 50, 0.2);">
-        <div class="mdl-card__title" style="background: var(--success); color: white; padding: 20px;">
+    <div class="surface-card result-card" style="margin-top: 32px; border: 3px solid #2e7d32; box-shadow: 0 8px 32px rgba(46, 125, 50, 0.2);">
+        <div class="mdl-card__title" style="background: #2e7d32; color: white; padding: 20px;">
             <h2 class="mdl-card__title-text" style="color: white; margin: 0;">
-                <span class="material-icons-round">verified</span>
-                Certificate Verified!
+                <span class="material-icons-round">verified</span> Certificate Verified!
             </h2>
         </div>
         <div class="mdl-card__supporting-text" style="padding: 24px;">
-            <div class="info-panel"
-                style="margin-bottom: 24px; padding: 16px; background: #e8f5e9; border-radius: 12px; border-left: 4px solid var(--success);">
+            <div class="info-panel" style="margin-bottom: 24px; padding: 16px; background: #e8f5e9; border-radius: 12px; border-left: 4px solid #2e7d32;">
                 <div style="display: flex; align-items: center; gap: 12px;">
-                    <span class="material-icons-round"
-                        style="font-size: 2.5rem; color: var(--success);">check_circle</span>
-                    <div>
-                        <h3 style="margin: 0; color: var(--success); font-size: 1.2rem;">Authentic Certificate</h3>
-                        <p style="margin: 4px 0 0; color: #2e7d32; font-size: 0.95rem;">Successfully verified in Pehchan
-                            Database.</p>
-                    </div>
+                    <span class="material-icons-round" style="font-size: 2.5rem; color: #2e7d32;">check_circle</span>
+                    <div><h3 style="margin: 0; color: #1b5e20; font-size: 1.2rem;">Authentic Volunteer Certificate</h3></div>
                 </div>
             </div>
 
             <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 1.2rem;">
-                <span class="material-icons-round" style="color: var(--primary-600);">description</span>
-                Volunteer Details
+                <span class="material-icons-round" style="color: #0284c7;">person</span> Volunteer Details
             </h3>
 
             <div style="background: #f8f9fa; padding: 20px; border-radius: 16px; border: 1px solid #dee2e6;">
                 <div style="display: grid; gap: 20px;">
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
                         <div>
-                            <p
-                                style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">
-                                Certificate Number</p>
-                            <p style="font-size: 1.1rem; font-weight: 700; color: var(--primary-700); margin: 0;">{{
-                                certificate.certificate_number }}</p>
+                            <p style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">Certificate Number</p>
+                            <p style="font-size: 1.1rem; font-weight: 700; color: #1a56db; margin: 0;">{{ certificate.certificate_number }}</p>
                         </div>
                         <div>
-                            <p
-                                style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">
-                                Volunteer Name</p>
-                            <p style="font-size: 1.1rem; color: var(--text-primary); margin: 0;">{{
-                                certificate.volunteer.user.get_full_name|default:certificate.volunteer.user.username }}
-                            </p>
+                            <p style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">Volunteer Name</p>
+                            <p style="font-size: 1.1rem; color: #212529; margin: 0;">{{ certificate.volunteer.user.get_full_name|default:certificate.volunteer.user.username }}</p>
                         </div>
                     </div>
-
                     <div style="border-top: 1px solid #dee2e6; padding-top: 15px;">
-                        <p
-                            style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">
-                            Event</p>
-                        <p style="font-size: 1.1rem; color: var(--text-primary); margin: 0; font-weight: 600;">{{
-                            certificate.event.name }}</p>
-                        <p style="font-size: 0.95rem; color: #6c757d; margin: 4px 0 0;">{{ certificate.event.location }}
-                        </p>
+                        <p style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">Event</p>
+                        <p style="font-size: 1.1rem; color: #212529; margin: 0; font-weight: 600;">{{ certificate.event.name }}</p>
                     </div>
-
-                    <div
-                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 1px solid #dee2e6; padding-top: 15px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 1px solid #dee2e6; padding-top: 15px;">
                         <div>
-                            <p
-                                style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">
-                                Event Date</p>
+                            <p style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">Event Date</p>
                             <p style="margin: 0; font-weight: 600;">{{ certificate.event.event_date|date:"F d, Y" }}</p>
                         </div>
                         <div>
-                            <p
-                                style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">
-                                Issue Date</p>
+                            <p style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">Issue Date</p>
                             <p style="margin: 0; font-weight: 600;">{{ certificate.issue_date|date:"F d, Y" }}</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {% if certificate.file %}
-            <div style="text-align: center; margin-top: 24px;">
-                <a href="{{ certificate.file.url }}" target="_blank" class="pill-button pill-button--primary"
-                    style="width: 100%; justify-content: center;">
-                    <span class="material-icons-round">download</span> Download Certificate
-                </a>
+            <div class="verification-note no-print">
+                <strong>Note:</strong> For verification of the final certificate, please 
+                <a href="mailto:madad@pehchanyui.in" style="color: #0284c7; font-weight: 600;">mail us at madad@pehchanyui.in</a> 
+                from the official mail id of your organization.
             </div>
-            {% endif %}
+
+            <div style="display: flex; gap: 12px; margin-top: 24px;" class="no-print">
+                <button onclick="window.print();" class="pill-button" style="flex: 1; justify-content: center; background: #607d8b; color: white; border: none; cursor: pointer; padding: 12px; display: flex; align-items: center; gap: 8px;">
+                    <span class="material-icons-round">print</span> Print Verification
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Results for Donor Certificate -->
     {% elif donor_certificate %}
-    <div class="surface-card"
-        style="margin-top: 32px; border: 3px solid var(--success); box-shadow: 0 8px 32px rgba(46, 125, 50, 0.2);">
-        <div class="mdl-card__title" style="background: var(--success); color: white; padding: 20px;">
+    <div class="surface-card result-card" style="margin-top: 32px; border: 3px solid #2e7d32; box-shadow: 0 8px 32px rgba(46, 125, 50, 0.2);">
+        <div class="mdl-card__title" style="background: #2e7d32; color: white; padding: 20px;">
             <h2 class="mdl-card__title-text" style="color: white; margin: 0;">
-                <span class="material-icons-round">verified</span>
-                Certificate Verified!
+                <span class="material-icons-round">verified</span> Certificate Verified!
             </h2>
         </div>
         <div class="mdl-card__supporting-text" style="padding: 24px;">
-            <div class="info-panel"
-                style="margin-bottom: 24px; padding: 16px; background: #e8f5e9; border-radius: 12px; border-left: 4px solid var(--success);">
+            <div class="info-panel" style="margin-bottom: 24px; padding: 16px; background: #e8f5e9; border-radius: 12px; border-left: 4px solid #2e7d32;">
                 <div style="display: flex; align-items: center; gap: 12px;">
-                    <span class="material-icons-round"
-                        style="font-size: 2.5rem; color: var(--success);">check_circle</span>
-                    <div>
-                        <h3 style="margin: 0; color: var(--success); font-size: 1.2rem;">Authentic Certificate</h3>
-                        <p style="margin: 4px 0 0; color: #2e7d32; font-size: 0.95rem;">Successfully verified in Pehchan
-                            Database.</p>
-                    </div>
+                    <span class="material-icons-round" style="font-size: 2.5rem; color: #2e7d32;">check_circle</span>
+                    <div><h3 style="margin: 0; color: #1b5e20; font-size: 1.2rem;">Authentic Donor Certificate</h3></div>
                 </div>
             </div>
 
             <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 1.2rem;">
-                <span class="material-icons-round" style="color: var(--primary-600);">description</span>
-                Donor Details
+                <span class="material-icons-round" style="color: #0284c7;">volunteer_activism</span> Donor Details
             </h3>
 
             <div style="background: #f8f9fa; padding: 20px; border-radius: 16px; border: 1px solid #dee2e6;">
                 <div style="display: grid; gap: 20px;">
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
                         <div>
-                            <p
-                                style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">
-                                Certificate Number</p>
-                            <p style="font-size: 1.1rem; font-weight: 700; color: var(--primary-700); margin: 0;">{{
-                                donor_certificate.certificate_number }}</p>
+                            <p style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">Certificate Number</p>
+                            <p style="font-size: 1.1rem; font-weight: 700; color: #1a56db; margin: 0;">{{ donor_certificate.certificate_number }}</p>
                         </div>
                         <div>
-                            <p
-                                style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">
-                                Donor Name</p>
-                            <p style="font-size: 1.1rem; color: var(--text-primary); margin: 0;">{{
-                                donor_certificate.user.get_full_name|default:donor_certificate.user.username }}</p>
+                            <p style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">Donor Name</p>
+                            <p style="font-size: 1.1rem; color: #212529; margin: 0;">{{ donor_certificate.user.get_full_name|default:donor_certificate.user.username }}</p>
                         </div>
                     </div>
-
                     <div style="border-top: 1px solid #dee2e6; padding-top: 15px;">
-                        <p
-                            style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">
-                            Donation</p>
-                        <p style="font-size: 1.1rem; color: var(--text-primary); margin: 0; font-weight: 600;">
+                        <p style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">Donation Details</p>
+                        <p style="font-size: 1.1rem; color: #212529; margin: 0; font-weight: 600;">
                             {% if donor_certificate.donation_type == 'material' %}
-                            {{ donor_certificate.material_donation.item_name }} (Qty: {{
-                            donor_certificate.material_donation.quantity }})
+                                {{ donor_certificate.material_donation.item_name }} (Qty: {{ donor_certificate.material_donation.quantity }})
                             {% elif donor_certificate.donation_type == 'money' %}
-                            Amount: ₹{{ donor_certificate.money_donation.amount }}
-                            {% else %}
-                            {{ donor_certificate.get_donation_type_display }}
+                                Contribution of ₹{{ donor_certificate.money_donation.amount }}
                             {% endif %}
                         </p>
                     </div>
-
-                    <div
-                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 1px solid #dee2e6; padding-top: 15px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 1px solid #dee2e6; padding-top: 15px;">
                         <div>
-                            <p
-                                style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">
-                                Date</p>
-                            <p style="margin: 0; font-weight: 600;">
-                                {% if donor_certificate.donation_type == 'material' %}
-                                {{ donor_certificate.material_donation.created_at|date:"F d, Y" }}
-                                {% elif donor_certificate.donation_type == 'money' %}
-                                {{ donor_certificate.money_donation.created_at|date:"F d, Y" }}
-                                {% else %}
-                                {{ donor_certificate.issue_date|date:"F d, Y" }}
-                                {% endif %}
-                            </p>
+                            <p style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">Type</p>
+                            <p style="margin: 0; font-weight: 600;">{{ donor_certificate.donation_type|title }}</p>
                         </div>
                         <div>
-                            <p
-                                style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">
-                                Issue Date</p>
+                            <p style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">Issue Date</p>
                             <p style="margin: 0; font-weight: 600;">{{ donor_certificate.issue_date|date:"F d, Y" }}</p>
                         </div>
                     </div>
-
-                    {% if donor_certificate.remarks %}
-                    <div style="border-top: 1px solid #dee2e6; padding-top: 15px;">
-                        <p
-                            style="text-transform: uppercase; font-size: 0.75rem; color: #6c757d; font-weight: 700; margin-bottom: 4px;">
-                            Remarks</p>
-                        <p style="margin: 0; font-style: italic;">{{ donor_certificate.remarks }}</p>
-                    </div>
-                    {% endif %}
                 </div>
             </div>
 
-            {% if donor_certificate.file %}
-            <div style="text-align: center; margin-top: 24px;">
-                <a href="{{ donor_certificate.file.url }}" target="_blank" class="pill-button pill-button--primary"
-                    style="width: 100%; justify-content: center;">
-                    <span class="material-icons-round">download</span> Download Certificate
-                </a>
+            <div class="verification-note no-print">
+                <strong>Note:</strong> For verification of the final certificate, please 
+                <a href="mailto:madad@pehchanyui.in" style="color: #0284c7; font-weight: 600;">mail us at madad@pehchanyui.in</a> 
+                from the official mail id of your organization.
             </div>
-            {% endif %}
+
+            <div style="display: flex; gap: 12px; margin-top: 24px;" class="no-print">
+                <button onclick="window.print();" class="pill-button" style="flex: 1; justify-content: center; background: #607d8b; color: white; border: none; cursor: pointer; padding: 12px; display: flex; align-items: center; gap: 8px;">
+                    <span class="material-icons-round">print</span> Print Verification
+                </button>
+            </div>
         </div>
     </div>
     {% endif %}
 
-    <div style="text-align: center; margin-top: 40px; margin-bottom: 60px;">
-        <a href="{% url 'home' %}" class="pill-button pill-button--primary"
-            style="display: inline-flex; align-items: center; gap: 8px;">
-            <span class="material-icons-round">home</span> Back to Home
+    <div style="text-align: center; margin-top: 40px; margin-bottom: 60px;" class="no-print">
+        <a href="{% url 'home' %}" class="pill-button" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: #666;">
+            <span class="material-icons-round">arrow_back</span> Back to Home
         </a>
     </div>
 </div>
+
+<script>
+    function copyEmail() {
+        const email = "madad@pehchanyui.in";
+        navigator.clipboard.writeText(email).then(() => {
+            alert("Email address copied to clipboard!");
+        });
+    }
+</script>
 {% endblock %}

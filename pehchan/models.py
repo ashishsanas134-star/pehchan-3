@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.validators import EmailValidator
-
+from decimal import Decimal
 
 class Event(models.Model):
     """Model for managing events"""
@@ -84,7 +84,6 @@ class Certificate(models.Model):
         ordering = ['-issue_date']
     
     def save(self, *args, **kwargs):
-        # Auto-generate certificate number if not exists
         if not self.certificate_number:
             import random
             import string
@@ -170,15 +169,11 @@ class DonorCertificate(models.Model):
         null=True
     )
     
-    # Certificate details
     certificate_number = models.CharField(max_length=50, unique=True, editable=False)
     issue_date = models.DateField(default=timezone.now)
     issued_by = models.CharField(max_length=200, default='Pehchan NGO')
     remarks = models.TextField(blank=True, help_text='Additional remarks or appreciation message')
-    
-    # Optional file attachment
     file = models.FileField(upload_to='donor_certificates/', blank=True, null=True)
-    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -188,7 +183,6 @@ class DonorCertificate(models.Model):
         verbose_name_plural = 'Donor Certificates'
     
     def save(self, *args, **kwargs):
-        # Auto-generate certificate number if not exists
         if not self.certificate_number:
             import random
             import string
@@ -201,50 +195,26 @@ class DonorCertificate(models.Model):
         return f"Certificate {self.certificate_number} - {self.user.username}"
     
     def get_donation_details(self):
-        """Get the related donation details"""
         if self.donation_type == 'material' and self.material_donation:
             return f"{self.material_donation.item_name} (Qty: {self.material_donation.quantity})"
         elif self.donation_type == 'money' and self.money_donation:
             return f"₹{self.money_donation.amount}"
         return "N/A"
-    
-    def get_donation_date(self):
-        """Get the date of donation"""
-        if self.donation_type == 'material' and self.material_donation:
-            return self.material_donation.created_at
-        elif self.donation_type == 'money' and self.money_donation:
-            return self.money_donation.created_at
-        return None
 
 
 class AnonymousDonation(models.Model):
     """Model for anonymous donations without login"""
-    # Donor Information (Optional)
-    donor_name = models.CharField(max_length=200, blank=True, null=True, help_text='Donor name (optional for anonymous)')
-    donor_email = models.EmailField(blank=True, null=True, help_text='Email for receipt (optional)')
-    donor_phone = models.CharField(max_length=20, blank=True, null=True, help_text='Contact number (optional)')
-    
-    # Donation Details
-    amount = models.DecimalField(max_digits=10, decimal_places=2, help_text='Donation amount')
-    transaction_id = models.CharField(max_length=100, blank=True, null=True, help_text='UPI transaction ID')
-    
-    # Receipt
-    receipt = models.FileField(upload_to='anonymous_donation_receipts/', blank=True, null=True, help_text='Upload payment receipt')
-    
-    # Receipt Preference
-    wants_receipt = models.BooleanField(default=False, help_text='Donor wants a receipt marked as Anonymous')
-    
-    # Additional Information
-    message = models.TextField(blank=True, null=True, help_text='Additional message from donor')
-    
-    # Google Form Submission URL (for reference)
-    google_form_submitted = models.BooleanField(default=False, help_text='Has the donor submitted the Google Form?')
-    
-    # Timestamps
+    donor_name = models.CharField(max_length=200, blank=True, null=True)
+    donor_email = models.EmailField(blank=True, null=True)
+    donor_phone = models.CharField(max_length=20, blank=True, null=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    transaction_id = models.CharField(max_length=100, blank=True, null=True)
+    receipt = models.FileField(upload_to='anonymous_donation_receipts/', blank=True, null=True)
+    wants_receipt = models.BooleanField(default=False)
+    message = models.TextField(blank=True, null=True)
+    google_form_submitted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    
-    # Metadata
-    ip_address = models.GenericIPAddressField(null=True, blank=True, help_text='IP address of donor')
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
     
     class Meta:
         ordering = ['-created_at']
@@ -257,84 +227,23 @@ class AnonymousDonation(models.Model):
 
 
 class ContactMessage(models.Model):
-    """Model for contact form messages from website visitors"""
-    STATUS_CHOICES = [
-        ('new', 'New'),
-        ('read', 'Read'),
-        ('replied', 'Replied'),
-        ('archived', 'Archived'),
-    ]
+    """Model for contact form messages"""
+    STATUS_CHOICES = [('new', 'New'), ('read', 'Read'), ('replied', 'Replied'), ('archived', 'Archived')]
+    PRIORITY_CHOICES = [('low', 'Low'), ('medium', 'Medium'), ('high', 'High'), ('urgent', 'Urgent')]
     
-    PRIORITY_CHOICES = [
-        ('low', 'Low'),
-        ('medium', 'Medium'),
-        ('high', 'High'),
-        ('urgent', 'Urgent'),
-    ]
-    
-    # Contact Information
-    name = models.CharField(max_length=200, help_text='Full name of the person')
-    email = models.EmailField(validators=[EmailValidator()], help_text='Email address for response')
-    
-    # Message Details
-    message = models.TextField(help_text='Message content')
-    
-    # Status & Priority
-    status = models.CharField(
-        max_length=20, 
-        choices=STATUS_CHOICES, 
-        default='new',
-        help_text='Current status of the message'
-    )
-    priority = models.CharField(
-        max_length=20, 
-        choices=PRIORITY_CHOICES, 
-        default='medium',
-        help_text='Priority level for handling this message'
-    )
-    
-    # Admin Notes
-    admin_notes = models.TextField(
-        blank=True, 
-        null=True,
-        help_text='Internal notes for team members (not visible to sender)'
-    )
-    
-    # Response
-    response = models.TextField(
-        blank=True, 
-        null=True,
-        help_text='Response sent to the person'
-    )
-    responded_by = models.ForeignKey(
-        User, 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        blank=True,
-        related_name='contact_responses',
-        help_text='Admin who responded to this message'
-    )
-    responded_at = models.DateTimeField(
-        null=True, 
-        blank=True,
-        help_text='Date and time when response was sent'
-    )
-    
-    # Timestamps
+    name = models.CharField(max_length=200)
+    email = models.EmailField(validators=[EmailValidator()])
+    message = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
+    priority = models.CharField(max_length=20, choices=PRIORITY_CHOICES, default='medium')
+    admin_notes = models.TextField(blank=True, null=True)
+    response = models.TextField(blank=True, null=True)
+    responded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='contact_responses')
+    responded_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
-    # Metadata
-    ip_address = models.GenericIPAddressField(
-        null=True, 
-        blank=True,
-        help_text='IP address of the sender (for security)'
-    )
-    user_agent = models.TextField(
-        blank=True, 
-        null=True,
-        help_text='Browser information (for analytics)'
-    )
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.TextField(blank=True, null=True)
     
     class Meta:
         ordering = ['-created_at']
@@ -349,26 +258,6 @@ class ContactMessage(models.Model):
     
     def __str__(self):
         return f"{self.name} - {self.created_at.strftime('%Y-%m-%d %H:%M')}"
-    
-    def mark_as_read(self):
-        """Mark message as read"""
-        if self.status == 'new':
-            self.status = 'read'
-            self.save()
-    
-    def mark_as_replied(self, user=None):
-        """Mark message as replied"""
-        self.status = 'replied'
-        if user:
-            self.responded_by = user
-        self.responded_at = timezone.now()
-        self.save()
-    
-    def get_short_message(self, length=50):
-        """Get shortened message for display"""
-        if len(self.message) > length:
-            return f"{self.message[:length]}..."
-        return self.message
 
 
 class PasswordResetOTP(models.Model):
@@ -379,17 +268,12 @@ class PasswordResetOTP(models.Model):
     expires_at = models.DateTimeField()
     
     def is_valid(self):
-        """Check if OTP is still valid"""
-        from django.utils import timezone
         return timezone.now() < self.expires_at
-    
-    def __str__(self):
-        return f"OTP for {self.user.username}"
 
 
 class PehchanWallet(models.Model):
     """Model for Pehchan Wallet to track organization funds"""
-    balance = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    balance = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal('0.00'))
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -402,19 +286,22 @@ class PehchanWallet(models.Model):
     
     @classmethod
     def get_wallet(cls):
-        """Get or create the single wallet instance"""
         wallet, created = cls.objects.get_or_create(id=1)
         return wallet
     
     def deposit(self, amount, description="", transaction_type="donation"):
-        """Deposit money to wallet"""
+        """Deposit money to wallet and record transaction"""
+        # Ensure amount is a Decimal
+        amount = Decimal(str(amount))
+        
         if amount <= 0:
             raise ValueError("Deposit amount must be positive")
-        
-        self.balance += amount
+            
+        # Explicitly cast current balance to Decimal to avoid float + decimal errors
+        current_balance = Decimal(str(self.balance))
+        self.balance = current_balance + amount
         self.save()
         
-        # Create transaction record
         return WalletTransaction.objects.create(
             wallet=self,
             amount=amount,
@@ -424,75 +311,50 @@ class PehchanWallet(models.Model):
         )
     
     def withdraw(self, amount, description="", transaction_type="expense"):
-        """Withdraw money from wallet"""
+        """Withdraw money from wallet and record transaction"""
+        # Ensure amount is a Decimal
+        amount = Decimal(str(amount))
+        
         if amount <= 0:
             raise ValueError("Withdrawal amount must be positive")
         
-        if amount > self.balance:
+        # Explicitly cast current balance to Decimal
+        current_balance = Decimal(str(self.balance))
+            
+        if amount > current_balance:
             raise ValueError("Insufficient funds in wallet")
         
-        self.balance -= amount
+        self.balance = current_balance - amount
         self.save()
         
-        # Create transaction record
         return WalletTransaction.objects.create(
             wallet=self,
-            amount=-amount,  # Negative for withdrawals
+            amount=-amount,
             transaction_type=transaction_type,
             description=description,
             balance_after_transaction=self.balance
         )
 
-
 class WalletTransaction(models.Model):
     """Model to track all wallet transactions"""
-    TRANSACTION_TYPES = [
-        ('donation', 'Donation'),
-        ('expense', 'Expense'),
-        ('adjustment', 'Adjustment'),
-    ]
+    TRANSACTION_TYPES = [('donation', 'Donation'), ('expense', 'Expense'), ('adjustment', 'Adjustment')]
     
     wallet = models.ForeignKey(PehchanWallet, on_delete=models.CASCADE, related_name='transactions')
-    amount = models.DecimalField(max_digits=12, decimal_places=2, help_text="Positive for deposits, negative for withdrawals")
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
     transaction_type = models.CharField(max_length=20, choices=TRANSACTION_TYPES)
     description = models.TextField(blank=True)
-    related_donation = models.ForeignKey(
-        MoneyDonation, 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        blank=True,
-        related_name='wallet_transactions'
-    )
-    related_expense = models.ForeignKey(
-        'Expense', 
-        on_delete=models.SET_NULL, 
-        null=True, 
-        blank=True,
-        related_name='wallet_transactions'
-    )
+    related_donation = models.ForeignKey(MoneyDonation, on_delete=models.SET_NULL, null=True, blank=True)
+    related_expense = models.ForeignKey('Expense', on_delete=models.SET_NULL, null=True, blank=True)
     balance_after_transaction = models.DecimalField(max_digits=12, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
         ordering = ['-created_at']
-        verbose_name = 'Wallet Transaction'
-        verbose_name_plural = 'Wallet Transactions'
-    
-    def __str__(self):
-        return f"{self.get_transaction_type_display()} - ₹{abs(self.amount)} - {self.created_at.strftime('%Y-%m-%d')}"
 
 
 class Expense(models.Model):
     """Model for tracking organization expenses"""
-    CATEGORY_CHOICES = [
-        ('office', 'Office Supplies'),
-        ('travel', 'Travel'),
-        ('salary', 'Salary'),
-        ('marketing', 'Marketing'),
-        ('utilities', 'Utilities'),
-        ('maintenance', 'Maintenance'),
-        ('other', 'Other'),
-    ]
+    CATEGORY_CHOICES = [('office', 'Office'), ('travel', 'Travel'), ('salary', 'Salary'), ('marketing', 'Marketing'), ('other', 'Other')]
     
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
@@ -508,8 +370,6 @@ class Expense(models.Model):
     
     class Meta:
         ordering = ['-date', '-created_at']
-        verbose_name = 'Expense'
-        verbose_name_plural = 'Expenses'
-    
+
     def __str__(self):
-        return f"{self.title} - ₹{self.amount} - {self.date}"
+        return f"{self.title} - ₹{self.amount}"

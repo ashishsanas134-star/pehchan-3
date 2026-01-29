@@ -2966,3 +2966,27 @@ html {
         font-size: 0.85rem;
     }
 }
+@media (max-width: 991px) {
+    .gallery-grid-3, 
+    .gallery-grid-2 {
+        display: block !important; /* Disable Grid */
+        column-count: 2;           /* 2 columns for tablets */
+        column-gap: 15px;
+    }
+
+    /* For small phones, switch to 1 column */
+    @media (max-width: 480px) {
+        .gallery-grid-3, .gallery-grid-2 {
+            column-count: 1;
+        }
+    }
+
+    .gallery-grid-3 img, 
+    .gallery-grid-2 img {
+        height: auto !important;   /* Let height be natural */
+        width: 100% !important;
+        display: inline-block;
+        margin-bottom: 15px;       /* Space between stacked images */
+        break-inside: avoid;       /* Prevents image from splitting across columns */
+    }
+}
