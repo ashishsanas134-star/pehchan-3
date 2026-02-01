@@ -91,6 +91,14 @@ class MaterialDonationForm(forms.ModelForm):
 
 
 class MoneyDonationForm(forms.ModelForm):
+    receipt_upload = forms.FileField(
+        required=True,
+        widget=forms.FileInput(attrs={
+            'class': 'form-control',
+            'accept': 'image/*,.pdf'
+        })
+    )
+
     class Meta:
         model = MoneyDonation
         fields = ['amount', 'receipt_upload']
@@ -100,10 +108,6 @@ class MoneyDonationForm(forms.ModelForm):
                 'placeholder': 'Amount in ₹',
                 'min': 1,
                 'step': '0.01'
-            }),
-            'receipt_upload': forms.FileInput(attrs={
-                'class': 'form-control',
-                'accept': 'image/*,.pdf'
             }),
         }
 

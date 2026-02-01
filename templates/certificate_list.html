@@ -14,63 +14,113 @@
 </div>
 
 <div class="dashboard-section">
-    {% if certificates %}
-        <div class="dashboard-grid">
-            {% for certificate in certificates %}
-            <div class="surface-card certificate-card">
-                <div class="mdl-card__title">
-                    <h2 class="mdl-card__title-text">
-                        <span class="material-icons-round">verified</span>
-                        Certificate #{{ certificate.pk }}
-                    </h2>
-                </div>
-                <div class="mdl-card__supporting-text">
-                    <div style="display: grid; gap: 14px;">
-                        <div style="padding: 12px; background: rgba(255, 255, 255, 0.6); border-radius: var(--radius-md); border-left: 3px solid var(--secondary-500);">
-                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-                                <span class="material-icons-round" style="font-size: 1.2rem; color: var(--secondary-600);">event</span>
-                                <strong style="color: var(--neutral-700);">Event</strong>
-                            </div>
-                            <p style="margin: 0; color: var(--text-primary); font-weight: 600;">{{ certificate.event.name }}</p>
-                        </div>
-                        
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                            <div>
-                                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-tertiary); margin-bottom: 4px;">
-                                    <span class="material-icons-round" style="font-size: 1rem;">calendar_today</span>
-                                    <span style="font-size: 0.85rem; font-weight: 600;">Issued</span>
-                                </div>
-                                <p style="margin: 0; color: var(--text-primary);">{{ certificate.issue_date|date:"M d, Y" }}</p>
-                            </div>
-                            <div>
-                                <div style="display: flex; align-items: center; gap: 6px; color: var(--text-tertiary); margin-bottom: 4px;">
-                                    <span class="material-icons-round" style="font-size: 1rem;">event</span>
-                                    <span style="font-size: 0.85rem; font-weight: 600;">Event Date</span>
-                                </div>
-                                <p style="margin: 0; color: var(--text-primary);">{{ certificate.event.event_date|date:"M d, Y" }}</p>
-                            </div>
-                        </div>
-                        
-                        <div style="padding: 10px; background: rgba(255, 248, 225, 0.6); border-radius: var(--radius-sm);">
-                            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
-                                <span class="material-icons-round" style="font-size: 1rem; color: var(--secondary-600);">location_on</span>
-                                <span style="font-size: 0.85rem; font-weight: 600; color: var(--neutral-700);">Location</span>
-                            </div>
-                            <p style="margin: 0; color: var(--text-primary);">{{ certificate.event.location }}</p>
-                        </div>
-                    </div>
-                    
-                    {% if certificate.file %}
-                    <div style="margin-top: 20px;">
-                        <a href="{{ certificate.file.url }}" target="_blank" class="pill-button pill-button--secondary">
-                            <span class="material-icons-round">download</span> Download Certificate
-                        </a>
-                    </div>
-                    {% endif %}
+    <!-- Filters & Search Section -->
+    <div class="surface-card" style="margin-bottom: 2rem; padding: 1.5rem;">
+        <form method="GET" action="." style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; align-items: end;">
+            <!-- Search -->
+            <div class="form-field">
+                <label class="form-label">Search</label>
+                <div style="position: relative;">
+                    <span class="material-icons-round" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-tertiary); font-size: 1.2rem;">search</span>
+                    <input type="text" name="search" value="{{ search_query }}" placeholder="Cert No. or Event Name" 
+                        style="padding-left: 40px; border-radius: var(--radius-md); border: 2px solid var(--neutral-200); width: 100%; height: 48px;">
                 </div>
             </div>
-            {% endfor %}
+
+            <!-- Month Filter -->
+            <div class="form-field">
+                <label class="form-label">Filter by Month</label>
+                <select name="month" style="border-radius: var(--radius-md); border: 2px solid var(--neutral-200); width: 100%; height: 48px; padding: 0 12px;">
+                    <option value="">All Months</option>
+                    {% for m_val, m_name in months %}
+                        <option value="{{ m_val }}" {% if current_month == m_val %}selected{% endif %}>{{ m_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Sort -->
+            <div class="form-field">
+                <label class="form-label">Sort by</label>
+                <select name="sort" style="border-radius: var(--radius-md); border: 2px solid var(--neutral-200); width: 100%; height: 48px; padding: 0 12px;">
+                    <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest First</option>
+                    <option value="oldest" {% if current_sort == 'oldest' %}selected{% endif %}>Oldest First</option>
+                </select>
+            </div>
+
+            <!-- Actions -->
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" class="pill-button pill-button--primary" style="height: 48px; flex: 1;">
+                    Apply
+                </button>
+                {% if search_query or current_month or current_sort != 'newest' %}
+                    <a href="." class="pill-button pill-button--outline" style="height: 48px; width: 48px; padding: 0; display: flex; align-items: center; justify-content: center;" title="Clear Filters">
+                        <span class="material-icons-round">refresh</span>
+                    </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    {% if certificates %}
+        <div class="table-card surface-card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Serial No.</th>
+                        <th>Certificate No.</th>
+                        <th>Event Name</th>
+                        <th>Issue Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for certificate in certificates %}
+                    <tr>
+                        <td style="font-weight: 700; color: var(--text-tertiary);">
+                            {{ page_obj.start_index|add:forloop.counter0 }}
+                        </td>
+                        <td><span class="cert-no">{{ certificate.certificate_number }}</span></td>
+                        <td><strong>{{ certificate.event.name }}</strong></td>
+                        <td>{{ certificate.issue_date|date:"M d, Y" }}</td>
+                        <td>
+                            <a href="{% url 'certificate_detail' certificate.pk %}" class="view-link">
+                                <span class="material-icons-round" style="font-size: 1.2rem;">visibility</span>
+                                View Details
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
+
+        {% if is_paginated %}
+        <div class="pagination-wrapper">
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if current_month %}&month={{ current_month }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}" class="pagination-btn">
+                        <span class="material-icons-round">first_page</span>
+                    </a>
+                    <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_month %}&month={{ current_month }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}" class="pagination-btn">
+                        <span class="material-icons-round">chevron_left</span>
+                    </a>
+                {% endif %}
+
+                <div class="pagination-info">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </div>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_month %}&month={{ current_month }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}" class="pagination-btn">
+                        <span class="material-icons-round">chevron_right</span>
+                    </a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if current_month %}&month={{ current_month }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}" class="pagination-btn">
+                        <span class="material-icons-round">last_page</span>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
     {% else %}
         <div class="surface-card">
             <div class="mdl-card__supporting-text">

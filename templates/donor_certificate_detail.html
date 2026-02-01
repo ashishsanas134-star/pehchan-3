@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Donor Certificate Details - Pehchan{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    <div class="surface-card">
+        <div class="mdl-card__title" style="background: linear-gradient(135deg, var(--secondary-600), var(--secondary-500), var(--secondary-400));">
+            <h2 class="mdl-card__title-text" style="color: white;">
+                <span class="material-icons-round">workspace_premium</span>
+                Donor Certificate #{{ certificate.certificate_number }}
+            </h2>
+        </div>
+        
+        <div class="mdl-card__supporting-text">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px;">
+                <div class="info-panel" style="border-left: 4px solid var(--secondary-500); padding: 16px;">
+                    <div style="display: flex; align-items: center; gap: 10px; color: var(--secondary-600); font-weight: 600; margin-bottom: 8px;">
+                        <span class="material-icons-round">card_giftcard</span>
+                        <span>Donation Type</span>
+                    </div>
+                    <p style="margin: 0; font-size: 1.2rem; color: var(--text-primary); font-weight: 700;">{{ certificate.get_donation_type_display }}</p>
+                </div>
+
+                <div class="info-panel" style="border-left: 4px solid var(--primary-500); padding: 16px;">
+                    <div style="display: flex; align-items: center; gap: 10px; color: var(--primary-700); font-weight: 600; margin-bottom: 8px;">
+                        <span class="material-icons-round">calendar_today</span>
+                        <span>Issue Date</span>
+                    </div>
+                    <p style="margin: 0; font-size: 1.2rem; color: var(--text-primary);">{{ certificate.issue_date|date:"F d, Y" }}</p>
+                </div>
+            </div>
+
+            <div style="display: grid; gap: 20px; padding: 20px; background: var(--neutral-50); border-radius: var(--radius-lg); border: 1px solid var(--neutral-200);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--text-tertiary); font-weight: 600;">Certificate Number:</span>
+                    <span style="color: var(--text-primary); font-family: monospace; font-size: 1.1rem;">{{ certificate.certificate_number }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--text-tertiary); font-weight: 600;">Donor Name:</span>
+                    <span style="color: var(--text-primary);">{{ certificate.user.get_full_name|default:certificate.user.username }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--text-tertiary); font-weight: 600;">Donation Details:</span>
+                    <span style="color: var(--text-primary); font-weight: 600;">{{ certificate.get_donation_details }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--text-tertiary); font-weight: 600;">Issued By:</span>
+                    <span style="color: var(--text-primary);">{{ certificate.issued_by }}</span>
+                </div>
+            </div>
+
+            {% if certificate.remarks %}
+            <div style="margin-top: 24px; padding: 20px; background: rgba(255, 248, 225, 0.6); border-radius: var(--radius-lg); border: 1px solid var(--secondary-200);">
+                <h4 style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; color: var(--text-primary);">
+                    <span class="material-icons-round" style="color: var(--secondary-600);">message</span>
+                    Appreciation Message
+                </h4>
+                <p style="margin: 0; color: var(--text-secondary); line-height: 1.6;">{{ certificate.remarks }}</p>
+            </div>
+            {% endif %}
+
+            {% if certificate.file %}
+            <div style="margin-top: 32px; text-align: center; padding: 24px; border: 2px dashed var(--secondary-300); border-radius: var(--radius-xl);">
+                <h4 style="margin-bottom: 16px;">Certificate File Available</h4>
+                <a href="{{ certificate.file.url }}" target="_blank" class="pill-button pill-button--secondary" style="padding: 14px 40px;">
+                    <span class="material-icons-round">download</span> Download Original Certificate
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="mdl-card__actions" style="border-top: 1px solid var(--neutral-200); padding: 20px; display: flex; gap: 12px;">
+            <a href="{% url 'donor_certificate_list' %}" class="pill-button pill-button--outline">
+                <span class="material-icons-round">arrow_back</span> Back to Donor Certificates
+            </a>
+            <a href="{% url 'dashboard' %}" class="pill-button pill-button--ghost">
+                <span class="material-icons-round">home</span> Home
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -34,9 +34,11 @@ urlpatterns = [
     path('volunteer/lifetime/', views.LifetimeVolunteerCreateView.as_view(), name='lifetime_volunteer'),
     
     # Certificates (Login Required)
-    path('certificates/', views.certificate_list, name='certificate_list'),
+    path('certificates/', views.CertificateListView.as_view(), name='certificate_list'),
+    path('certificates/<int:pk>/', views.certificate_detail, name='certificate_detail'),
     path('verify-certificate/', views.certificate_verify, name='certificate_verify'),
-    path('certificates/donor/', views.donor_certificate_list, name='donor_certificate_list'),
+    path('certificates/donor/', views.DonorCertificateListView.as_view(), name='donor_certificate_list'),
+    path('certificates/donor/<int:pk>/', views.donor_certificate_detail, name='donor_certificate_detail'),
     
     # Donations (Login Required)
     path('donate/material/', views.MaterialDonationCreateView.as_view(), name='material_donation'),

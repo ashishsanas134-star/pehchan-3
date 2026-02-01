@@ -2990,3 +2990,120 @@ html {
         break-inside: avoid;       /* Prevents image from splitting across columns */
     }
 }
+
+/* Pagination Styles */
+.pagination-wrapper {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding-bottom: 2rem;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: #fff;
+    padding: 0.8rem 1.5rem;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f0f0f0;
+}
+
+.pagination-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: #1E3A8A;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.pagination-btn:hover {
+    background: #f8f9fa;
+    color: #F9A826;
+    border-color: #F9A826;
+}
+
+.pagination-btn .material-icons-round {
+    font-size: 24px;
+}
+
+.pagination-info {
+    font-weight: 500;
+    color: #666;
+    font-size: 0.95rem;
+    padding: 0 0.5rem;
+}
+
+/* Data Table Styles */
+.table-card {
+    background: white;
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.data-table thead {
+    background: #f8fafc;
+}
+
+.data-table th {
+    padding: 1.25rem 1rem;
+    text-align: left;
+    font-weight: 700;
+    color: #475569;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.data-table td {
+    padding: 1.25rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+    vertical-align: middle;
+}
+
+.data-table tbody tr {
+    transition: all 0.2s;
+}
+
+.data-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.view-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--primary-600);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.view-link:hover {
+    color: var(--primary-800);
+    text-decoration: underline;
+}
+
+.cert-no {
+    font-family: monospace;
+    font-weight: 600;
+    color: var(--primary-700);
+}

@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Certificate Details - Pehchan{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    <div class="surface-card">
+        <div class="mdl-card__title" style="background: linear-gradient(135deg, var(--secondary-600), var(--secondary-400));">
+            <h2 class="mdl-card__title-text" style="color: white;">
+                <span class="material-icons-round">verified</span>
+                Certificate #{{ certificate.certificate_number }}
+            </h2>
+        </div>
+        
+        <div class="mdl-card__supporting-text">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px;">
+                <div class="info-panel" style="border-left: 4px solid var(--secondary-500); padding: 16px;">
+                    <div style="display: flex; align-items: center; gap: 10px; color: var(--secondary-600); font-weight: 600; margin-bottom: 8px;">
+                        <span class="material-icons-round">event</span>
+                        <span>Event Name</span>
+                    </div>
+                    <p style="margin: 0; font-size: 1.2rem; color: var(--text-primary); font-weight: 700;">{{ certificate.event.name }}</p>
+                </div>
+
+                <div class="info-panel" style="border-left: 4px solid var(--primary-500); padding: 16px;">
+                    <div style="display: flex; align-items: center; gap: 10px; color: var(--primary-700); font-weight: 600; margin-bottom: 8px;">
+                        <span class="material-icons-round">calendar_today</span>
+                        <span>Issue Date</span>
+                    </div>
+                    <p style="margin: 0; font-size: 1.2rem; color: var(--text-primary);">{{ certificate.issue_date|date:"F d, Y" }}</p>
+                </div>
+            </div>
+
+            <div style="display: grid; gap: 20px; padding: 20px; background: var(--neutral-50); border-radius: var(--radius-lg); border: 1px solid var(--neutral-200);">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--text-tertiary); font-weight: 600;">Certificate Number:</span>
+                    <span style="color: var(--text-primary); font-family: monospace; font-size: 1.1rem;">{{ certificate.certificate_number }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--text-tertiary); font-weight: 600;">Volunteer Name:</span>
+                    <span style="color: var(--text-primary);">{{ certificate.volunteer.user.get_full_name|default:certificate.volunteer.user.username }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--text-tertiary); font-weight: 600;">Event Date:</span>
+                    <span style="color: var(--text-primary);">{{ certificate.event.event_date|date:"F d, Y" }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--text-tertiary); font-weight: 600;">Location:</span>
+                    <span style="color: var(--text-primary);">{{ certificate.event.location }}</span>
+                </div>
+            </div>
+
+            {% if certificate.file %}
+            <div style="margin-top: 32px; text-align: center; padding: 24px; border: 2px dashed var(--secondary-300); border-radius: var(--radius-xl);">
+                <h4 style="margin-bottom: 16px;">Certificate File Available</h4>
+                <a href="{{ certificate.file.url }}" target="_blank" class="pill-button pill-button--secondary" style="padding: 14px 40px;">
+                    <span class="material-icons-round">download</span> Download Original Certificate
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="mdl-card__actions" style="border-top: 1px solid var(--neutral-200); padding: 20px; display: flex; gap: 12px;">
+            <a href="{% url 'certificate_list' %}" class="pill-button pill-button--outline">
+                <span class="material-icons-round">arrow_back</span> Back to My Certificates
+            </a>
+            <a href="{% url 'dashboard' %}" class="pill-button pill-button--ghost">
+                <span class="material-icons-round">home</span> Home
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

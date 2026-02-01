@@ -3,6 +3,55 @@
 {% block title %}Material Donation - Pehchan{% endblock %}
 
 {% block content %}
+<style>
+    @keyframes popIn {
+        0% { transform: scale(0.8); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    
+    .success-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(10, 26, 74, 0.85);
+        backdrop-filter: blur(8px);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .success-modal {
+        background: white;
+        padding: 48px 32px;
+        border-radius: 32px;
+        text-align: center;
+        max-width: 480px;
+        width: 90%;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        border: 4px solid var(--primary-500);
+        animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+</style>
+
+<div id="success-popup" class="success-overlay">
+    <div class="success-modal">
+        <div style="background: var(--success); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; box-shadow: 0 8px 20px rgba(46, 125, 95, 0.3);">
+            <span class="material-icons-round" style="font-size: 48px; color: white;">check_circle</span>
+        </div>
+        <h2 style="color: var(--primary-800); margin-bottom: 16px; font-weight: 800; font-size: 2rem;">🌟 Success! 🌟</h2>
+        <p style="font-size: 1.15rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 32px;">
+            <strong style="color: var(--primary-700);">Thanks for your contribution! ❤️</strong><br><br>
+            📧 You will receive a confirmation email once your donation is processed. ✨
+        </p>
+        <button type="button" class="pill-button pill-button--primary" onclick="document.querySelector('.form-shell').submit();" style="width: 100%; height: 56px; font-size: 1.1rem;">
+            OK, I Understand!
+        </button>
+    </div>
+</div>
+
 <div style="max-width: 900px; margin: 0 auto;">
     <div class="surface-card form-card">
         <div class="mdl-card__title">
@@ -83,7 +132,7 @@
                 </div>
                 
                 <div class="mdl-card__actions" style="margin-top: 28px; padding: 0; display: flex; gap: 12px; flex-wrap: wrap;">
-                    <button type="submit" class="pill-button pill-button--primary">
+                    <button type="button" class="pill-button pill-button--primary" onclick="const form = document.querySelector('.form-shell'); if(form.checkValidity()){ document.getElementById('success-popup').style.display='flex'; } else { form.reportValidity(); }">
                         <span class="material-icons-round">send</span> Submit Donation
                     </button>
                     <a href="{% url 'dashboard' %}" class="pill-button pill-button--outline">

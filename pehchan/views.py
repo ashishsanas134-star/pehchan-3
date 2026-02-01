@@ -250,9 +250,23 @@ class EventListView(LoginRequiredMixin, ListView):
     model = Event
     template_name = 'event_list.html'
     context_object_name = 'events'
+    paginate_by = 3
     
     def get_queryset(self):
-        return Event.objects.filter(status='upcoming').order_by('event_date')
+        queryset = Event.objects.filter(status='upcoming').order_by('event_date')
+        search_query = self.request.GET.get('search', '')
+        if search_query:
+            queryset = queryset.filter(
+                Q(name__icontains=search_query) | 
+                Q(description__icontains=search_query) |
+                Q(location__icontains=search_query)
+            )
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search_query'] = self.request.GET.get('search', '')
+        return context
 
 
 class EventDetailView(LoginRequiredMixin, DetailView):
@@ -304,14 +318,106 @@ class LifetimeVolunteerCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
+class CertificateListView(LoginRequiredMixin, ListView):
+    """List user's volunteer certificates with search, filter, and sort"""
+    model = Certificate
+    template_name = 'certificate_list.html'
+    context_object_name = 'certificates'
+    paginate_by = 5
+
+    def get_queryset(self):
+        queryset = Certificate.objects.filter(
+            volunteer__user=self.request.user
+        ).select_related('event', 'volunteer')
+        
+        # Search
+        search = self.request.GET.get('search')
+        if search:
+            queryset = queryset.filter(
+                Q(certificate_number__icontains=search) |
+                Q(event__name__icontains=search)
+            )
+            
+        # Month Filter
+        month = self.request.GET.get('month')
+        if month and month.isdigit():
+            queryset = queryset.filter(issue_date__month=int(month))
+            
+        # Sorting
+        sort = self.request.GET.get('sort', 'newest')
+        if sort == 'oldest':
+            queryset = queryset.order_by('issue_date', 'id')
+        else:
+            queryset = queryset.order_by('-issue_date', '-id')
+            
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search_query'] = self.request.GET.get('search', '')
+        context['current_month'] = self.request.GET.get('month', '')
+        context['current_sort'] = self.request.GET.get('sort', 'newest')
+        context['months'] = [
+            ('1', 'January'), ('2', 'February'), ('3', 'March'), ('4', 'April'),
+            ('5', 'May'), ('6', 'June'), ('7', 'July'), ('8', 'August'),
+            ('9', 'September'), ('10', 'October'), ('11', 'November'), ('12', 'December')
+        ]
+        return context
+
+
 @login_required
-def certificate_list(request):
-    """List user's certificates"""
-    certificates = Certificate.objects.filter(
-        volunteer__user=request.user
-    ).select_related('event', 'volunteer')
-    
-    return render(request, 'certificate_list.html', {'certificates': certificates})
+def certificate_detail(request, pk):
+    """View details of a volunteer certificate"""
+    certificate = get_object_or_404(Certificate, pk=pk, volunteer__user=request.user)
+    return render(request, 'certificate_detail.html', {'certificate': certificate})
+
+
+class DonorCertificateListView(LoginRequiredMixin, ListView):
+    """List user's donor certificates with search, filter, and sort"""
+    model = DonorCertificate
+    template_name = 'donor_certificate_list.html'
+    context_object_name = 'donor_certificates'
+    paginate_by = 5
+
+    def get_queryset(self):
+        queryset = DonorCertificate.objects.filter(
+            user=self.request.user
+        ).select_related('material_donation', 'money_donation')
+        
+        # Search
+        search = self.request.GET.get('search')
+        if search:
+            queryset = queryset.filter(
+                Q(certificate_number__icontains=search) |
+                Q(material_donation__item_name__icontains=search) |
+                Q(donation_type__icontains=search)
+            )
+            
+        # Month Filter
+        month = self.request.GET.get('month')
+        if month and month.isdigit():
+            queryset = queryset.filter(issue_date__month=int(month))
+            
+        # Sorting
+        sort = self.request.GET.get('sort', 'newest')
+        if sort == 'oldest':
+            queryset = queryset.order_by('issue_date', 'created_at')
+        else:
+            queryset = queryset.order_by('-issue_date', '-created_at')
+            
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search_query'] = self.request.GET.get('search', '')
+        context['current_month'] = self.request.GET.get('month', '')
+        context['current_sort'] = self.request.GET.get('sort', 'newest')
+        context['months'] = [
+            ('1', 'January'), ('2', 'February'), ('3', 'March'), ('4', 'April'),
+            ('5', 'May'), ('6', 'June'), ('7', 'July'), ('8', 'August'),
+            ('9', 'September'), ('10', 'October'), ('11', 'November'), ('12', 'December')
+        ]
+        return context
 
 
 #@login_required
@@ -344,14 +450,15 @@ def certificate_verify(request):
     })
 @login_required
 def donor_certificate_list(request):
-    """List user's donor certificates"""
-    donor_certificates = DonorCertificate.objects.filter(
-        user=request.user
-    ).select_related('material_donation', 'money_donation').order_by('-issue_date')
-    
-    return render(request, 'donor_certificate_list.html', {
-        'donor_certificates': donor_certificates
-    })
+    """Placeholder view - logic handled by DonorCertificateListView"""
+    return redirect('donor_certificate_list_cbv')
+
+
+@login_required
+def donor_certificate_detail(request, pk):
+    """View details of a donor certificate"""
+    certificate = get_object_or_404(DonorCertificate, pk=pk, user=request.user)
+    return render(request, 'donor_certificate_detail.html', {'certificate': certificate})
 
 
 class MaterialDonationCreateView(LoginRequiredMixin, CreateView):
@@ -367,7 +474,7 @@ class MaterialDonationCreateView(LoginRequiredMixin, CreateView):
         
         # Show pickup/courier message
         pickup_msg = self.object.get_pickup_message()
-        messages.success(self.request, f'Material donation submitted successfully! {pickup_msg}')
+        messages.success(self.request, f'🌟 Thanks for your contribution! ❤️ You will receive a confirmation email once your donation is processed. ✨ {pickup_msg}')
         return response
 
 
@@ -388,7 +495,7 @@ class MoneyDonationCreateView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         form.instance.payment_method = 'upi'
         form.instance.upi_id = 'pehchan@upi'  # Static UPI ID
-        messages.success(self.request, 'Money donation submitted successfully! Thank you for your support.')
+        messages.success(self.request, '🌟 Thanks for your contribution! ❤️ You will receive a confirmation email once your donation is processed. ✨')
         return super().form_valid(form)
 
 

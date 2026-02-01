@@ -8,10 +8,36 @@
         <span class="badge-chip"><span class="material-icons-round">event</span> Volunteer Opportunities</span>
         <h1>Upcoming Events</h1>
         <p>Choose a gathering that lets you plant new hope and make a lasting impact in the community.</p>
+
+        <div class="search-section" style="margin-top: 32px; max-width: 600px;">
+            <form method="GET" action="{% url 'event_list' %}" style="display: flex; gap: 12px;">
+                <div style="position: relative; flex-grow: 1;">
+                    <span class="material-icons-round" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-tertiary);">search</span>
+                    <input type="text" name="search" value="{{ search_query }}" placeholder="Search events by name, location or keyword..." 
+                        style="width: 100%; padding: 14px 16px 14px 48px; border-radius: var(--radius-full); border: none; background: rgba(255, 255, 255, 0.9); font-size: 1rem; box-shadow: var(--shadow-md);">
+                </div>
+                <button type="submit" class="pill-button pill-button--secondary">
+                    Search
+                </button>
+                {% if search_query %}
+                    <a href="{% url 'event_list' %}" class="pill-button pill-button--ghost" style="padding: 12px 20px;">
+                        Clear
+                    </a>
+                {% endif %}
+            </form>
+        </div>
     </div>
 </div>
 
 <div class="dashboard-section">
+    {% if search_query %}
+        <div style="margin-bottom: 24px;">
+            <h3 style="font-size: 1.25rem; color: var(--text-secondary);">
+                Showing results for "{{ search_query }}"
+            </h3>
+        </div>
+    {% endif %}
+
     {% if events %}
         <div class="dashboard-grid">
             {% for event in events %}
@@ -53,15 +79,43 @@
             </div>
             {% endfor %}
         </div>
+
+        {% if is_paginated %}
+        <div class="pagination-wrapper">
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-btn">
+                        <span class="material-icons-round">first_page</span>
+                    </a>
+                    <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-btn">
+                        <span class="material-icons-round">chevron_left</span>
+                    </a>
+                {% endif %}
+
+                <div class="pagination-info">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </div>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-btn">
+                        <span class="material-icons-round">chevron_right</span>
+                    </a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pagination-btn">
+                        <span class="material-icons-round">last_page</span>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
     {% else %}
         <div class="surface-card">
             <div class="mdl-card__supporting-text">
                 <div class="info-panel info-panel--sky">
-                    <span class="material-icons-round" style="font-size: 3rem; color: var(--info); margin-bottom: 12px;">event_busy</span>
-                    <h3 style="margin: 8px 0;">No Upcoming Events</h3>
-                    <p style="color: var(--text-secondary);">New experiences will bloom soon. Check back later for exciting volunteer opportunities!</p>
-                    <a href="{% url 'dashboard' %}" class="pill-button pill-button--outline" style="margin-top: 16px;">
-                        <span class="material-icons-round">arrow_back</span> Back to Dashboard
+                    <span class="material-icons-round" style="font-size: 3rem; color: var(--info); margin-bottom: 12px;">{% if search_query %}search_off{% else %}event_busy{% endif %}</span>
+                    <h3 style="margin: 8px 0;">{% if search_query %}No matches found{% else %}No Upcoming Events{% endif %}</h3>
+                    <p style="color: var(--text-secondary);">{% if search_query %}We couldn't find any events matching "{{ search_query }}". Try a different keyword.{% else %}New experiences will bloom soon. Check back later for exciting volunteer opportunities!{% endif %}</p>
+                    <a href="{% url 'event_list' %}" class="pill-button pill-button--outline" style="margin-top: 16px;">
+                        <span class="material-icons-round">{% if search_query %}refresh{% else %}arrow_back{% endif %}</span> {% if search_query %}Show All Events{% else %}Back to Events{% endif %}
                     </a>
                 </div>
             </div>
