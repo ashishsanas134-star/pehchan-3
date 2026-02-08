@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.db.models import Q
+from django.db.models import Q, Sum
 
 from .models import (
     Event, EventVolunteer, LifetimeVolunteer, 
@@ -198,24 +198,40 @@ def logout_view(request):
 @login_required
 def dashboard(request):
     """Main dashboard view"""
-    # Get user's events
-    upcoming_events = Event.objects.filter(
-        status='upcoming'
-    ).filter(
-        Q(volunteers__user=request.user) | Q(volunteers__user__lifetime_volunteer__status='approved')
-    ).distinct().order_by('event_date')
+    # Get search queries from request
+    upcoming_search = request.GET.get('upcoming_search', '')
+    joined_search = request.GET.get('joined_search', '')
+
+    # Get all upcoming events with optional search
+    # Include ongoing events as well since they're still active
+    from django.utils import timezone
+    today = timezone.now().date()
+    upcoming_events = Event.objects.filter(event_date__gte=today).order_by('event_date')
+    if upcoming_search:
+        upcoming_events = upcoming_events.filter(
+            Q(name__icontains=upcoming_search) | 
+            Q(description__icontains=upcoming_search) |
+            Q(location__icontains=upcoming_search)
+        )
     
-    joined_events = EventVolunteer.objects.filter(user=request.user).select_related('event')
+    # Get events joined by the current user with optional search
+    joined_events = EventVolunteer.objects.filter(user=request.user).select_related('event').order_by('-joined_at')
+    if joined_search:
+        joined_events = joined_events.filter(
+            Q(event__name__icontains=joined_search) |
+            Q(event__description__icontains=joined_search) |
+            Q(event__location__icontains=joined_search)
+        )
     
     # Get user's certificates
-    certificates = Certificate.objects.filter(volunteer__user=request.user).select_related('event', 'volunteer')
+    certificates = Certificate.objects.filter(volunteer__user=request.user).select_related('event', 'volunteer').order_by('-issue_date')
     
     # Get user's donor certificates
-    donor_certificates = DonorCertificate.objects.filter(user=request.user).select_related('material_donation', 'money_donation')
+    donor_certificates = DonorCertificate.objects.filter(user=request.user).select_related('material_donation', 'money_donation').order_by('-issue_date')
     
     # Get user's donations
-    material_donations = MaterialDonation.objects.filter(user=request.user)
-    money_donations = MoneyDonation.objects.filter(user=request.user)
+    material_donations = MaterialDonation.objects.filter(user=request.user).order_by('-created_at')
+    money_donations = MoneyDonation.objects.filter(user=request.user).order_by('-created_at')
     
     # Check if user is an approved lifetime volunteer
     is_lifetime_volunteer = hasattr(request.user, 'lifetime_volunteer') and request.user.lifetime_volunteer.status == 'approved'
@@ -228,14 +244,48 @@ def dashboard(request):
         'material_donations': material_donations,
         'money_donations': money_donations,
         'is_lifetime_volunteer': is_lifetime_volunteer,
+        'upcoming_search': upcoming_search,
+        'joined_search': joined_search,
     }
     return render(request, 'dashboard.html', context)
 
 
 @login_required
 def admin_dashboard(request):
-    """Admin dashboard view - UI only"""
-    return render(request, 'admin_dashboard.html')
+    """Admin dashboard view with real statistics"""
+    # Check if user is staff/admin
+    if not request.user.is_staff:
+        messages.error(request, "Access denied. Admin privileges required.")
+        return redirect('dashboard')
+
+    # Get counts for statistics
+    total_users_count = User.objects.count()
+    active_volunteers_count = EventVolunteer.objects.filter(status='approved').count()
+    upcoming_events_count = Event.objects.filter(status='upcoming').count()
+    
+    # Calculate total money donations
+    total_money = MoneyDonation.objects.aggregate(total=Sum('amount'))['total'] or 0
+    # Convert to a readable format (e.g., 2.4L)
+    if total_money >= 100000:
+        money_display = f"₹{total_money/100000:.1f}L"
+    elif total_money >= 1000:
+        money_display = f"₹{total_money/1000:.1f}K"
+    else:
+        money_display = f"₹{total_money}"
+
+    # Get recent data for tables
+    recent_users = User.objects.all().order_by('-date_joined')[:5]
+    recent_events = Event.objects.all().order_by('-event_date')[:5]
+    
+    context = {
+        'total_users_count': total_users_count,
+        'active_volunteers_count': active_volunteers_count,
+        'upcoming_events_count': upcoming_events_count,
+        'money_display': money_display,
+        'recent_users': recent_users,
+        'recent_events': recent_events,
+    }
+    return render(request, 'admin_dashboard.html', context)
 
 
 @login_required
@@ -246,14 +296,17 @@ def user_dashboard_ui(request):
 
 
 class EventListView(LoginRequiredMixin, ListView):
-    """List all upcoming events"""
+    """List all upcoming and ongoing events"""
     model = Event
     template_name = 'event_list.html'
     context_object_name = 'events'
     paginate_by = 3
     
     def get_queryset(self):
-        queryset = Event.objects.filter(status='upcoming').order_by('event_date')
+        from django.utils import timezone
+        today = timezone.now().date()
+        # Filter to include both upcoming and ongoing events
+        queryset = Event.objects.filter(event_date__gte=today).order_by('event_date')
         search_query = self.request.GET.get('search', '')
         if search_query:
             queryset = queryset.filter(
@@ -278,10 +331,14 @@ class EventDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Check if user already joined this event
-        context['already_joined'] = EventVolunteer.objects.filter(
+        already_joined = EventVolunteer.objects.filter(
             user=self.request.user,
             event=self.object
-        ).exists()
+        ).first()
+        
+        context['already_joined'] = already_joined is not None
+        if not context['already_joined']:
+            context['volunteer_form'] = EventVolunteerForm()
         return context
 
 
@@ -293,9 +350,21 @@ def join_event(request, pk):
     # Check if user already joined
     if EventVolunteer.objects.filter(user=request.user, event=event).exists():
         messages.warning(request, 'You have already joined this event!')
-    else:
-        EventVolunteer.objects.create(user=request.user, event=event)
-        messages.success(request, f'Successfully joined {event.name} as a volunteer!')
+        return redirect('event_detail', pk=pk)
+
+    if request.method == 'POST':
+        form = EventVolunteerForm(request.POST)
+        if form.is_valid():
+            volunteer = form.save(commit=False)
+            volunteer.user = request.user
+            volunteer.event = event
+            volunteer.save()
+            messages.success(request, f'Successfully joined {event.name} as a volunteer!')
+            return redirect('event_detail', pk=pk)
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{error}")
     
     return redirect('event_detail', pk=pk)
 

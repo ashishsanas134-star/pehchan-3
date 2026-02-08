@@ -32,6 +32,10 @@ class SignUpForm(UserCreationForm):
         super(SignUpForm, self).__init__(*args, **kwargs)
         self.fields['password1'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Password'})
         self.fields['password2'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Confirm Password'})
+        
+        # Remove password validators to allow any password
+        self.fields['password1'].help_text = None
+        self.fields['password2'].help_text = None
 
 
 class LoginForm(AuthenticationForm):
@@ -46,15 +50,47 @@ class LoginForm(AuthenticationForm):
 
 
 class EventVolunteerForm(forms.ModelForm):
+    contact_number = forms.CharField(
+        max_length=10,
+        min_length=10,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Contact Number (10 digits)',
+            'pattern': '[0-9]{10}',
+            'title': 'Please enter exactly 10 digits'
+        })
+    )
+    
     class Meta:
         model = EventVolunteer
-        fields = []
+        fields = ['contact_number']
+    
+    def clean_contact_number(self):
+        contact_number = self.cleaned_data.get('contact_number')
+        if contact_number and not contact_number.isdigit():
+            raise forms.ValidationError("Contact number must contain only digits.")
+        if contact_number and len(contact_number) != 10:
+            raise forms.ValidationError("Contact number must be exactly 10 digits.")
+        return contact_number
         
 
 class LifetimeVolunteerForm(forms.ModelForm):
+    contact_number = forms.CharField(
+        max_length=10,
+        min_length=10,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Contact Number (10 digits)',
+            'pattern': '[0-9]{10}',
+            'title': 'Please enter exactly 10 digits'
+        })
+    )
+    
     class Meta:
         model = LifetimeVolunteer
-        fields = ['motivation']
+        fields = ['contact_number', 'motivation']
         widgets = {
             'motivation': forms.Textarea(attrs={
                 'class': 'form-control',
@@ -62,12 +98,32 @@ class LifetimeVolunteerForm(forms.ModelForm):
                 'placeholder': 'Tell us why you want to become a lifetime volunteer...'
             }),
         }
+    
+    def clean_contact_number(self):
+        contact_number = self.cleaned_data.get('contact_number')
+        if contact_number and not contact_number.isdigit():
+            raise forms.ValidationError("Contact number must contain only digits.")
+        if contact_number and len(contact_number) != 10:
+            raise forms.ValidationError("Contact number must be exactly 10 digits.")
+        return contact_number
 
 
 class MaterialDonationForm(forms.ModelForm):
+    contact_number = forms.CharField(
+        max_length=10,
+        min_length=10,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Contact Number (10 digits)',
+            'pattern': '[0-9]{10}',
+            'title': 'Please enter exactly 10 digits'
+        })
+    )
+    
     class Meta:
         model = MaterialDonation
-        fields = ['item_name', 'quantity', 'location', 'message']
+        fields = ['item_name', 'quantity', 'location', 'contact_number', 'message']
         widgets = {
             'item_name': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -88,6 +144,14 @@ class MaterialDonationForm(forms.ModelForm):
                 'placeholder': 'Additional message (optional)'
             }),
         }
+    
+    def clean_contact_number(self):
+        contact_number = self.cleaned_data.get('contact_number')
+        if contact_number and not contact_number.isdigit():
+            raise forms.ValidationError("Contact number must contain only digits.")
+        if contact_number and len(contact_number) != 10:
+            raise forms.ValidationError("Contact number must be exactly 10 digits.")
+        return contact_number
 
 
 class MoneyDonationForm(forms.ModelForm):
@@ -98,10 +162,22 @@ class MoneyDonationForm(forms.ModelForm):
             'accept': 'image/*,.pdf'
         })
     )
+    
+    contact_number = forms.CharField(
+        max_length=10,
+        min_length=10,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Contact Number (10 digits)',
+            'pattern': '[0-9]{10}',
+            'title': 'Please enter exactly 10 digits'
+        })
+    )
 
     class Meta:
         model = MoneyDonation
-        fields = ['amount', 'receipt_upload']
+        fields = ['amount', 'contact_number', 'receipt_upload']
         widgets = {
             'amount': forms.NumberInput(attrs={
                 'class': 'form-control',
@@ -110,6 +186,14 @@ class MoneyDonationForm(forms.ModelForm):
                 'step': '0.01'
             }),
         }
+    
+    def clean_contact_number(self):
+        contact_number = self.cleaned_data.get('contact_number')
+        if contact_number and not contact_number.isdigit():
+            raise forms.ValidationError("Contact number must contain only digits.")
+        if contact_number and len(contact_number) != 10:
+            raise forms.ValidationError("Contact number must be exactly 10 digits.")
+        return contact_number
 
 
 class CertificateVerificationForm(forms.Form):

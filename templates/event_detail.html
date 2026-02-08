@@ -68,19 +68,34 @@
             </div>
         </div>
         
-        <div class="mdl-card__actions" style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <div class="mdl-card__actions" style="display: flex; gap: 12px; flex-wrap: wrap; padding: 24px;">
             {% if already_joined %}
                 <button class="pill-button" style="background: var(--neutral-200); color: var(--neutral-600); cursor: not-allowed;" disabled>
                     <span class="material-icons-round">check_circle</span> Already Joined
                 </button>
             {% else %}
-                <a href="{% url 'join_event' event.pk %}" class="pill-button pill-button--primary">
-                    <span class="material-icons-round">volunteer_activism</span> Join as Volunteer
-                </a>
+                <div style="width: 100%; max-width: 400px;">
+                    <form method="POST" action="{% url 'join_event' event.pk %}">
+                        {% csrf_token %}
+                        <div class="form-field">
+                            <label class="form-label" for="{{ volunteer_form.contact_number.id_for_label }}">
+                                <span class="material-icons-round" style="vertical-align: middle; margin-right: 6px;">phone</span>
+                                Contact Number <span style="color: var(--error);">*</span>
+                            </label>
+                            <p style="font-size: 0.85rem; color: var(--text-tertiary); margin: 4px 0 10px;">Enter your 10-digit number to join this event</p>
+                            {{ volunteer_form.contact_number }}
+                        </div>
+                        <button type="submit" class="pill-button pill-button--primary" style="width: 100%; margin-top: 12px;">
+                            <span class="material-icons-round">volunteer_activism</span> Join as Volunteer
+                        </button>
+                    </form>
+                </div>
             {% endif %}
-            <a href="{% url 'event_list' %}" class="pill-button pill-button--outline">
-                <span class="material-icons-round">arrow_back</span> Back to Events
-            </a>
+            <div style="display: flex; align-items: flex-end; gap: 12px;">
+                <a href="{% url 'event_list' %}" class="pill-button pill-button--outline">
+                    <span class="material-icons-round">arrow_back</span> Back to Events
+                </a>
+            </div>
         </div>
     </div>
 </div>

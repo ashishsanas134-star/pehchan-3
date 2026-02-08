@@ -103,6 +103,18 @@
                     {% endif %}
                 </div>
                 
+                <div class="form-field">
+                    <label class="form-label" for="{{ form.contact_number.id_for_label }}">
+                        <span class="material-icons-round" style="vertical-align: middle; margin-right: 6px;">phone</span>
+                        Contact Number <span style="color: var(--error);">*</span>
+                    </label>
+                    <p style="font-size: 0.9rem; color: var(--text-tertiary); margin: 4px 0 12px;">Enter your 10-digit mobile number for pickup coordination</p>
+                    {{ form.contact_number }}
+                    {% if form.contact_number.errors %}
+                        <span style="color: var(--error); font-size: 0.9rem; margin-top: 4px; display: block;">{{ form.contact_number.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                
                 <div class="info-panel" style="background: linear-gradient(135deg, var(--primary-50), var(--surface-1)); border-left: 4px solid var(--primary-500); margin: 24px 0;">
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
                         <span class="material-icons-round" style="color: var(--primary-600);">local_shipping</span>
@@ -145,7 +157,7 @@
 </div>
 
 <div style="text-align: center; margin-top: 32px;">
-    <a href="{% url 'dashboard' %}" class="pill-button pill-button--ghost">
+    <a href="{% url 'dashboard' %}" class="pill-button pill-button--outline">
         <span class="material-icons-round">home</span> Back to Dashboard
     </a>
 </div>

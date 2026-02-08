@@ -4,9 +4,14 @@ services:
     runtime: python
     buildCommand: |
       pip install -r requirements.txt
+      python manage.py migrate
       python manage.py collectstatic --noinput
     startCommand: gunicorn pehchan_webapp.wsgi:application
     envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pehchan-db
+          property: connectionString
       - key: DJANGO_SETTINGS_MODULE
         value: pehchan_webapp.settings
       - key: SECRET_KEY
@@ -15,3 +20,7 @@ services:
         value: 3.11.0
       - key: WEB_CONCURRENCY
         value: 4
+
+databases:
+  - name: pehchan-db
+    plan: free

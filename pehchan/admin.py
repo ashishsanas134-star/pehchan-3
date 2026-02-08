@@ -11,7 +11,8 @@ from .models import (
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('name', 'event_date', 'status')
+    list_display = ('name', 'event_date', 'get_status_display', 'status')
+    readonly_fields = ('get_status_display',)
     
     # This line tells Django to load your fix on the "Add Event" page
     class Media:
@@ -22,9 +23,9 @@ class EventAdmin(admin.ModelAdmin):
 
 @admin.register(EventVolunteer)
 class EventVolunteerAdmin(admin.ModelAdmin):
-    list_display = ['user', 'event', 'joined_at', 'status', 'issue_certificate_button']
+    list_display = ['user', 'event', 'contact_number', 'joined_at', 'status', 'issue_certificate_button']
     list_filter = ['status', 'joined_at', 'event']
-    search_fields = ['user__username', 'user__email', 'event__name']
+    search_fields = ['user__username', 'user__email', 'event__name', 'contact_number']
     date_hierarchy = 'joined_at'
     ordering = ['-joined_at']
     actions = ['issue_certificate']
@@ -150,9 +151,9 @@ class EventVolunteerAdmin(admin.ModelAdmin):
 
 @admin.register(LifetimeVolunteer)
 class LifetimeVolunteerAdmin(admin.ModelAdmin):
-    list_display = ['user', 'joined_at', 'status', 'approved_at', 'rejected_at']
+    list_display = ['user', 'contact_number', 'joined_at', 'status', 'approved_at', 'rejected_at']
     list_filter = ['status', 'joined_at']
-    search_fields = ['user__username', 'user__email', 'motivation']
+    search_fields = ['user__username', 'user__email', 'contact_number', 'motivation']
     date_hierarchy = 'joined_at'
     ordering = ['-joined_at']
     readonly_fields = ['joined_at', 'approved_at', 'rejected_at', 'reviewed_by']
@@ -212,9 +213,9 @@ class CertificateAdmin(admin.ModelAdmin):
 
 @admin.register(MaterialDonation)
 class MaterialDonationAdmin(admin.ModelAdmin):
-    list_display = ['user', 'item_name', 'quantity', 'location', 'status', 'created_at', 'issue_certificate_button']
+    list_display = ['user', 'item_name', 'quantity', 'location', 'contact_number', 'status', 'created_at', 'issue_certificate_button']
     list_filter = ['status', 'location', 'created_at']
-    search_fields = ['user__username', 'item_name', 'location']
+    search_fields = ['user__username', 'item_name', 'location', 'contact_number']
     date_hierarchy = 'created_at'
     ordering = ['-created_at']
     readonly_fields = ['created_at']
@@ -345,13 +346,21 @@ class MaterialDonationAdmin(admin.ModelAdmin):
 
 @admin.register(MoneyDonation)
 class MoneyDonationAdmin(admin.ModelAdmin):
-    list_display = ['user', 'amount', 'payment_method', 'created_at', 'issue_certificate_button']
-    list_filter = ['payment_method', 'created_at']
-    search_fields = ['user__username', 'user__email', 'upi_id']
+    list_display = ['user', 'amount', 'contact_number', 'status', 'payment_method', 'created_at', 'issue_certificate_button']
+    list_filter = ['status', 'payment_method', 'created_at']
+    search_fields = ['user__username', 'user__email', 'upi_id', 'contact_number']
     date_hierarchy = 'created_at'
     ordering = ['-created_at']
     readonly_fields = ['created_at']
-    actions = ['issue_donor_certificate']
+    actions = ['issue_donor_certificate', 'verify_donations', 'decline_donations']
+    
+    def verify_donations(self, request, queryset):
+        queryset.update(status='verified')
+    verify_donations.short_description = "Mark selected donations as Verified"
+
+    def decline_donations(self, request, queryset):
+        queryset.update(status='declined')
+    decline_donations.short_description = "Mark selected donations as Declined"
     
     def get_urls(self):
         urls = super().get_urls()
@@ -415,11 +424,14 @@ class MoneyDonationAdmin(admin.ModelAdmin):
     def issue_certificate_button(self, obj):
         """Display an 'Issue Certificate' button for each donation"""
         from django.urls import reverse
-        url = reverse('admin:pehchan_moneydonation_issue_certificate', args=[obj.pk])
-        return format_html(
-            '<a class="button" href="{}" target="_blank">Issue Certificate</a>',
-            url
-        )
+        # Only show button for verified donations
+        if obj.status == 'verified':
+            url = reverse('admin:pehchan_moneydonation_issue_certificate', args=[obj.pk])
+            return format_html(
+                '<a class="button" href="{}" target="_blank">Issue Certificate</a>',
+                url
+            )
+        return format_html('<span style="color: #999;">Requires Verification</span>')
     issue_certificate_button.short_description = 'Certificate Actions'
     
     def issue_donor_certificate(self, request, queryset):
@@ -429,19 +441,27 @@ class MoneyDonationAdmin(admin.ModelAdmin):
         from django.http import HttpResponseRedirect
         from django.urls import reverse
         
-        # If only one donation is selected, redirect to custom form for certificate number input
-        if len(queryset) == 1:
-            donation = queryset.first()
-            # Redirect to a custom view for entering certificate number
+        # Filter for verified donations only
+        verified_queryset = queryset.filter(status='verified')
+        unverified_count = queryset.count() - verified_queryset.count()
+        
+        if unverified_count > 0:
+            self.message_user(request, f'Skipped {unverified_count} donation(s) that are not verified.', level='warning')
+
+        if not verified_queryset.exists():
+            return
+            
+        # If only one verified donation is selected, redirect to custom form
+        if verified_queryset.count() == 1:
+            donation = verified_queryset.first()
             url = reverse('admin:pehchan_moneydonation_issue_certificate', args=[donation.pk])
             return HttpResponseRedirect(url)
         
-        # For multiple selection, issue certificates with auto-generated numbers
+        # For multiple selection
         created_count = 0
         skipped_count = 0
         
-        for donation in queryset.all():  # No status filter for money donations
-            # Check if donor certificate already exists
+        for donation in verified_queryset:
             if not DonorCertificate.objects.filter(money_donation=donation).exists():
                 DonorCertificate.objects.create(
                     user=donation.user,

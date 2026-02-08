@@ -478,45 +478,39 @@
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="/admin/auth/user/" class="sidebar-menu-link">
                     <span class="material-icons-round">people</span>
                     <span>Users</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="/admin/pehchan/eventvolunteer/" class="sidebar-menu-link">
                     <span class="material-icons-round">volunteer_activism</span>
                     <span>Volunteers</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="/admin/pehchan/event/" class="sidebar-menu-link">
                     <span class="material-icons-round">event</span>
                     <span>Events</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="/admin/pehchan/moneydonation/" class="sidebar-menu-link">
                     <span class="material-icons-round">card_giftcard</span>
                     <span>Donations</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="/admin/pehchan/certificate/" class="sidebar-menu-link">
                     <span class="material-icons-round">workspace_premium</span>
                     <span>Certificates</span>
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
-                    <span class="material-icons-round">analytics</span>
-                    <span>Reports</span>
-                </a>
-            </li>
-            <li class="sidebar-menu-item">
-                <a href="#" class="sidebar-menu-link">
+                <a href="/admin/" class="sidebar-menu-link">
                     <span class="material-icons-round">settings</span>
-                    <span>Settings</span>
+                    <span>Django Admin</span>
                 </a>
             </li>
             <li class="sidebar-menu-item" style="margin-top: 2rem;">
@@ -547,12 +541,8 @@
             <div class="stat-card primary">
                 <div class="stat-header">
                     <div>
-                        <div class="stat-value">1,247</div>
+                        <div class="stat-value">{{ total_users_count }}</div>
                         <div class="stat-label">Total Users</div>
-                        <div class="stat-change positive">
-                            <span class="material-icons-round" style="font-size: 1rem;">trending_up</span>
-                            +12.5%
-                        </div>
                     </div>
                     <div class="stat-icon">
                         <span class="material-icons-round">people</span>
@@ -563,12 +553,8 @@
             <div class="stat-card success">
                 <div class="stat-header">
                     <div>
-                        <div class="stat-value">856</div>
+                        <div class="stat-value">{{ active_volunteers_count }}</div>
                         <div class="stat-label">Active Volunteers</div>
-                        <div class="stat-change positive">
-                            <span class="material-icons-round" style="font-size: 1rem;">trending_up</span>
-                            +8.2%
-                        </div>
                     </div>
                     <div class="stat-icon">
                         <span class="material-icons-round">volunteer_activism</span>
@@ -579,12 +565,8 @@
             <div class="stat-card warning">
                 <div class="stat-header">
                     <div>
-                        <div class="stat-value">42</div>
+                        <div class="stat-value">{{ upcoming_events_count }}</div>
                         <div class="stat-label">Upcoming Events</div>
-                        <div class="stat-change positive">
-                            <span class="material-icons-round" style="font-size: 1rem;">trending_up</span>
-                            +5.3%
-                        </div>
                     </div>
                     <div class="stat-icon">
                         <span class="material-icons-round">event</span>
@@ -595,12 +577,8 @@
             <div class="stat-card danger">
                 <div class="stat-header">
                     <div>
-                        <div class="stat-value">₹2.4L</div>
+                        <div class="stat-value">{{ money_display }}</div>
                         <div class="stat-label">Total Donations</div>
-                        <div class="stat-change positive">
-                            <span class="material-icons-round" style="font-size: 1rem;">trending_up</span>
-                            +18.7%
-                        </div>
                     </div>
                     <div class="stat-icon">
                         <span class="material-icons-round">payments</span>
@@ -636,10 +614,10 @@
         <div class="table-card">
             <div class="table-header">
                 <h3 class="table-title">Recent Users</h3>
-                <button class="table-action-btn">
+                <a href="/admin/auth/user/add/" class="table-action-btn">
                     <span class="material-icons-round" style="font-size: 1.2rem;">add</span>
                     Add User
-                </button>
+                </a>
             </div>
             <table class="data-table">
                 <thead>
@@ -653,56 +631,22 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for u in recent_users %}
                     <tr>
-                        <td><strong>Aniksha Upadhyay</strong></td>
-                        <td>aniksha@pehchanyui.in</td>
-                        <td>Founder</td>
+                        <td><strong>{{ u.get_full_name|default:u.username }}</strong></td>
+                        <td>{{ u.email }}</td>
+                        <td>{% if u.is_staff %}Admin{% else %}Volunteer{% endif %}</td>
                         <td><span class="status-badge active">Active</span></td>
-                        <td>Apr 2020</td>
+                        <td>{{ u.date_joined|date:"M Y" }}</td>
                         <td>
-                            <span class="material-icons-round" style="cursor: pointer; color: #667eea;">edit</span>
+                            <a href="/admin/auth/user/{{ u.id }}/change/"><span class="material-icons-round" style="cursor: pointer; color: #667eea;">edit</span></a>
                         </td>
                     </tr>
+                    {% empty %}
                     <tr>
-                        <td><strong>Aditya Jha</strong></td>
-                        <td>aditya@pehchanyui.in</td>
-                        <td>Programme Manager</td>
-                        <td><span class="status-badge active">Active</span></td>
-                        <td>May 2020</td>
-                        <td>
-                            <span class="material-icons-round" style="cursor: pointer; color: #667eea;">edit</span>
-                        </td>
+                        <td colspan="6" style="text-align: center;">No users found.</td>
                     </tr>
-                    <tr>
-                        <td><strong>Pallavi Thakur</strong></td>
-                        <td>pallavi@pehchanyui.in</td>
-                        <td>Admin Manager</td>
-                        <td><span class="status-badge active">Active</span></td>
-                        <td>May 2020</td>
-                        <td>
-                            <span class="material-icons-round" style="cursor: pointer; color: #667eea;">edit</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Shilpa Dubey</strong></td>
-                        <td>shilpa@pehchanyui.in</td>
-                        <td>Treasurer</td>
-                        <td><span class="status-badge active">Active</span></td>
-                        <td>Jun 2020</td>
-                        <td>
-                            <span class="material-icons-round" style="cursor: pointer; color: #667eea;">edit</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>New Volunteer</strong></td>
-                        <td>volunteer@example.com</td>
-                        <td>Volunteer</td>
-                        <td><span class="status-badge pending">Pending</span></td>
-                        <td>Dec 2024</td>
-                        <td>
-                            <span class="material-icons-round" style="cursor: pointer; color: #667eea;">edit</span>
-                        </td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -711,10 +655,10 @@
         <div class="table-card">
             <div class="table-header">
                 <h3 class="table-title">Recent Events</h3>
-                <button class="table-action-btn">
+                <a href="/admin/pehchan/event/add/" class="table-action-btn">
                     <span class="material-icons-round" style="font-size: 1.2rem;">add</span>
                     Create Event
-                </button>
+                </a>
             </div>
             <table class="data-table">
                 <thead>
@@ -729,51 +673,32 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for event in recent_events %}
                     <tr>
                         <td>
-                            <img src="{% static 'images/events/environments/2.png' %}" alt="Beach Cleanup"
-                                style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
+                            {% if event.image %}
+                                <img src="{{ event.image.url }}" alt="{{ event.name }}"
+                                    style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
+                            {% else %}
+                                <div style="width: 40px; height: 40px; border-radius: 8px; background: #e2e8f0; display: flex; align-items: center; justify-content: center;">
+                                    <span class="material-icons-round" style="color: #94a3b8; font-size: 1.2rem;">image</span>
+                                </div>
+                            {% endif %}
                         </td>
-                        <td><strong>Beach Cleanup Drive</strong></td>
-                        <td>Dec 15, 2024</td>
-                        <td>Juhu Beach, Mumbai</td>
-                        <td>45</td>
-                        <td><span class="status-badge active">Active</span></td>
+                        <td><strong>{{ event.name }}</strong></td>
+                        <td>{{ event.event_date|date:"M d, Y" }}</td>
+                        <td>{{ event.location }}</td>
+                        <td>{{ event.volunteers.count }}</td>
+                        <td><span class="status-badge {% if event.status == 'upcoming' %}pending{% else %}active{% endif %}">{{ event.get_status_display }}</span></td>
                         <td>
-                            <span class="material-icons-round"
-                                style="cursor: pointer; color: #667eea;">visibility</span>
+                            <a href="{% url 'event_detail' event.pk %}"><span class="material-icons-round" style="cursor: pointer; color: #667eea;">visibility</span></a>
                         </td>
                     </tr>
+                    {% empty %}
                     <tr>
-                        <td>
-                            <img src="{% static 'images/events/education/17.png' %}" alt="Education"
-                                style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
-                        </td>
-                        <td><strong>Education for All</strong></td>
-                        <td>Dec 20, 2024</td>
-                        <td>Navi Mumbai</td>
-                        <td>32</td>
-                        <td><span class="status-badge active">Active</span></td>
-                        <td>
-                            <span class="material-icons-round"
-                                style="cursor: pointer; color: #667eea;">visibility</span>
-                        </td>
+                        <td colspan="7" style="text-align: center;">No events found.</td>
                     </tr>
-                    <tr>
-                        <td>
-                            <img src="{% static 'images/events/environments/12.png' %}" alt="Tree Plantation"
-                                style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
-                        </td>
-                        <td><strong>Tree Plantation</strong></td>
-                        <td>Dec 25, 2024</td>
-                        <td>Aarey Colony</td>
-                        <td>28</td>
-                        <td><span class="status-badge pending">Pending</span></td>
-                        <td>
-                            <span class="material-icons-round"
-                                style="cursor: pointer; color: #667eea;">visibility</span>
-                        </td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>

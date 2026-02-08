@@ -3099,11 +3099,12 @@ html {
 
 .view-link:hover {
     color: var(--primary-800);
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 .cert-no {
     font-family: monospace;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--primary-700);
+    font-size: 1.4rem;
 }

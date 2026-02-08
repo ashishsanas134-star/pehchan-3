@@ -142,8 +142,11 @@
     {% endif %}
 </div>
 
-<div style="text-align: center; margin-top: 40px;">
-    <a href="{% url 'dashboard' %}" class="pill-button pill-button--ghost">
+<div style="display: flex; justify-content: center; gap: 12px; margin-top: 40px; flex-wrap: wrap;">
+    <a href="{% url 'certificate_verify' %}" class="pill-button pill-button--outline">
+        <span class="material-icons-round">verified_user</span> Verify a Certificate
+    </a>
+    <a href="{% url 'dashboard' %}" class="pill-button pill-button--outline">
         <span class="material-icons-round">home</span> Back to Dashboard
     </a>
 </div>

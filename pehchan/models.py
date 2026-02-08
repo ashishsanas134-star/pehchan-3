@@ -1,8 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-from django.core.validators import EmailValidator
+from django.core.validators import EmailValidator, RegexValidator
 from decimal import Decimal
+from datetime import date
+
 
 class Event(models.Model):
     """Model for managing events"""
@@ -26,6 +28,27 @@ class Event(models.Model):
     
     def __str__(self):
         return f"{self.name} - {self.event_date}"
+    
+    def save(self, *args, **kwargs):
+        # Automatically update status based on event date
+        today = timezone.now().date()
+        if self.event_date < today:
+            self.status = 'completed'
+        elif self.event_date == today:
+            self.status = 'ongoing'
+        else:
+            self.status = 'upcoming'
+        super().save(*args, **kwargs)
+    
+    def get_status_display(self):
+        # Return appropriate status considering the date
+        today = timezone.now().date()
+        if self.event_date < today:
+            return 'Completed'
+        elif self.event_date == today:
+            return 'Ongoing'
+        else:
+            return 'Upcoming'
 
 
 class EventVolunteer(models.Model):
@@ -35,8 +58,14 @@ class EventVolunteer(models.Model):
         ('approved', 'Approved'),
     ]
     
+    phone_regex = RegexValidator(
+        regex=r'^\d{10}$',
+        message="Contact number must be exactly 10 digits."
+    )
+    
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='event_volunteers')
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='volunteers')
+    contact_number = models.CharField(max_length=10, validators=[phone_regex], default='0000000000')
     joined_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     
@@ -56,7 +85,13 @@ class LifetimeVolunteer(models.Model):
         ('rejected', 'Rejected'),
     ]
     
+    phone_regex = RegexValidator(
+        regex=r'^\d{10}$',
+        message="Contact number must be exactly 10 digits."
+    )
+    
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='lifetime_volunteer')
+    contact_number = models.CharField(max_length=10, validators=[phone_regex], default='0000000000')
     joined_at = models.DateTimeField(auto_now_add=True)
     motivation = models.TextField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
@@ -104,10 +139,16 @@ class MaterialDonation(models.Model):
         ('processed', 'Processed'),
     ]
     
+    phone_regex = RegexValidator(
+        regex=r'^\d{10}$',
+        message="Contact number must be exactly 10 digits."
+    )
+    
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='material_donations')
     item_name = models.CharField(max_length=200)
     quantity = models.IntegerField()
     location = models.CharField(max_length=200)
+    contact_number = models.CharField(max_length=10, validators=[phone_regex], default='0000000000')
     message = models.TextField(blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -131,11 +172,24 @@ class MoneyDonation(models.Model):
         ('upi', 'UPI'),
     ]
     
+    STATUS_CHOICES = [
+        ('unverified', 'Unverified'),
+        ('verified', 'Verified'),
+        ('declined', 'Declined'),
+    ]
+    
+    phone_regex = RegexValidator(
+        regex=r'^\d{10}$',
+        message="Contact number must be exactly 10 digits."
+    )
+    
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='money_donations')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES, default='upi')
     upi_id = models.CharField(max_length=100, blank=True)
+    contact_number = models.CharField(max_length=10, validators=[phone_regex], default='0000000000')
     receipt_upload = models.FileField(upload_to='receipts/', blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='unverified')
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
@@ -230,7 +284,7 @@ class ContactMessage(models.Model):
     """Model for contact form messages"""
     STATUS_CHOICES = [('new', 'New'), ('read', 'Read'), ('replied', 'Replied'), ('archived', 'Archived')]
     PRIORITY_CHOICES = [('low', 'Low'), ('medium', 'Medium'), ('high', 'High'), ('urgent', 'Urgent')]
-    
+
     name = models.CharField(max_length=200)
     email = models.EmailField(validators=[EmailValidator()])
     message = models.TextField()
@@ -266,7 +320,7 @@ class PasswordResetOTP(models.Model):
     otp = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True)
     expires_at = models.DateTimeField()
-    
+
     def is_valid(self):
         return timezone.now() < self.expires_at
 
@@ -334,6 +388,7 @@ class PehchanWallet(models.Model):
             description=description,
             balance_after_transaction=self.balance
         )
+
 
 class WalletTransaction(models.Model):
     """Model to track all wallet transactions"""

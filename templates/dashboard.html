@@ -167,9 +167,17 @@
                 <h2 class="mdl-card__title-text"><span class="material-icons-round">event</span> Upcoming Events</h2>
             </div>
             <div class="mdl-card__supporting-text">
+                <form method="GET" action="." style="margin-bottom: 16px; display: flex; gap: 8px;">
+                    <div class="form-field" style="margin: 0; flex-grow: 1;">
+                        <input type="text" name="upcoming_search" placeholder="Search events..." value="{{ upcoming_search }}" class="form-control" style="height: 40px; padding: 0 12px;">
+                    </div>
+                    <button type="submit" class="pill-button pill-button--primary" style="padding: 0 16px; height: 40px;">
+                        <span class="material-icons-round">search</span>
+                    </button>
+                </form>
                 {% if upcoming_events %}
                     <ul class="list-elevated">
-                        {% for event in upcoming_events|slice:":5" %}
+                        {% for event in upcoming_events|slice:":3" %}
                             <li>
                                 <span class="material-icons-round">calendar_today</span>
                                 <div>
@@ -194,18 +202,29 @@
                 <h2 class="mdl-card__title-text"><span class="material-icons-round">check_circle</span> My Joined Events</h2>
             </div>
             <div class="mdl-card__supporting-text">
+                <form method="GET" action="." style="margin-bottom: 16px; display: flex; gap: 8px;">
+                    <div class="form-field" style="margin: 0; flex-grow: 1;">
+                        <input type="text" name="joined_search" placeholder="Search my events..." value="{{ joined_search }}" class="form-control" style="height: 40px; padding: 0 12px;">
+                    </div>
+                    <button type="submit" class="pill-button pill-button--primary" style="padding: 0 16px; height: 40px;">
+                        <span class="material-icons-round">search</span>
+                    </button>
+                </form>
                 {% if joined_events %}
                     <ul class="list-elevated">
-                        {% for ev in joined_events|slice:":5" %}
+                        {% for ev in joined_events|slice:":3" %}
                             <li>
                                 <span class="material-icons-round">event_available</span>
                                 <div>
-                                    <span>{{ ev.event.name }}</span>
+                                    <a href="{% url 'event_detail' ev.event.pk %}">{{ ev.event.name }}</a>
                                     <span class="metric-footnote">Status: {{ ev.get_status_display }}</span>
                                 </div>
                             </li>
                         {% endfor %}
                     </ul>
+                    <div style="margin-top: 18px;">
+                        <a href="{% url 'event_list' %}" class="pill-button pill-button--primary">Browse Events</a>
+                    </div>
                 {% else %}
                     <div class="info-panel">
                         <span>You haven't joined any events yet. Explore new experiences to grow the green movement.</span>
@@ -232,8 +251,8 @@
                             <li>
                                 <span class="material-icons-round">verified</span>
                                 <div>
-                                    <span>Certificate #{{ cert.pk }} · {{ cert.event.name }}</span>
-                                    <span class="metric-footnote">Issued {{ cert.issue_date }}</span>
+                                    <a href="{% url 'certificate_detail' cert.pk %}">Certificate #{{ cert.certificate_number|default:cert.pk }}</a>
+                                    <span class="metric-footnote">{{ cert.event.name }} · Issued {{ cert.issue_date }}</span>
                                 </div>
                             </li>
                         {% endfor %}
@@ -259,7 +278,7 @@
                             <li>
                                 <span class="material-icons-round">card_giftcard</span>
                                 <div>
-                                    <span>{{ cert.certificate_number }}</span>
+                                    <a href="{% url 'donor_certificate_detail' cert.pk %}">{{ cert.certificate_number }}</a>
                                     <span class="metric-footnote">{{ cert.get_donation_type_display }} · {{ cert.issue_date }}</span>
                                 </div>
                             </li>
@@ -339,7 +358,7 @@
                 <div class="info-panel info-panel--warning">
                     <span class="material-icons-round">hourglass_empty</span>
                     <div>
-                        <h3>Your Application is Pending Review</h3>
+                        <h3>Application Under Review</h3>
                         <p>Thank you for applying to become a lifetime volunteer. Your application is currently under review and will be processed soon.</p>
                     </div>
                 </div>
@@ -354,7 +373,7 @@
             {% endif %}
         {% else %}
             <div class="lifetime-highlight">
-                <span class="material-icons-round">local_florist</span>
+                <span class="material-icons-round:local_florist</span>
                 <div>
                     <h3>Become a Lifetime Volunteer</h3>
                     <p>Join our core team and make a lasting commitment to creating positive change in our community.</p>
@@ -379,8 +398,8 @@
         <div class="lifetime-highlight">
             <span class="material-icons-round">local_florist</span>
             <div>
-                <h3>Thank you for nurturing hope!</h3>
-                <p>Your lifetime commitment keeps Pehchan rooted in purpose and flourishing with possibilities.</p>
+                <h3>Application has been verified</h3>
+                <p>Your lifetime commitment keeps Pehchan rooted in purpose and flourishing with possibilities. Thank you for nurturing hope!</p>
             </div>
         </div>
     </div>
