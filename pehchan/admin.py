@@ -12,7 +12,6 @@ from .models import (
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
     list_display = ('name', 'event_date', 'get_status_display', 'status')
-    readonly_fields = ('get_status_display',)
     
     # This line tells Django to load your fix on the "Add Event" page
     class Media:
