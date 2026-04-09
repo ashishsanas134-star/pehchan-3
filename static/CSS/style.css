@@ -43,7 +43,7 @@ html {
 }
 
 .logo img {
-    height: 50px;
+    height: 75px;
     cursor: pointer;
 }
 
@@ -122,6 +122,7 @@ html {
     width: 100%;
     background: transparent;
     box-shadow: none;
+    z-index: 1001; /* Ensure navbar is above hero content */
 }
 
 .home .nav-links a {
@@ -183,14 +184,14 @@ html {
     right: 50%;
     margin-left: -50vw;
     margin-right: -50vw;
-    height: 85vh;
+    height: 100vh; /* Changed from 85vh to occupy full screen */
     min-height: 600px;
-    max-height: 900px;
     overflow: hidden;
     display: flex;
+    flex-direction: column; /* Ensure vertical stack */
     align-items: center;
     justify-content: center;
-    padding: 0;
+    padding-top: 160px;
 }
 
 .banner-img {
@@ -209,71 +210,58 @@ html {
     text-align: center;
     color: #fff;
     z-index: 10;
-    padding: 3rem 2rem;
-    max-width: 800px;
+    padding: 0 2rem; /* Removed vertical padding to use margins instead */
+    max-width: 900px;
     margin: 0 auto;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 20px;
-    backdrop-filter: blur(5px);
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .hero-logo {
-    width: 150px;
-    height: 150px;
-    margin: 0 auto 2rem;
+    width: 210px; /* Increased 1.5x from 140px */
+    height: 210px;
+    object-fit: contain;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
     display: block;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-}
-
-/* Enlarge hero logo on Home and remove overlay for pixel-match */
-.home .hero-logo {
-    width: 200px;
-    height: 200px;
-}
-
-.home .hero-content {
-    background: transparent;
-    backdrop-filter: none;
-    padding-top: 2rem;
-}
-
-.home .hero-title-green {
-    margin-top: 0.5rem;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
 }
 
 .hero-title-green {
-    font-size: 5.5rem;
+    font-size: 3.5rem; /* Reduced from 4.5rem for better spacing */
     font-weight: 700;
-    margin-bottom: 0rem;
+    margin-bottom: 0.8rem;
     margin-top: 0;
     color: #4CAF50;
     text-align: center;
     letter-spacing: 2px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+    font-family: 'Georgia', serif;
 }
 
 .hero-title-blue {
-    font-size: 2.2rem;
-    font-weight: 500;
-    margin-bottom: 3rem;
+    font-size: 1.8rem; /* Reduced from 2rem */
+    font-weight: 600;
+    margin-bottom: 1.5rem;
     margin-top: 0;
     color: #2196F3;
     text-align: center;
     letter-spacing: 1px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 
 
 
 .hero-buttons {
-    margin-top: 20rem;
-    /* Adjust this value to move buttons lower */
+    margin-top: 1.5rem;
     display: flex;
-    gap: 1rem;
-    /* keeps some space between the buttons */
+    gap: 1.5rem;
     justify-content: center;
-    /* centers the buttons horizontally */
+    align-items: center;
 }
 
 
@@ -3107,4 +3095,46 @@ html {
     font-weight: 700;
     color: var(--primary-700);
     font-size: 1.4rem;
+}
+
+/* Responsive Hero Section */
+@media (max-width: 768px) {
+    .donate-btn {
+        display: none !important; /* Hide to prevent menu overlap on mobile */
+    }
+    .hero-title-green {
+        font-size: 3rem !important;
+    }
+    .hero-title-blue {
+        font-size: 1.4rem !important;
+        margin-top: 0;
+    }
+    .hero-logo {
+        width: 180px;
+    }
+    .hero-banner {
+        height: auto;
+        min-height: 500px;
+        padding-top: 120px; /* Increased to clear navbar fully */
+    }
+    .hero-buttons {
+        flex-direction: column;
+        gap: 1.2rem;
+        margin-top: 2rem;
+    }
+    .hero-logo {
+        width: 210px;
+        height: 210px;
+    }
+    .hero-title-green {
+        font-size: 3rem !important;
+    }
+    .hero-title-blue {
+        font-size: 1.4rem !important;
+    }
+    .btn-join, .btn-donate-hero {
+        padding: 0.8rem 2rem;
+        width: 200px;
+        text-align: center;
+    }
 }

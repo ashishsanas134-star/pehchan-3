@@ -190,147 +190,7 @@
             color: #664d03;
         }
 
-        /* Full page hero section - FULL WIDTH */
-        .hero-banner {
-            position: relative;
-            width: 100%;
-            height: 90vh;
-            /* Taller look as requested */
-            min-height: 500px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .banner-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: top center;
-            /* Protects logo at the top */
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-
-        body,
-        html {
-            overflow-x: hidden;
-            max-width: 100%;
-        }
-
-        .hero-content {
-            position: relative;
-            text-align: center;
-            color: #fff;
-            z-index: 10;
-            padding: 3rem 2rem;
-            max-width: 800px;
-            margin: 0 auto;
-            background: transparent;
-            border-radius: 20px;
-            backdrop-filter: none;
-        }
-
-        .hero-buttons {
-            margin-top: 22rem;
-            /* Clear logo space */
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn-join {
-            padding: 1rem 3rem;
-            border: 2px solid #FFA500 !important;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            background: #FFA500 !important;
-            color: #fff !important;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            text-decoration: none !important;
-            border-bottom: none !important;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .btn-donate-hero {
-            padding: 1rem 3rem;
-            border: 2px solid #FFA500 !important;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            background: #FFA500 !important;
-            color: #fff !important;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            text-decoration: none !important;
-            border-bottom: none !important;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .btn-join:hover,
-        .btn-join:active,
-        .btn-join:focus,
-        .btn-join:focus-visible,
-        .btn-join:visited,
-        .btn-donate-hero:hover,
-        .btn-donate-hero:active,
-        .btn-donate-hero:focus,
-        .btn-donate-hero:focus-visible,
-        .btn-donate-hero:visited {
-            background: #FFA500 !important;
-            color: #fff !important;
-            border: 2px solid #FFA500 !important;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 165, 0, 0.4) !important;
-            text-decoration: none !important;
-            outline: none !important;
-        }
-
-
-
-        /* Enhanced mobile responsiveness */
-        @media (max-width: 1024px) {
-            .campaigns {
-                grid-template-columns: 1fr;
-            }
-
-            .campaign-card {
-                max-width: 500px;
-                margin: 0 auto;
-            }
-        }
-
         @media (max-width: 768px) {
-            .hero-banner {
-                width: 100%;
-                height: 60vh;
-                min-height: 400px;
-            }
-
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-                margin-top: 12rem;
-            }
-
-            .btn-join,
-            .btn-donate-hero {
-                width: 80%;
-                max-width: 300px;
-            }
-
             .donate-content h2 {
                 font-size: 1.8rem;
             }
@@ -356,27 +216,6 @@
         }
 
         @media (max-width: 480px) {
-            .hero-banner {
-                width: 100%;
-                height: 60vh;
-                min-height: 350px;
-            }
-
-            .hero-content {
-                padding: 1.5rem 1rem;
-                background: rgba(0, 0, 0, 0.4);
-            }
-
-            .hero-buttons {
-                margin-top: 8rem;
-            }
-
-            .btn-join,
-            .btn-donate-hero {
-                padding: 0.8rem 2rem;
-                font-size: 1rem;
-            }
-
             .donate-content h2 {
                 font-size: 1.5rem;
             }
@@ -462,8 +301,11 @@
 
     <!-- Hero section -->
     <section class="hero-banner">
-        <img src="/static/images/Herobanner.png" alt="Hero Banner" class="banner-img">
+        <img src="{% static 'images/background.png' %}" alt="Hero Banner" class="banner-img">
         <div class="hero-content">
+            <img src="{% static 'images/PEHCHANlogo.png' %}" class="hero-logo" alt="Pehchan Logo">
+            <h1 class="hero-title-green">Pehchan</h1>
+            <h2 class="hero-title-blue">Your Unique Identity</h2>
             <div class="hero-buttons">
                 <a href="{% if user.is_authenticated %}{% url 'lifetime_volunteer' %}{% else %}{% url 'public_volunteer' %}{% endif %}"
                     class="btn-join">JOIN US</a>

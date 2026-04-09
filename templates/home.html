@@ -110,12 +110,7 @@
             border: 1px solid #f5c6cb;
         }
 
-        .hero-banner {
-            background: url("{% static 'images/Herobanner.png' %}") center/cover no-repeat;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
+        /* Hero banner base handled by style.css */
 
         /* Center Navbar Content */
         .nav-container {
@@ -161,17 +156,17 @@
     </nav>
 
     <!-- Hero section -->
-    <section class="hero-banner"
-        style="display: flex; align-items: center; justify-content: center; position: relative; min-height: 100vh;">
-        <div class="hero-content" style="text-align: center; z-index: 2; position: relative; margin-top: 250px;">
-            <div class="hero-buttons" style="display: flex; gap: 30px; justify-content: center; align-items: center;">
+    <section class="hero-banner">
+        <img src="{% static 'images/background.png' %}" alt="Hero Banner" class="banner-img">
+        <div class="hero-content">
+            <img src="{% static 'images/PEHCHANlogo.png' %}" class="hero-logo" alt="Pehchan Logo">
+            <h1 class="hero-title-green">Pehchan</h1>
+            <h2 class="hero-title-blue">Your Unique Identity</h2>
+            <div class="hero-buttons">
                 <a href="{% if user.is_authenticated %}{% url 'lifetime_volunteer' %}{% else %}{% url 'public_volunteer' %}{% endif %}"
-                    class="btn-join"
-                    style="padding: 18px 40px; font-size: 16px; font-weight: 700; text-decoration: none; border-radius: 50px; background: #F9A826; color: white; border: 3px solid #F9A826; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; font-family: 'Poppins', sans-serif; box-shadow: 0 4px 15px rgba(249, 168, 38, 0.3);">JOIN
-                    US</a>
+                    class="btn-join">JOIN US</a>
                 <a href="{% if user.is_authenticated %}{% url 'money_donation' %}{% else %}{% url 'public_donate' %}{% endif %}"
-                    class="btn-donate-hero"
-                    style="padding: 18px 40px; font-size: 16px; font-weight: 700; text-decoration: none; border-radius: 50px; background: transparent; color: #F9A826; border: 3px solid #F9A826; cursor: pointer; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; font-family: 'Poppins', sans-serif;">DONATE</a>
+                    class="btn-donate-hero">DONATE</a>
             </div>
         </div>
     </section>
@@ -183,8 +178,6 @@
         <img src="{% static 'images/pink leaf.png' %}" class="leaf-decor leaf-bottom-left" alt="">
         <img src="{% static 'images/blue leaf.png' %}" class="leaf-decor leaf-bottom-right" alt="">
         <div class="container">
-            <h2 class="section-title-dark georgia-brand" style="font-size: 3.5rem;">Pehchan</h2>
-            <h3 class="section-subtitle-dark georgia-brand">Your Unique Identity</h3>
             <p class="about-intro">Established in 2020, Pehchan-your unique identity is a non-profit organisation
                 focused on the education of underprivileged children and helping the homeless.</p>
         </div>
