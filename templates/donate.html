@@ -149,24 +149,20 @@
         }
 
         .qr-code-container {
-            width: 220px;
-            height: 220px;
-            margin: 0 auto 20px;
-            background: white;
-            border: 3px solid #2e7d5f;
-            border-radius: 12px;
+            margin: 0 auto 25px;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
-            color: #666;
+            text-align: center;
         }
 
         .upi-id-box {
-            background: linear-gradient(135deg, #2e7d5f 0%, #3d9970 100%);
-            color: white;
+            background: #f8f9fa;
+            border: 2px dashed #2e7d5f;
+            color: #333;
             padding: 15px;
-            border-radius: 10px;
+            border-radius: 12px;
             margin-top: 20px;
             text-align: center;
         }
@@ -210,8 +206,8 @@
             }
 
             .qr-code-container {
-                width: 180px;
-                height: 180px;
+                width: auto;
+                height: auto;
             }
         }
 
@@ -229,8 +225,8 @@
             }
 
             .qr-code-container {
-                width: 150px;
-                height: 150px;
+                width: auto;
+                height: auto;
             }
 
             .upi-id-box {
@@ -289,7 +285,7 @@
                 <a class="mdl-navigation__link" href="{% url 'signup' %}">Sign Up</a>
                 {% endif %}
             </ul>
-            <a href="{% if user.is_authenticated %}{% url 'money_donation' %}{% else %}{% url 'public_donate' %}{% endif %}"
+            <a href="{% if user.is_authenticated %}{% url 'money_donation' %}{% else %}{% url 'public_donate' %}#support{% endif %}"
                 class="donate-btn">Donate Now</a>
             <div class="mobile-menu-toggle">
                 <span></span>
@@ -309,14 +305,14 @@
             <div class="hero-buttons">
                 <a href="{% if user.is_authenticated %}{% url 'lifetime_volunteer' %}{% else %}{% url 'public_volunteer' %}{% endif %}"
                     class="btn-join">JOIN US</a>
-                <a href="{% if user.is_authenticated %}{% url 'money_donation' %}{% else %}{% url 'public_donate' %}{% endif %}"
+                <a href="{% if user.is_authenticated %}{% url 'money_donation' %}{% else %}{% url 'public_donate' %}#support{% endif %}"
                     class="btn-donate-hero">DONATE</a>
             </div>
         </div>
     </section>
 
     <!-- Page Title -->
-    <section class="page-title">
+    <section class="page-title" id="support">
         <h1>Support Our Cause</h1>
     </section>
 
@@ -362,46 +358,9 @@
                             choose to donate materials or money as per your wish.</p>
                     </div>
 
-                    <!-- Donation Campaigns -->
-                    <div class="campaigns">
-                        <div class="campaign-card">
 
-                            <h3>Education Kit</h3>
-                            <p>Help provide educational materials</p>
-                            <div class="progress-bar">
-                                <div class="progress" style="width: 60%"></div>
-                            </div>
-                            <p>₹3,000 raised of ₹5,000 goal</p>
-                        </div>
-                        <div class="campaign-card">
 
-                            <h3>Poverty Alleviation Kit</h3>
-                            <p>Support families with essentials</p>
-                            <div class="progress-bar">
-                                <div class="progress" style="width: 45%"></div>
-                            </div>
-                            <p>₹1,350 raised of ₹3,000 goal</p>
-                        </div>
-                    </div>
 
-                    <!-- Donation Options Info -->
-                    <div style="background: #f8f9fa; padding: 25px; border-radius: 10px; margin-top: 30px;">
-                        <h3 style="color: #333; margin-bottom: 20px;">After Login, You Can:</h3>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                            <div
-                                style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                <h4 style="color: #667eea; margin-bottom: 10px;">💝 Material Donation</h4>
-                                <p style="color: #666; margin: 0;">Donate items like books, clothes, food, etc. We'll
-                                    pick up from Mumbai or you can courier from other locations.</p>
-                            </div>
-                            <div
-                                style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                <h4 style="color: #764ba2; margin-bottom: 10px;">💰 Money Donation</h4>
-                                <p style="color: #666; margin: 0;">Make monetary contributions via UPI. Upload your
-                                    payment receipt for verification.</p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -412,107 +371,26 @@
                     <p style="color: #666; margin-bottom: 30px;">Support our cause without creating an account. Your
                         contribution makes a difference!</p>
 
-                    <div class="form-grid">
-                        <!-- UPI Details Section -->
-                        <div class="form-section">
+                        <div class="form-section" style="max-width: 600px; margin: 0 auto; grid-column: span 2;">
                             <h3><span class="material-icons">qr_code_scanner</span> Donate via UPI</h3>
                             <p style="color: #666; font-size: 14px; margin-bottom: 25px;">Scan the QR code or use the
                                 UPI ID to make your payment</p>
 
                             <div class="qr-code-container">
-                                <div>
-                                    <div style="font-size: 48px; margin-bottom: 10px;">📱</div>
-                                    <p style="margin: 0;">Scan QR Code to Pay</p>
-                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #999;">Any UPI app works</p>
-                                </div>
+                                <img src="{% static 'images/pehchan_QRcode.jpeg' %}" alt="Pehchan QR Code" style="max-width: 220px; height: auto; border-radius: 8px; display: block;">
+                                <p style="margin: 20px 0 8px 0; font-weight: 700; color: #1a1a1a; font-size: 1.2rem; letter-spacing: -0.5px;">Scan QR Code to Pay</p>
+                                <p style="margin: 0; font-size: 14px; color: #666; font-weight: 500;">Any UPI app works</p>
                             </div>
 
                             <div class="upi-id-box">
                                 <p style="margin: 0; font-size: 14px; font-weight: 500;">UPI ID: <span
-                                        style="font-family: monospace; font-size: 16px;">pehchan@upi</span></p>
-                            </div>
-
-                            <p style="margin-top: 20px; color: #666; font-size: 14px; text-align: center;">
-                                After making the payment, please fill the form with your details
-                            </p>
+                                        style="font-family: monospace; font-size: 16px;">anikshaupadhyay2001@okicici</span></p>
                         </div>
 
-                        <!-- Donation Form Section -->
-                        <div class="form-section">
-                            <h3><span class="material-icons">edit_note</span> Submit Donation Details</h3>
-                            <p style="color: #666; font-size: 14px; margin-bottom: 20px;">Please provide your donation
-                                details so we can acknowledge your contribution:</p>
-
-                            <form method="POST" action="{% url 'public_donate' %}" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                <input type="hidden" name="form_type" value="anonymous_donation">
-
-                                <div class="form-group">
-                                    <label for="{{ anon_donation_form.donor_name.id_for_label }}">Name
-                                        (Optional)</label>
-                                    {{ anon_donation_form.donor_name }}
-                                </div>
-
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label for="{{ anon_donation_form.donor_email.id_for_label }}">Email
-                                            (Optional)</label>
-                                        {{ anon_donation_form.donor_email }}
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="{{ anon_donation_form.donor_phone.id_for_label }}">Phone
-                                            (Optional)</label>
-                                        {{ anon_donation_form.donor_phone }}
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="{{ anon_donation_form.amount.id_for_label }}">Donation Amount (₹)
-                                        *</label>
-                                    {{ anon_donation_form.amount }}
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="{{ anon_donation_form.transaction_id.id_for_label }}">UPI Transaction ID
-                                        (Optional)</label>
-                                    {{ anon_donation_form.transaction_id }}
-                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #999;">You can find this in
-                                        your UPI app after payment</p>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="{{ anon_donation_form.receipt.id_for_label }}">Payment Receipt (Optional
-                                        but recommended)</label>
-                                    {{ anon_donation_form.receipt }}
-                                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #999;">Upload screenshot of
-                                        payment confirmation</p>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="{{ anon_donation_form.message.id_for_label }}">Message
-                                        (Optional)</label>
-                                    {{ anon_donation_form.message }}
-                                </div>
-
-                                <div class="checkbox-group">
-                                    {{ anon_donation_form.wants_receipt }}
-                                    <label for="{{ anon_donation_form.wants_receipt.id_for_label }}"
-                                        style="margin: 0; font-size: 14px; cursor: pointer;">
-                                        I want a receipt marked as "Anonymous"
-                                    </label>
-                                </div>
-
-                                <button type="submit" class="btn-primary">
-                                    Submit Donation Details
-                                </button>
-                            </form>
+                        <div class="note-box">
+                            <p>💡 <strong>Note:</strong> For tax benefits and tracking, we recommend creating a free account
+                                and using the regular donation process.</p>
                         </div>
-                    </div>
-
-                    <div class="note-box">
-                        <p>💡 <strong>Note:</strong> For tax benefits and tracking, we recommend creating a free account
-                            and using the regular donation process.</p>
-                    </div>
                 </div>
             </div>
         </div>
@@ -577,7 +455,7 @@
                     <h4>Contact Us</h4>
                     <p>Mumbai, Maharashtra, India</p>
                     <p>madad@pehchanyui.in</p>
-                    <p>8356065814, 8691829196</p>
+                    <p>+91 98928 87992</p>
                 </div>
             </div>
         </div>

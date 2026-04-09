@@ -197,10 +197,27 @@ def logout_view(request):
 
 @login_required
 def dashboard(request):
-    """Main dashboard view"""
-    # Get search queries from request
-    upcoming_search = request.GET.get('upcoming_search', '')
-    joined_search = request.GET.get('joined_search', '')
+    """User dashboard view with search and contact form capability"""
+    user = request.user
+    
+    # Handle Contact Form Submission
+    contact_form = ContactMessageForm()
+    if request.method == 'POST' and 'message' in request.POST and 'email' in request.POST:
+        contact_form = ContactMessageForm(request.POST)
+        if contact_form.is_valid():
+            contact_msg = contact_form.save(commit=False)
+            # Capture metadata
+            contact_msg.ip_address = request.META.get('REMOTE_ADDR')
+            contact_msg.user_agent = request.META.get('HTTP_USER_AGENT')
+            contact_msg.save()
+            messages.success(request, 'Your message has been sent successfully. We will get back to you soon!')
+            return redirect('dashboard')
+        else:
+            messages.error(request, 'There was an error with your message. Please check the form and try again.')
+
+    # Existing dashboard logic
+    upcoming_search = request.GET.get('upcoming_search', '').strip()
+    joined_search = request.GET.get('joined_search', '').strip()
 
     # Get all upcoming events with optional search
     # Include ongoing events as well since they're still active
@@ -236,9 +253,15 @@ def dashboard(request):
     # Check if user is an approved lifetime volunteer
     is_lifetime_volunteer = hasattr(request.user, 'lifetime_volunteer') and request.user.lifetime_volunteer.status == 'approved'
     
+    # Get events managed by the current user (if staff)
+    managed_events = None
+    if request.user.is_staff:
+        managed_events = Event.objects.filter(created_by=request.user).order_by('-created_at')[:5]
+
     context = {
         'upcoming_events': upcoming_events,
         'joined_events': joined_events,
+        'managed_events': managed_events,
         'certificates': certificates,
         'donor_certificates': donor_certificates,
         'material_donations': material_donations,
@@ -246,6 +269,7 @@ def dashboard(request):
         'is_lifetime_volunteer': is_lifetime_volunteer,
         'upcoming_search': upcoming_search,
         'joined_search': joined_search,
+        'contact_form': contact_form,
     }
     return render(request, 'dashboard.html', context)
 
@@ -557,13 +581,13 @@ class MoneyDonationCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Static UPI ID for donations
-        context['upi_id'] = 'pehchan@upi'  # Replace with your actual UPI ID
+        context['upi_id'] = 'anikshaupadhyay2001@okicici'  # Replace with your actual UPI ID
         return context
     
     def form_valid(self, form):
         form.instance.user = self.request.user
         form.instance.payment_method = 'upi'
-        form.instance.upi_id = 'pehchan@upi'  # Static UPI ID
+        form.instance.upi_id = 'anikshaupadhyay2001@okicici'  # Static UPI ID
         messages.success(self.request, '🌟 Thanks for your contribution! ❤️ You will receive a confirmation email once your donation is processed. ✨')
         return super().form_valid(form)
 

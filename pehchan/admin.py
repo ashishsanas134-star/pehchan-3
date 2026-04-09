@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.urls import path, reverse
 from django.utils.html import format_html
 from django.utils import timezone
+from django import forms
+from django.db import models
 from .models import (
     Event, EventVolunteer, LifetimeVolunteer, 
     Certificate, MaterialDonation, MoneyDonation, DonorCertificate, ContactMessage, AnonymousDonation,
@@ -9,15 +11,36 @@ from .models import (
 )
 
 
+class NativeDateTimeWidget(forms.SplitDateTimeWidget):
+    def __init__(self, attrs=None, date_format=None, time_format=None):
+        widgets = (
+            forms.DateInput(attrs={'type': 'date', 'class': 'vDateField'}, format=date_format),
+            forms.TimeInput(attrs={'type': 'time', 'class': 'vTimeField'}, format=time_format),
+        )
+        # Note: we don't call super().__init__ because we want to define our own widgets
+        forms.MultiWidget.__init__(self, widgets, attrs)
+
+
+
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin):
-    list_display = ('name', 'event_date', 'get_status_display', 'status')
+    list_display = ('name', 'event_date', 'get_status_display', 'status', 'created_by')
+    readonly_fields = ('created_by',)
     
-    # This line tells Django to load your fix on the "Add Event" page
+    def save_model(self, request, obj, form, change):
+        if not obj.pk:
+            obj.created_by = request.user
+        super().save_model(request, obj, form, change)
+
     class Media:
         css = {
             'all': ('CSS/admin_patch.css',)
         }
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if isinstance(db_field, models.DateTimeField):
+            kwargs['widget'] = NativeDateTimeWidget
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 
 @admin.register(EventVolunteer)
@@ -352,6 +375,11 @@ class MoneyDonationAdmin(admin.ModelAdmin):
     ordering = ['-created_at']
     readonly_fields = ['created_at']
     actions = ['issue_donor_certificate', 'verify_donations', 'decline_donations']
+    
+    class Media:
+        css = {
+            'all': ('CSS/admin_patch.css',)
+        }
     
     def verify_donations(self, request, queryset):
         queryset.update(status='verified')
@@ -838,7 +866,12 @@ class ContactMessageAdmin(admin.ModelAdmin):
 @admin.register(PehchanWallet)
 class PehchanWalletAdmin(admin.ModelAdmin):
     list_display = ['balance', 'created_at', 'updated_at']
-    readonly_fields = ['balance', 'created_at', 'updated_at']
+    readonly_fields = ['created_at', 'updated_at']
+    
+    class Media:
+        css = {
+            'all': ('CSS/admin_patch.css',)
+        }
     
     def has_add_permission(self, request):
         # Only allow one wallet instance
@@ -872,6 +905,16 @@ class ExpenseAdmin(admin.ModelAdmin):
     list_filter = ['category', 'date', 'approved_by']
     search_fields = ['title', 'description']
     readonly_fields = ['created_at', 'updated_at']
+    
+    class Media:
+        css = {
+            'all': ('CSS/admin_patch.css',)
+        }
+    
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if isinstance(db_field, (models.DateTimeField, models.TimeField)):
+            kwargs['widget'] = NativeDateTimeWidget
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
     
     fieldsets = (
         ('Expense Details', {
@@ -919,6 +962,11 @@ class AnonymousDonationAdmin(admin.ModelAdmin):
     ]
     
     readonly_fields = ['created_at', 'ip_address']
+    
+    class Media:
+        css = {
+            'all': ('CSS/admin_patch.css',)
+        }
     
     fieldsets = (
         ('Donor Information (Optional)', {

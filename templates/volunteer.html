@@ -206,7 +206,7 @@
                 <a class="mdl-navigation__link" href="{% url 'signup' %}">Sign Up</a>
                 {% endif %}
             </ul>
-            <a href="{% if user.is_authenticated %}{% url 'money_donation' %}{% else %}{% url 'public_donate' %}{% endif %}"
+            <a href="{% if user.is_authenticated %}{% url 'money_donation' %}{% else %}{% url 'public_donate' %}#support{% endif %}"
                 class="donate-btn">Donate Now</a>
             <div class="mobile-menu-toggle">
                 <span></span>

@@ -145,7 +145,7 @@
                 <a class="mdl-navigation__link" href="{% url 'signup' %}">Sign Up</a>
                 {% endif %}
             </ul>
-            <a href="{% if user.is_authenticated %}{% url 'money_donation' %}{% else %}{% url 'public_donate' %}{% endif %}"
+            <a href="{% if user.is_authenticated %}{% url 'money_donation' %}{% else %}{% url 'public_donate' %}#support{% endif %}"
                 class="donate-btn">Donate Now</a>
             <div class="mobile-menu-toggle">
                 <span></span>
@@ -165,7 +165,7 @@
             <div class="hero-buttons">
                 <a href="{% if user.is_authenticated %}{% url 'lifetime_volunteer' %}{% else %}{% url 'public_volunteer' %}{% endif %}"
                     class="btn-join">JOIN US</a>
-                <a href="{% if user.is_authenticated %}{% url 'money_donation' %}{% else %}{% url 'public_donate' %}{% endif %}"
+                <a href="{% if user.is_authenticated %}{% url 'money_donation' %}{% else %}{% url 'public_donate' %}#support{% endif %}"
                     class="btn-donate-hero">DONATE</a>
             </div>
         </div>
@@ -378,40 +378,7 @@
                 <div class="contact-form">
                     <h3>Send us a message</h3>
 
-                    <!-- Display Messages -->
-                    {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert-{{ message.tags }}">
-                        {{ message }}
-                    </div>
-                    {% endfor %}
-                    {% endif %}
-
-                    <form method="POST" action="{% url 'home' %}">
-                        {% csrf_token %}
-                        <input type="text" name="name" placeholder="Name" required
-                            value="{{ contact_form.name.value|default:'' }}">
-                        {% if contact_form.name.errors %}
-                        <div style="color: #dc3545; font-size: 14px; margin-top: 5px;">{{ contact_form.name.errors.0 }}
-                        </div>
-                        {% endif %}
-
-                        <input type="email" name="email" placeholder="Email" required
-                            value="{{ contact_form.email.value|default:'' }}">
-                        {% if contact_form.email.errors %}
-                        <div style="color: #dc3545; font-size: 14px; margin-top: 5px;">{{ contact_form.email.errors.0 }}
-                        </div>
-                        {% endif %}
-
-                        <textarea name="message" placeholder="Message" rows="5"
-                            required>{{ contact_form.message.value|default:'' }}</textarea>
-                        {% if contact_form.message.errors %}
-                        <div style="color: #dc3545; font-size: 14px; margin-top: 5px;">{{ contact_form.message.errors.0
-                            }}</div>
-                        {% endif %}
-
-                        <button type="submit" class="btn-submit">Submit</button>
-                    </form>
+                    {% include 'includes/_contact_form.html' with contact_form_action='home' %}
                 </div>
             </div>
         </div>

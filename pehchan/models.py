@@ -20,6 +20,13 @@ class Event(models.Model):
     location = models.CharField(max_length=200)
     image = models.ImageField(upload_to='event_images/', blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='upcoming')
+    created_by = models.ForeignKey(
+        User, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True, 
+        related_name='events_created'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -312,6 +319,12 @@ class ContactMessage(models.Model):
     
     def __str__(self):
         return f"{self.name} - {self.created_at.strftime('%Y-%m-%d %H:%M')}"
+    
+    def get_short_message(self, limit=50):
+        """Returns a truncated version of the message for previews"""
+        if self.message and len(self.message) > limit:
+            return f"{self.message[:limit]}..."
+        return self.message
 
 
 class PasswordResetOTP(models.Model):

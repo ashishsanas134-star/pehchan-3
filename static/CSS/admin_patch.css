@@ -1,31 +1,133 @@
-/* Fix the squashed Django Admin Calendar */
+/* Modern Premium Django Admin UI Overrides */
+
+/* --- Calendar Box Styling --- */
 .calendarbox {
-    width: 300px !important; /* Makes it wider */
-    border: 1px solid #ddd !important;
-    border-radius: 8px !important;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important;
-    padding: 10px !important;
+    width: 320px !important;
+    border: none !important;
+    border-radius: 12px !important;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2), 0 5px 15px rgba(0,0,0,0.1) !important;
+    padding: 15px !important;
     background: #fff !important;
     z-index: 9999 !important;
+    font-family: 'Poppins', 'Roboto', sans-serif !important;
 }
 
 .calendar table {
     width: 100% !important;
-}
-
-.calendar td {
-    padding: 5px !important;
-    text-align: center !important;
-}
-
-.calendar th {
-    background: #2b5d8f !important; /* Matches your blue theme */
-    color: white !important;
+    border-collapse: separate !important;
+    border-spacing: 2px !important;
 }
 
 .calendar caption {
-    background: #333 !important;
+    background: #2b5d8f !important;
     color: white !important;
+    font-weight: 700 !important;
+    padding: 12px !important;
+    border-radius: 8px 8px 0 0 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+}
+
+.calendar th {
+    background: #f8f9fa !important;
+    color: #555 !important;
+    font-weight: 600 !important;
+    padding: 8px 0 !important;
+    border-bottom: 1px solid #eee !important;
+    font-size: 11px !important;
+}
+
+.calendar td {
+    padding: 0 !important;
+    text-align: center !important;
+}
+
+.calendar td a {
+    display: block !important;
+    padding: 8px 0 !important;
+    border-radius: 4px !important;
+    transition: all 0.2s ease !important;
+    color: #333 !important;
+    font-size: 13px !important;
+    text-decoration: none !important;
+}
+
+.calendar td a:hover {
+    background: #2e7d5f !important;
+    color: white !important;
+    transform: scale(1.1);
+}
+
+.calendar td.today a {
+    background: #eef2f7 !important;
     font-weight: bold !important;
-    padding: 10px !important;
+    border: 1px solid #2b5d8f !important;
+}
+
+.calendar td.selected a {
+    background: #2b5d8f !important;
+    color: white !important;
+}
+
+/* --- Clock Box Styling --- */
+.clockbox {
+    width: 180px !important;
+    border: none !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+    background: #fff !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    z-index: 9999 !important;
+}
+
+.clockbox h2 {
+    background: #2b5d8f !important;
+    color: white !important;
+    font-size: 14px !important;
+    padding: 12px !important;
+    margin: 0 !important;
+    text-align: center !important;
+}
+
+.clockbox ul {
+    margin: 0 !important;
+    padding: 5px 0 !important;
+    list-style: none !important;
+}
+
+.clockbox li {
+    padding: 0 !important;
+}
+
+.clockbox li a {
+    display: block !important;
+    padding: 8px 15px !important;
+    color: #444 !important;
+    text-decoration: none !important;
+    font-size: 13px !important;
+    transition: all 0.2s !important;
+}
+
+.clockbox li a:hover {
+    background: #f0f4f8 !important;
+    color: #2b5d8f !important;
+    padding-left: 20px !important;
+}
+
+/* Fix for icons and spacing in the admin line */
+.datetimeshortcuts {
+    color: #999 !important;
+    font-size: 11px !important;
+}
+
+.datetimeshortcuts a {
+    color: #2b5d8f !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    margin: 0 5px !important;
+}
+
+.datetimeshortcuts a:hover {
+    text-decoration: underline !important;
 }
