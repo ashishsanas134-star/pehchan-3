@@ -5,7 +5,9 @@ urlpatterns = [
     # Home and Public Pages
     path('', views.home, name='home'),
     path('about/', views.about, name='about'),
-    path('gallery/', views.public_events, name='public_events'),
+    path('gallery/', views.public_gallery, name='public_gallery'),
+    path('events/', views.public_events_list, name='public_events'),
+    path('events/<int:pk>/', views.public_event_detail, name='public_event_detail'),
     path('volunteer-info/', views.public_volunteer, name='public_volunteer'),
     path('donate-info/', views.public_donate, name='public_donate'),
     path('verify-certificate/', views.certificate_verify, name='public_certificate_verify'),

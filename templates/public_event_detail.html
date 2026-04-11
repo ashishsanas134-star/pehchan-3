@@ -1,0 +1,445 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ event.name }} - Pehchan</title>
+    <link rel="stylesheet" href="{% static 'CSS/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --pehchan-blue: #0A1A4A;
+            --pehchan-orange: #F9A826;
+            --pehchan-light-blue: #e3f2fd;
+            --pehchan-success: #2e7d32;
+        }
+
+        body {
+            background: #fdfdfd;
+        }
+
+        .event-detail-container {
+            padding: 3rem 0;
+            max-width: 1100px;
+            margin: 0 auto;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .event-header {
+            margin-bottom: 3rem;
+            text-align: left;
+            position: relative;
+        }
+
+        .event-header::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: var(--pehchan-orange);
+            border-radius: 2px;
+        }
+
+        .event-header h1 {
+            font-size: 3.5rem;
+            color: var(--pehchan-blue);
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+
+        .event-status {
+            display: inline-block;
+            padding: 0.4rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .status-upcoming { background: var(--pehchan-light-blue); color: #1976d2; border: 1px solid #bbdefb; }
+        .status-ongoing { background: #e8f5e9; color: var(--pehchan-success); border: 1px solid #c8e6c9; }
+
+        .event-main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            background: transparent;
+            margin-bottom: 4rem;
+        }
+
+        .event-visual-section {
+            position: sticky;
+            top: 100px;
+        }
+
+        .image-container {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border: 8px solid #fff;
+            transform: rotate(-1deg);
+            transition: transform 0.5s ease;
+        }
+
+        .image-container:hover {
+            transform: rotate(0deg) scale(1.02);
+        }
+
+        .event-banner {
+            width: 100%;
+            height: auto;
+            max-height: 500px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-overlay-decoration {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 100px;
+            height: 100px;
+            background: var(--pehchan-orange);
+            opacity: 0.1;
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        .event-body {
+            padding: 0;
+        }
+
+        .event-info-strip {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            padding: 1.2rem;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+            border: 1px solid #f0f0f0;
+            transition: transform 0.3s;
+        }
+
+        .info-item:hover {
+            transform: translateX(10px);
+            border-color: var(--pehchan-orange);
+        }
+
+        .info-icon {
+            font-size: 1.5rem;
+            height: 54px;
+            min-width: 54px;
+            background: linear-gradient(135deg, var(--pehchan-blue), #152b6b);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(10, 26, 74, 0.2);
+        }
+
+        .info-text strong {
+            display: block;
+            font-size: 0.8rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 4px;
+        }
+
+        .info-text span {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--pehchan-blue);
+        }
+
+        .event-description-section h2 {
+            font-size: 2rem;
+            color: var(--pehchan-blue);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .event-description-section h2::before {
+            content: '';
+            display: inline-block;
+            width: 10px;
+            height: 25px;
+            background: var(--pehchan-orange);
+            border-radius: 5px;
+        }
+
+        .event-description-section p {
+            font-size: 1.15rem;
+            line-height: 1.9;
+            color: #444;
+            white-space: pre-line;
+            text-align: justify;
+        }
+
+        .action-section {
+            margin-top: 3.5rem;
+            text-align: left;
+        }
+
+        .action-box {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, var(--pehchan-orange), var(--pehchan-blue));
+        }
+
+        .action-box h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--pehchan-blue);
+            font-weight: 700;
+        }
+
+        .action-box p {
+            margin-bottom: 2rem;
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .btn-large {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 1.2rem 2.8rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--pehchan-orange), #e69519);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(249, 168, 38, 0.3);
+            background: linear-gradient(135deg, #e69519, var(--pehchan-orange));
+        }
+
+        .joined-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: #e8f5e9;
+            color: var(--pehchan-success);
+            padding: 1.2rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            border: 2px solid #c8e6c9;
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.1);
+        }
+
+        .nav-container { justify-content: center !important; }
+        .nav-links { margin-left: 0 !important; margin-right: 80px !important; }
+
+        @media (max-width: 992px) {
+            .event-main-content { grid-template-columns: 1fr; gap: 3rem; }
+            .event-visual-section { position: relative; top: 0; }
+            .image-container { transform: none; width: 100%; max-width: 600px; margin: 0 auto; }
+            .event-header { text-align: center; }
+            .event-header::after { left: 50%; transform: translateX(-50%); }
+            .event-header h1 { font-size: 2.8rem; }
+        }
+
+        @media (max-width: 600px) {
+            .event-header h1 { font-size: 2.2rem; }
+            .event-body { padding: 0.5rem; }
+            .btn-large { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">HOME</a></li>
+                <li><a href="{% url 'public_gallery' %}">GALLERY</a></li>
+                <li><a href="{% url 'public_events' %}" class="active">EVENTS</a></li>
+                <li><a href="{% url 'public_volunteer' %}">VOLUNTEER</a></li>
+                <li><a href="{% url 'about' %}">ABOUT US</a></li>
+                <li><a href="{% url 'public_certificate_verify' %}">VERIFY CERTIFICATE</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'dashboard' %}">DASHBOARD</a></li>
+                {% else %}
+                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="{% url 'signup' %}">Sign Up</a></li>
+                {% endif %}
+            </ul>
+            <a href="{% if user.is_authenticated %}{% url 'money_donation' %}{% else %}{% url 'public_donate' %}#support{% endif %}"
+                class="donate-btn">Donate Now</a>
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container event-detail-container">
+        <div class="event-header">
+            <span class="event-status status-{{ event.status }}">
+                {{ event.get_status_display }}
+            </span>
+            <h1>{{ event.name }}</h1>
+        </div>
+
+        <div class="event-main-content">
+            <div class="event-visual-section">
+                <div class="image-container">
+                    {% if event.image %}
+                        <img src="{{ event.image.url }}" alt="{{ event.name }}" class="event-banner">
+                    {% else %}
+                        <img src="{% static 'images/background.png' %}" alt="{{ event.name }}" class="event-banner">
+                    {% endif %}
+                    <div class="image-overlay-decoration"></div>
+                </div>
+            </div>
+
+            <div class="event-body">
+                <div class="event-info-strip">
+                    <div class="info-item">
+                        <div class="info-icon">📅</div>
+                        <div class="info-text">
+                            <strong>Date</strong>
+                            <span>{{ event.event_date|date:"F d, Y" }}</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">📍</div>
+                        <div class="info-text">
+                            <strong>Location</strong>
+                            <span>{{ event.location }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="event-description-section">
+                    <h2>Event Description</h2>
+                    <p>{{ event.description }}</p>
+                </div>
+
+                <div class="action-section">
+                    {% if already_joined %}
+                        <div class="joined-badge">
+                            <span style="font-size: 1.5rem;">✨</span>
+                            You have already joined this event
+                        </div>
+                    {% elif user.is_authenticated %}
+                        <div class="action-box">
+                            <h3>Be the change.</h3>
+                            <p>Your participation can transform lives. Join our team for this event and create a lasting impact today.</p>
+                            <a href="{% url 'event_detail' event.pk %}" class="btn-large btn-primary">
+                                🚀 JOIN AS VOLUNTEER
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="action-box">
+                            <h3>Ready to make an impact?</h3>
+                            <p>Login to your account to register for this event. Not a member yet? Join the Pehchan family today!</p>
+                            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                                <a href="{% url 'login' %}" class="btn-large btn-primary">
+                                    🔑 LOGIN TO JOIN
+                                </a>
+                                <a href="{% url 'signup' %}" class="btn-large" style="border: 2px solid var(--pehchan-orange); color: var(--pehchan-blue); background: #fff;">
+                                    ✨ SIGN UP
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 3rem;">
+            <a href="{% url 'public_events' %}" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; color: #666; font-weight: 600;">
+                ← BACK TO ALL EVENTS
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <img src="{% static 'images/logos/location_logo.png' %}" alt="Pehchan Location"
+                        style="height: 80px; margin-bottom: 0.5rem;">
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'public_gallery' %}">Gallery</a></li>
+                        <li><a href="{% url 'public_events' %}">Events</a></li>
+                        <li><a href="{% url 'public_volunteer' %}">Volunteer</a></li>
+                        <li><a href="{% url 'about' %}">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Contact Us</h4>
+                    <p>Mumbai, Maharashtra, India</p>
+                    <p>madad@pehchanyui.in</p>
+                    <p>+91 98928 87992</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <div class="footer-bottom">
+        <p>Copyright © Pehchan-Your Unique Identity. All rights reserved.</p>
+    </div>
+
+    <script src="{% static 'JS/script.js' %}"></script>
+</body>
+
+</html>

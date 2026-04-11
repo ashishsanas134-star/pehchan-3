@@ -76,9 +76,47 @@ def about(request):
     return render(request, 'about.html')
 
 
-def public_events(request):
-    """Public events/gallery page - accessible to all"""
-    return render(request, 'events.html')
+def public_gallery(request):
+    """Public gallery page - accessible to all"""
+    return render(request, 'gallery.html')
+
+
+def public_events_list(request):
+    """Public list of upcoming and ongoing events"""
+    from django.utils import timezone
+    today = timezone.now().date()
+    events = Event.objects.filter(event_date__gte=today).order_by('event_date')
+    
+    search_query = request.GET.get('search', '')
+    if search_query:
+        events = events.filter(
+            Q(name__icontains=search_query) | 
+            Q(description__icontains=search_query) |
+            Q(location__icontains=search_query)
+        )
+    
+    return render(request, 'public_events_list.html', {
+        'events': events,
+        'search_query': search_query
+    })
+
+
+def public_event_detail(request, pk):
+    """Public detail view for an event"""
+    event = get_object_or_404(Event, pk=pk)
+    
+    already_joined = False
+    if request.user.is_authenticated:
+        already_joined = EventVolunteer.objects.filter(
+            user=request.user,
+            event=event
+        ).exists()
+    
+    return render(request, 'public_event_detail.html', {
+        'event': event,
+        'already_joined': already_joined,
+        'volunteer_form': EventVolunteerForm() if not already_joined else None
+    })
 
 
 def public_volunteer(request):
