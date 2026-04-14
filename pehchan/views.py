@@ -28,45 +28,36 @@ from .models import PasswordResetOTP
 from .forms import ForgotPasswordForm, OTPVerificationForm, ResetPasswordForm
 
 
-import traceback
-
 def home(request):
     """Home page view with contact form"""
-    print(f"Home view accessed. Method: {request.method}")
-    try:
-        # Handle contact form submission FIRST (before checking authentication)
-        if request.method == 'POST':
-            print("Contact form submitted.")
-            form = ContactMessageForm(request.POST)
-            if form.is_valid():
-                # Save the contact message
-                contact_message = form.save(commit=False)
-                # Optionally capture IP address
-                x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-                if x_forwarded_for:
-                    contact_message.ip_address = x_forwarded_for.split(',')[0]
-                else:
-                    contact_message.ip_address = request.META.get('REMOTE_ADDR')
-                # Capture user agent
-                contact_message.user_agent = request.META.get('HTTP_USER_AGENT', '')
-                contact_message.save()
-                
-                messages.success(request, 'Thank you for your message! We will get back to you soon.')
-                return redirect('home')
+    # Handle contact form submission FIRST (before checking authentication)
+    if request.method == 'POST':
+        form = ContactMessageForm(request.POST)
+        if form.is_valid():
+            # Save the contact message
+            contact_message = form.save(commit=False)
+            # Optionally capture IP address
+            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+            if x_forwarded_for:
+                contact_message.ip_address = x_forwarded_for.split(',')[0]
             else:
-                messages.error(request, 'Please correct the errors in the form.')
+                contact_message.ip_address = request.META.get('REMOTE_ADDR')
+            # Capture user agent
+            contact_message.user_agent = request.META.get('HTTP_USER_AGENT', '')
+            contact_message.save()
+            
+            messages.success(request, 'Thank you for your message! We will get back to you soon.')
+            return redirect('home')
         else:
-            form = ContactMessageForm()
-        
-        # If user is authenticated, redirect to dashboard (for GET requests only)
-        if request.user.is_authenticated and request.method == 'GET':
-            return redirect('dashboard')
-        
-        return render(request, 'home.html', {'contact_form': form})
-    except Exception as e:
-        print("!!! ERROR IN HOME VIEW !!!")
-        traceback.print_exc()
-        raise e
+            messages.error(request, 'Please correct the errors in the form.')
+    else:
+        form = ContactMessageForm()
+    
+    # If user is authenticated, redirect to dashboard (for GET requests only)
+    if request.user.is_authenticated and request.method == 'GET':
+        return redirect('dashboard')
+    
+    return render(request, 'home.html', {'contact_form': form})
 
 
 def about(request):
