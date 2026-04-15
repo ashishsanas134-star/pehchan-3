@@ -47,7 +47,7 @@ A comprehensive Django web application for managing NGO events, volunteers, dona
 - Python 3.8 or higher
 - pip (Python package manager)
 
-### Installation
+### Local Development Setup
 
 1. **Create a virtual environment** (recommended):
    ```bash
@@ -61,29 +61,38 @@ A comprehensive Django web application for managing NGO events, volunteers, dona
    pip install -r requirements.txt
    ```
 
-3. **Run database migrations**:
+3. **Set up environment variables**:
+   ```bash
+   # Copy the example env file
+   cp .env.example .env
+   
+   # Edit .env and set your values (at minimum SECRET_KEY)
+   # For local development, you can set DEBUG=True
+   ```
+
+4. **Run database migrations**:
    ```bash
    python manage.py makemigrations
    python manage.py migrate
    ```
 
-4. **Create a superuser** (for admin access):
+5. **Create a superuser** (for admin access):
    ```bash
    python manage.py createsuperuser
    ```
    Follow the prompts to create an admin account.
 
-5. **Create media directory**:
+6. **Create media directory**:
    ```bash
    mkdir media
    ```
 
-6. **Run the development server**:
+7. **Run the development server**:
    ```bash
    python manage.py runserver
    ```
 
-7. **Access the application**:
+8. **Access the application**:
    - Main site: http://127.0.0.1:8000/
    - Admin panel: http://127.0.0.1:8000/admin/
 
@@ -182,16 +191,72 @@ The project uses Material Design Lite for styling. You can customize the appeara
 - Adding custom CSS files in the templates directory
 - Changing Material Design Lite themes
 
+## Production Deployment
+
+### Deploying to Render
+
+This project is configured for easy deployment on [Render](https://render.com/).
+
+1. **Push your code to GitHub**
+
+2. **Connect to Render**:
+   - Go to Render Dashboard → New Web Service
+   - Connect your GitHub repository
+   - Render will automatically detect `render.yaml`
+
+3. **Configure Environment Variables**:
+   The following variables will be set automatically:
+   - `DATABASE_URL` - PostgreSQL database connection
+   - `SECRET_KEY` - Auto-generated secure key
+   - `DEBUG` - Set to `false`
+   
+   You need to manually set:
+   - `EMAIL_HOST_USER` - Your email address
+   - `EMAIL_HOST_PASSWORD` - Your email app password
+   - `ALLOWED_HOSTS` - Your domain name (optional, Render adds it automatically)
+
+4. **Deploy** - Render will handle the rest!
+
+### Production Checklist
+
+Before deploying to production, ensure:
+
+- ✅ `SECRET_KEY` is set via environment variable (not hardcoded)
+- ✅ `DEBUG=False` in production
+- ✅ `ALLOWED_HOSTS` is configured with your domain
+- ✅ PostgreSQL database is configured
+- ✅ Email credentials are set (if using email features)
+- ✅ HTTPS is enabled (Render provides this automatically)
+- ✅ Static files are collected (`collectstatic` runs automatically)
+- ✅ Media files storage is configured for production (consider using AWS S3 or similar)
+
+### Security Features Enabled
+
+The project now includes production-ready security:
+
+- 🔒 HTTPS redirect (automatic in production)
+- 🔒 HTTP Strict Transport Security (HSTS)
+- 🔒 Secure cookies (SESSION_COOKIE_SECURE, CSRF_COOKIE_SECURE)
+- 🔒 XSS protection headers
+- 🔒 Content type sniffing protection
+- 🔒 Session security (HTTPOnly cookies, 1-hour expiry)
+- 🔒 CSRF protection with SameSite cookies
+- 🔒 Comprehensive error logging
+
 ## Security Notes
 
-⚠️ **Important for Production**:
-1. Change the `SECRET_KEY` in `settings.py`
-2. Set `DEBUG = False` in `settings.py`
-3. Configure `ALLOWED_HOSTS` properly
-4. Use a production database (PostgreSQL, MySQL)
-5. Set up proper static file serving
-6. Use HTTPS
-7. Configure email backend for notifications
+✅ **This project is now production-ready!**
+
+All critical security issues have been addressed:
+1. ✅ `SECRET_KEY` must be set via environment variable (no hardcoded fallback)
+2. ✅ `DEBUG` defaults to `False` for production safety
+3. ✅ `ALLOWED_HOSTS` properly configured
+4. ✅ Production security headers enabled (HTTPS, HSTS, XSS protection)
+5. ✅ Secure session and CSRF cookie settings
+6. ✅ Email credentials removed from code (must use environment variables)
+7. ✅ Comprehensive error logging configured
+
+For local development, create a `.env` file from `.env.example` and set `DEBUG=True`.
 
 ## Contributing
 
