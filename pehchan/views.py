@@ -6,6 +6,9 @@ from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.db.models import Q, Sum
+from django.http import HttpResponse
+from django.conf import settings
+import os
 
 from .models import (
     Event, EventVolunteer, LifetimeVolunteer, 
@@ -19,13 +22,53 @@ from .forms import (
 # Add these imports for the forgot password functionality
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
-from django.conf import settings
 from django.utils import timezone
 from datetime import timedelta
 import random
 import string
 from .models import PasswordResetOTP
 from .forms import ForgotPasswordForm, OTPVerificationForm, ResetPasswordForm
+
+
+# TEMPORARY: Admin creation endpoint for initial setup
+# DELETE THIS FUNCTION AFTER FIRST USE!
+def create_initial_admin(request):
+    """
+    TEMPORARY ENDPOINT - Creates admin user on first access.
+    DELETE THIS FUNCTION AND URL AFTER USE FOR SECURITY!
+    
+    Access: /create-admin/?key=SETUP_KEY_2024
+    """
+    # Simple security check - change this key!
+    setup_key = request.GET.get('key', '')
+    
+    if setup_key != 'PEHCAN_SETUP_2024_SECURE':
+        return HttpResponse('Invalid setup key', status=403)
+    
+    username = os.environ.get('ADMIN_USERNAME', 'admin')
+    email = os.environ.get('ADMIN_EMAIL', 'admin@pehchanyui.in')
+    password = os.environ.get('ADMIN_PASSWORD', 'admin')
+    
+    # Check if admin already exists
+    if User.objects.filter(username=username).exists():
+        return HttpResponse(f'Admin user "{username}" already exists! Login at /admin/')
+    
+    # Create admin user
+    try:
+        User.objects.create_superuser(
+            username=username,
+            email=email,
+            password=password
+        )
+        return HttpResponse(
+            f'✓ SUCCESS! Admin user created!\n\n'
+            f'Username: {username}\n'
+            f'Password: {password}\n'
+            f'Login at: /admin/\n\n'
+            f'IMPORTANT: Delete the create_initial_admin view and URL from your code for security!'
+        )
+    except Exception as e:
+        return HttpResponse(f'Error creating admin: {str(e)}', status=500)
 
 
 def home(request):

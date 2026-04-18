@@ -2,6 +2,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    # TEMPORARY: Admin creation endpoint - DELETE AFTER FIRST USE!
+    path('create-admin/', views.create_initial_admin, name='create_initial_admin'),
+    
     # Home and Public Pages
     path('', views.home, name='home'),
     path('about/', views.about, name='about'),
