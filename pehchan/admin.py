@@ -26,11 +26,16 @@ class ExportDataMixin:
         for obj in queryset:
             row = []
             for field in field_names:
-                value = getattr(obj, field)
-                if hasattr(value, 'url'):
-                    value = value.url
-                elif hasattr(value, 'pk'):
-                    value = str(value)
+                try:
+                    value = getattr(obj, field)
+                    if value and hasattr(value, 'url'):
+                        value = value.url
+                    elif hasattr(value, 'pk'):
+                        value = str(value)
+                    else:
+                        value = str(value) if value is not None else ""
+                except Exception:
+                    value = "ERROR"
                 row.append(value)
             writer.writerow(row)
 
@@ -62,17 +67,20 @@ class ExportDataMixin:
         for row_num, obj in enumerate(queryset, 2):
             for col_num, field in enumerate(field_names, 1):
                 cell = ws.cell(row=row_num, column=col_num)
-                value = getattr(obj, field)
-                
-                if hasattr(value, 'url'):
-                    # Handle image/file fields with clickable links
-                    cell.value = "View File"
-                    cell.hyperlink = value.url
-                    cell.font = Font(color="0000FF", underline="single")
-                elif hasattr(value, 'pk'):
-                    cell.value = str(value)
-                else:
-                    cell.value = str(value) if value is not None else ""
+                try:
+                    value = getattr(obj, field)
+                    
+                    if value and hasattr(value, 'url'):
+                        # Handle image/file fields with clickable links
+                        cell.value = "View File"
+                        cell.hyperlink = value.url
+                        cell.font = Font(color="0000FF", underline="single")
+                    elif hasattr(value, 'pk'):
+                        cell.value = str(value)
+                    else:
+                        cell.value = str(value) if value is not None else ""
+                except Exception:
+                    cell.value = "ERROR"
         
         # Auto-adjust column widths
         for col in ws.columns:
@@ -80,8 +88,9 @@ class ExportDataMixin:
             column = col[0].column_letter
             for cell in col:
                 try:
-                    if len(str(cell.value)) > max_length:
-                        max_length = len(str(cell.value))
+                    val_str = str(cell.value)
+                    if len(val_str) > max_length:
+                        max_length = len(val_str)
                 except:
                     pass
             adjusted_width = (max_length + 2)
@@ -1049,7 +1058,7 @@ class AnonymousDonationAdmin(admin.ModelAdmin, ExportDataMixin):
     ]
     
     readonly_fields = ['created_at', 'ip_address']
-    actions = ['export_as_csv']
+    actions = ['export_as_csv', 'export_as_excel']
     
     class Media:
         css = {

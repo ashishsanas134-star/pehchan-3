@@ -223,7 +223,7 @@ class MoneyDonation(models.Model):
         ordering = ['-created_at']
     
     def __str__(self):
-        return f"{self.user.username} - ₹{self.amount}"
+        return f"{self.user.username} - Rs. {self.amount}"
 
 
 class DonorCertificate(models.Model):
@@ -329,7 +329,7 @@ class AnonymousDonation(models.Model):
     
     def __str__(self):
         donor = self.donor_name if self.donor_name else 'Anonymous'
-        return f"{donor} - ₹{self.amount} - {self.created_at.strftime('%Y-%m-%d')}"
+        return f"{donor} - Rs. {self.amount} - {self.created_at.strftime('%Y-%m-%d')}"
 
 
 class ContactMessage(models.Model):
@@ -394,7 +394,7 @@ class PehchanWallet(models.Model):
         verbose_name_plural = 'Pehchan Wallet'
     
     def __str__(self):
-        return f"Pehchan Wallet - Balance: ₹{self.balance}"
+        return f"Pehchan Wallet - Balance: Rs. {self.balance}"
     
     @classmethod
     def get_wallet(cls):
