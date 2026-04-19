@@ -4,11 +4,39 @@ from django.utils.html import format_html
 from django.utils import timezone
 from django import forms
 from django.db import models
+import csv
+from django.http import HttpResponse
 from .models import (
     Event, EventVolunteer, LifetimeVolunteer, 
     Certificate, MaterialDonation, MoneyDonation, DonorCertificate, ContactMessage, AnonymousDonation,
     PehchanWallet, WalletTransaction, Expense
 )
+
+
+class ExportCsvMixin:
+    def export_as_csv(self, request, queryset):
+        meta = self.model._meta
+        field_names = [field.name for field in meta.fields]
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename={meta}.csv'
+        writer = csv.writer(response)
+
+        writer.writerow(field_names)
+        for obj in queryset:
+            row = []
+            for field in field_names:
+                value = getattr(obj, field)
+                # Handle many-to-many or related fields if necessary, 
+                # but for simplicity we'll just use the string representation.
+                if hasattr(value, 'pk'):
+                    value = str(value)
+                row.append(value)
+            writer.writerow(row)
+
+        return response
+
+    export_as_csv.short_description = "Download selected as CSV"
 
 
 class NativeDateTimeWidget(forms.SplitDateTimeWidget):
@@ -23,9 +51,10 @@ class NativeDateTimeWidget(forms.SplitDateTimeWidget):
 
 
 @admin.register(Event)
-class EventAdmin(admin.ModelAdmin):
+class EventAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ('name', 'event_date', 'get_status_display', 'status', 'created_by')
     readonly_fields = ('created_by',)
+    actions = ['export_as_csv']
     
     def save_model(self, request, obj, form, change):
         if not obj.pk:
@@ -44,13 +73,13 @@ class EventAdmin(admin.ModelAdmin):
 
 
 @admin.register(EventVolunteer)
-class EventVolunteerAdmin(admin.ModelAdmin):
+class EventVolunteerAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ['user', 'event', 'contact_number', 'joined_at', 'status', 'issue_certificate_button']
     list_filter = ['status', 'joined_at', 'event']
     search_fields = ['user__username', 'user__email', 'event__name', 'contact_number']
     date_hierarchy = 'joined_at'
     ordering = ['-joined_at']
-    actions = ['issue_certificate']
+    actions = ['issue_certificate', 'export_as_csv']
     
     def get_urls(self):
         urls = super().get_urls()
@@ -172,14 +201,14 @@ class EventVolunteerAdmin(admin.ModelAdmin):
 
 
 @admin.register(LifetimeVolunteer)
-class LifetimeVolunteerAdmin(admin.ModelAdmin):
+class LifetimeVolunteerAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ['user', 'contact_number', 'joined_at', 'status', 'approved_at', 'rejected_at']
     list_filter = ['status', 'joined_at']
     search_fields = ['user__username', 'user__email', 'contact_number', 'motivation']
     date_hierarchy = 'joined_at'
     ordering = ['-joined_at']
     readonly_fields = ['joined_at', 'approved_at', 'rejected_at', 'reviewed_by']
-    actions = ['approve_volunteers', 'reject_volunteers']
+    actions = ['approve_volunteers', 'reject_volunteers', 'export_as_csv']
     
     def approve_volunteers(self, request, queryset):
         """Approve selected lifetime volunteers"""
@@ -221,12 +250,13 @@ class LifetimeVolunteerAdmin(admin.ModelAdmin):
 
 
 @admin.register(Certificate)
-class CertificateAdmin(admin.ModelAdmin):
+class CertificateAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ['certificate_id', 'volunteer', 'event', 'issue_date']
     list_filter = ['issue_date', 'event']
     search_fields = ['volunteer__user__username', 'event__name']
     date_hierarchy = 'issue_date'
     ordering = ['-issue_date']
+    actions = ['export_as_csv']
     
     def certificate_id(self, obj):
         return obj.pk
@@ -234,14 +264,14 @@ class CertificateAdmin(admin.ModelAdmin):
 
 
 @admin.register(MaterialDonation)
-class MaterialDonationAdmin(admin.ModelAdmin):
+class MaterialDonationAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ['user', 'item_name', 'quantity', 'location', 'contact_number', 'status', 'created_at', 'issue_certificate_button']
     list_filter = ['status', 'location', 'created_at']
     search_fields = ['user__username', 'item_name', 'location', 'contact_number']
     date_hierarchy = 'created_at'
     ordering = ['-created_at']
     readonly_fields = ['created_at']
-    actions = ['issue_donor_certificate']
+    actions = ['issue_donor_certificate', 'export_as_csv']
     
     def get_urls(self):
         urls = super().get_urls()
@@ -372,14 +402,14 @@ class MaterialDonationAdmin(admin.ModelAdmin):
 
 
 @admin.register(MoneyDonation)
-class MoneyDonationAdmin(admin.ModelAdmin):
+class MoneyDonationAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ['user', 'amount', 'contact_number', 'status', 'payment_method', 'created_at', 'issue_certificate_button']
     list_filter = ['status', 'payment_method', 'created_at']
     search_fields = ['user__username', 'user__email', 'upi_id', 'contact_number']
     date_hierarchy = 'created_at'
     ordering = ['-created_at']
     readonly_fields = ['created_at']
-    actions = ['issue_donor_certificate', 'verify_donations', 'decline_donations']
+    actions = ['issue_donor_certificate', 'verify_donations', 'decline_donations', 'export_as_csv']
     
     def verify_donations(self, request, queryset):
         queryset.update(status='verified')
@@ -515,13 +545,14 @@ class MoneyDonationAdmin(admin.ModelAdmin):
 
 
 @admin.register(DonorCertificate)
-class DonorCertificateAdmin(admin.ModelAdmin):
+class DonorCertificateAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ['certificate_number', 'user', 'donation_type', 'get_donation_info', 'issue_date', 'issued_by', 'file_link', 'created_at']
     list_filter = ['donation_type', 'issue_date', 'created_at']
     search_fields = ['certificate_number', 'user__username', 'user__email', 'user__first_name', 'user__last_name']
     date_hierarchy = 'issue_date'
     ordering = ['-issue_date', '-created_at']
     readonly_fields = ['certificate_number', 'created_at', 'updated_at', 'get_donation_preview', 'file_link']
+    actions = ['export_as_csv']
     
     fieldsets = (
         ('Donor Information', {
@@ -577,7 +608,7 @@ class DonorCertificateAdmin(admin.ModelAdmin):
 
 
 @admin.register(ContactMessage)
-class ContactMessageAdmin(admin.ModelAdmin):
+class ContactMessageAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = [
         'colored_status', 
         'name', 
@@ -647,7 +678,8 @@ class ContactMessageAdmin(admin.ModelAdmin):
         'set_priority_high',
         'set_priority_medium',
         'set_priority_low',
-        'send_reply'
+        'send_reply',
+        'export_as_csv'
     ]
     
     # Specify the custom template
@@ -873,9 +905,10 @@ class ContactMessageAdmin(admin.ModelAdmin):
 
 
 @admin.register(PehchanWallet)
-class PehchanWalletAdmin(admin.ModelAdmin):
+class PehchanWalletAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ['balance', 'created_at', 'updated_at']
     readonly_fields = ['created_at', 'updated_at']
+    actions = ['export_as_csv']
     
     class Media:
         css = {
@@ -892,12 +925,13 @@ class PehchanWalletAdmin(admin.ModelAdmin):
 
 
 @admin.register(WalletTransaction)
-class WalletTransactionAdmin(admin.ModelAdmin):
+class WalletTransactionAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ['transaction_type', 'amount', 'description', 'balance_after_transaction', 'created_at']
     list_filter = ['transaction_type', 'created_at']
     search_fields = ['description']
     readonly_fields = ['wallet', 'amount', 'transaction_type', 'description', 'related_donation', 'related_expense', 'balance_after_transaction', 'created_at']
     date_hierarchy = 'created_at'
+    actions = ['export_as_csv']
     
     def has_add_permission(self, request):
         # Transactions are created automatically, not manually
@@ -909,11 +943,12 @@ class WalletTransactionAdmin(admin.ModelAdmin):
 
 
 @admin.register(Expense)
-class ExpenseAdmin(admin.ModelAdmin):
+class ExpenseAdmin(admin.ModelAdmin, ExportCsvMixin):
     list_display = ['title', 'category', 'amount', 'date', 'approved_by', 'created_at']
     list_filter = ['category', 'date', 'approved_by']
     search_fields = ['title', 'description']
     readonly_fields = ['created_at', 'updated_at']
+    actions = ['export_as_csv']
     
     class Media:
         css = {
@@ -943,7 +978,7 @@ class ExpenseAdmin(admin.ModelAdmin):
 
 
 @admin.register(AnonymousDonation)
-class AnonymousDonationAdmin(admin.ModelAdmin):
+class AnonymousDonationAdmin(admin.ModelAdmin, ExportCsvMixin):
     """Admin interface for anonymous donations"""
     list_display = [
         'get_donor_name',
@@ -971,6 +1006,7 @@ class AnonymousDonationAdmin(admin.ModelAdmin):
     ]
     
     readonly_fields = ['created_at', 'ip_address']
+    actions = ['export_as_csv']
     
     class Media:
         css = {

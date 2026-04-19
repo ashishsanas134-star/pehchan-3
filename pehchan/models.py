@@ -127,11 +127,31 @@ class Certificate(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.certificate_number:
-            import random
-            import string
             year = timezone.now().year
-            random_str = ''.join(random.choices(string.digits, k=6))
-            self.certificate_number = f"CERT-{year}-{random_str}"
+            prefix = f"PYUI/{year}/V/"
+            
+            # Find the last certificate number for this year and type
+            last_cert = Certificate.objects.filter(
+                certificate_number__startswith=prefix
+            ).order_by('-certificate_number').first()
+            
+            if last_cert:
+                try:
+                    # Extract the sequence number from the last certificate
+                    last_sequence = int(last_cert.certificate_number.split('/')[-1])
+                    new_sequence = last_sequence + 1
+                except (ValueError, IndexError):
+                    new_sequence = 1
+            else:
+                new_sequence = 1
+                
+            self.certificate_number = f"{prefix}{new_sequence:04d}"
+            
+            # Handle potential collision just in case
+            while Certificate.objects.filter(certificate_number=self.certificate_number).exists():
+                new_sequence += 1
+                self.certificate_number = f"{prefix}{new_sequence:04d}"
+                
         super().save(*args, **kwargs)
     
     def __str__(self):
@@ -245,20 +265,31 @@ class DonorCertificate(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.certificate_number:
-            import random
-            import string
             year = timezone.now().year
-            # Try up to 5 times to generate a unique number if collision occurs
-            for _ in range(5):
-                random_str = ''.join(random.choices(string.digits, k=6))
-                new_number = f"DON-{year}-{random_str}"
-                if not DonorCertificate.objects.filter(certificate_number=new_number).exists():
-                    self.certificate_number = new_number
-                    break
+            prefix = f"PYUI/{year}/D/"
+            
+            # Find the last certificate number for this year and type
+            last_cert = DonorCertificate.objects.filter(
+                certificate_number__startswith=prefix
+            ).order_by('-certificate_number').first()
+            
+            if last_cert:
+                try:
+                    # Extract the sequence number from the last certificate
+                    last_sequence = int(last_cert.certificate_number.split('/')[-1])
+                    new_sequence = last_sequence + 1
+                except (ValueError, IndexError):
+                    new_sequence = 1
             else:
-                # Fallback if somehow we hit 5 collisions (extremely unlikely)
-                random_str = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
-                self.certificate_number = f"DON-{year}-{random_str}"
+                new_sequence = 1
+                
+            self.certificate_number = f"{prefix}{new_sequence:04d}"
+            
+            # Handle potential collision just in case
+            while DonorCertificate.objects.filter(certificate_number=self.certificate_number).exists():
+                new_sequence += 1
+                self.certificate_number = f"{prefix}{new_sequence:04d}"
+                
         super().save(*args, **kwargs)
     
     def __str__(self):
