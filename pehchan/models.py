@@ -248,18 +248,32 @@ class DonorCertificate(models.Model):
             import random
             import string
             year = timezone.now().year
-            random_str = ''.join(random.choices(string.digits, k=6))
-            self.certificate_number = f"DON-{year}-{random_str}"
+            # Try up to 5 times to generate a unique number if collision occurs
+            for _ in range(5):
+                random_str = ''.join(random.choices(string.digits, k=6))
+                new_number = f"DON-{year}-{random_str}"
+                if not DonorCertificate.objects.filter(certificate_number=new_number).exists():
+                    self.certificate_number = new_number
+                    break
+            else:
+                # Fallback if somehow we hit 5 collisions (extremely unlikely)
+                random_str = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+                self.certificate_number = f"DON-{year}-{random_str}"
         super().save(*args, **kwargs)
     
     def __str__(self):
         return f"Certificate {self.certificate_number} - {self.user.username}"
     
     def get_donation_details(self):
-        if self.donation_type == 'material' and self.material_donation:
-            return f"{self.material_donation.item_name} (Qty: {self.material_donation.quantity})"
-        elif self.donation_type == 'money' and self.money_donation:
-            return f"₹{self.money_donation.amount}"
+        try:
+            if self.donation_type == 'material' and self.material_donation:
+                return f"{self.material_donation.item_name} (Qty: {self.material_donation.quantity})"
+            elif self.donation_type == 'money' and self.money_donation:
+                # Using 'Rs.' instead of '₹' to avoid potential UnicodeEncodeError 
+                # in environments that don't support UTF-8 encoding.
+                return f"Rs. {self.money_donation.amount}"
+        except Exception:
+            return "Error retrieving details"
         return "N/A"
 
 

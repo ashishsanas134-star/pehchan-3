@@ -48,6 +48,4 @@ urlpatterns = [
     
     # Admin Certificate Issuance (Staff Only)
     path('admin/issue-volunteer-certificate/<int:volunteer_id>/', views.issue_volunteer_certificate, name='issue_volunteer_certificate'),
-    path('admin/issue-material-donation-certificate/<int:donation_id>/', views.issue_material_donation_certificate, name='issue_material_donation_certificate'),
-    path('admin/issue-money-donation-certificate/<int:donation_id>/', views.issue_money_donation_certificate, name='issue_money_donation_certificate'),
 ]

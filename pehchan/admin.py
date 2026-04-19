@@ -257,6 +257,7 @@ class MaterialDonationAdmin(admin.ModelAdmin):
         from django.http import HttpResponseRedirect
         from django.urls import reverse
         from .models import MaterialDonation, DonorCertificate
+        from django.db import IntegrityError
         
         # Check permissions
         if not request.user.is_staff:
@@ -275,22 +276,23 @@ class MaterialDonationAdmin(admin.ModelAdmin):
             certificate_number = request.POST.get('certificate_number')
             certificate_file = request.FILES.get('certificate_file')
             if certificate_number:
-                # Create a donor certificate with the custom number
-                from django.utils import timezone
-                donor_certificate = DonorCertificate.objects.create(
-                    user=donation.user,
-                    donation_type='material',
-                    material_donation=donation,
-                    certificate_number=certificate_number,
-                    issue_date=timezone.now().date(),
-                    remarks=f'Thank you for your generous donation of {donation.quantity} {donation.item_name}(s).'
-                )
-                # If a file was uploaded, save it to the certificate
-                if certificate_file:
-                    donor_certificate.file = certificate_file
-                    donor_certificate.save()
-                messages.success(request, f'Donor certificate issued successfully for {donation.user.username}.')
-                return HttpResponseRedirect(reverse('admin:pehchan_materialdonation_changelist'))
+                try:
+                    donor_certificate = DonorCertificate.objects.create(
+                        user=donation.user,
+                        donation_type='material',
+                        material_donation=donation,
+                        certificate_number=certificate_number,
+                        issue_date=timezone.now().date(),
+                        remarks=f'Thank you for your generous donation of {donation.quantity} {donation.item_name}(s).'
+                    )
+                    # If a file was uploaded, save it to the certificate
+                    if certificate_file:
+                        donor_certificate.file = certificate_file
+                        donor_certificate.save()
+                    messages.success(request, f'Donor certificate issued successfully for {donation.user.username}.')
+                    return HttpResponseRedirect(reverse('admin:pehchan_materialdonation_changelist'))
+                except IntegrityError:
+                    messages.error(request, f'Certificate number "{certificate_number}" already exists. Please use a unique number.')
             else:
                 messages.error(request, 'Please enter a valid certificate number.')
         
@@ -345,14 +347,17 @@ class MaterialDonationAdmin(admin.ModelAdmin):
             
             # Check if donor certificate already exists
             if not DonorCertificate.objects.filter(material_donation=donation).exists():
-                DonorCertificate.objects.create(
-                    user=donation.user,
-                    donation_type='material',
-                    material_donation=donation,
-                    issue_date=timezone.now().date(),
-                    remarks=f'Thank you for your generous donation of {donation.quantity} {donation.item_name}(s).'
-                )
-                created_count += 1
+                try:
+                    DonorCertificate.objects.create(
+                        user=donation.user,
+                        donation_type='material',
+                        material_donation=donation,
+                        issue_date=timezone.now().date(),
+                        remarks=f'Thank you for your generous donation of {donation.quantity} {donation.item_name}(s).'
+                    )
+                    created_count += 1
+                except IntegrityError:
+                    skipped_count += 1
             else:
                 skipped_count += 1
         
@@ -376,11 +381,6 @@ class MoneyDonationAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at']
     actions = ['issue_donor_certificate', 'verify_donations', 'decline_donations']
     
-    class Media:
-        css = {
-            'all': ('CSS/admin_patch.css',)
-        }
-    
     def verify_donations(self, request, queryset):
         queryset.update(status='verified')
     verify_donations.short_description = "Mark selected donations as Verified"
@@ -403,6 +403,7 @@ class MoneyDonationAdmin(admin.ModelAdmin):
         from django.http import HttpResponseRedirect
         from django.urls import reverse
         from .models import MoneyDonation, DonorCertificate
+        from django.db import IntegrityError
         
         # Check permissions
         if not request.user.is_staff:
@@ -421,22 +422,23 @@ class MoneyDonationAdmin(admin.ModelAdmin):
             certificate_number = request.POST.get('certificate_number')
             certificate_file = request.FILES.get('certificate_file')
             if certificate_number:
-                # Create a donor certificate with the custom number
-                from django.utils import timezone
-                donor_certificate = DonorCertificate.objects.create(
-                    user=donation.user,
-                    donation_type='money',
-                    money_donation=donation,
-                    certificate_number=certificate_number,
-                    issue_date=timezone.now().date(),
-                    remarks=f'Thank you for your generous donation of ₹{donation.amount}.'
-                )
-                # If a file was uploaded, save it to the certificate
-                if certificate_file:
-                    donor_certificate.file = certificate_file
-                    donor_certificate.save()
-                messages.success(request, f'Donor certificate issued successfully for {donation.user.username}.')
-                return HttpResponseRedirect(reverse('admin:pehchan_moneydonation_changelist'))
+                try:
+                    donor_certificate = DonorCertificate.objects.create(
+                        user=donation.user,
+                        donation_type='money',
+                        money_donation=donation,
+                        certificate_number=certificate_number,
+                        issue_date=timezone.now().date(),
+                        remarks=f'Thank you for your generous donation of Rs. {donation.amount}.'
+                    )
+                    # If a file was uploaded, save it to the certificate
+                    if certificate_file:
+                        donor_certificate.file = certificate_file
+                        donor_certificate.save()
+                    messages.success(request, f'Donor certificate issued successfully for {donation.user.username}.')
+                    return HttpResponseRedirect(reverse('admin:pehchan_moneydonation_changelist'))
+                except IntegrityError:
+                    messages.error(request, f'Certificate number "{certificate_number}" already exists. Please use a unique number.')
             else:
                 messages.error(request, 'Please enter a valid certificate number.')
         
@@ -490,14 +492,17 @@ class MoneyDonationAdmin(admin.ModelAdmin):
         
         for donation in verified_queryset:
             if not DonorCertificate.objects.filter(money_donation=donation).exists():
-                DonorCertificate.objects.create(
-                    user=donation.user,
-                    donation_type='money',
-                    money_donation=donation,
-                    issue_date=timezone.now().date(),
-                    remarks=f'Thank you for your generous donation of ₹{donation.amount}.'
-                )
-                created_count += 1
+                try:
+                    DonorCertificate.objects.create(
+                        user=donation.user,
+                        donation_type='money',
+                        money_donation=donation,
+                        issue_date=timezone.now().date(),
+                        remarks=f'Thank you for your generous donation of Rs. {donation.amount}.'
+                    )
+                    created_count += 1
+                except IntegrityError:
+                    skipped_count += 1
             else:
                 skipped_count += 1
         
@@ -511,12 +516,12 @@ class MoneyDonationAdmin(admin.ModelAdmin):
 
 @admin.register(DonorCertificate)
 class DonorCertificateAdmin(admin.ModelAdmin):
-    list_display = ['certificate_number', 'user', 'donation_type', 'get_donation_info', 'issue_date', 'created_at']
+    list_display = ['certificate_number', 'user', 'donation_type', 'get_donation_info', 'issue_date', 'issued_by', 'file_link', 'created_at']
     list_filter = ['donation_type', 'issue_date', 'created_at']
     search_fields = ['certificate_number', 'user__username', 'user__email', 'user__first_name', 'user__last_name']
     date_hierarchy = 'issue_date'
     ordering = ['-issue_date', '-created_at']
-    readonly_fields = ['certificate_number', 'created_at', 'updated_at', 'get_donation_preview']
+    readonly_fields = ['certificate_number', 'created_at', 'updated_at', 'get_donation_preview', 'file_link']
     
     fieldsets = (
         ('Donor Information', {
@@ -534,6 +539,9 @@ class DonorCertificateAdmin(admin.ModelAdmin):
         }),
     )
     
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('user', 'material_donation', 'money_donation')
+
     def get_donation_info(self, obj):
         """Display donation details in list view"""
         return obj.get_donation_details()
@@ -541,30 +549,31 @@ class DonorCertificateAdmin(admin.ModelAdmin):
     
     def get_donation_preview(self, obj):
         """Show donation preview in admin form"""
-        if obj.donation_type == 'material' and obj.material_donation:
-            donation = obj.material_donation
-            return f"Item: {donation.item_name} | Quantity: {donation.quantity} | Location: {donation.location} | Date: {donation.created_at.strftime('%Y-%m-%d')}"
-        elif obj.donation_type == 'money' and obj.money_donation:
-            donation = obj.money_donation
-            return f"Amount: ₹{donation.amount} | Payment Method: {donation.get_payment_method_display()} | Date: {donation.created_at.strftime('%Y-%m-%d')}"
+        try:
+            if obj.donation_type == 'material' and obj.material_donation:
+                donation = obj.material_donation
+                return f"Item: {donation.item_name} | Quantity: {donation.quantity} | Location: {donation.location} | Date: {donation.created_at.strftime('%Y-%m-%d')}"
+            elif obj.donation_type == 'money' and obj.money_donation:
+                donation = obj.money_donation
+                return f"Amount: Rs. {donation.amount} | Payment Method: {donation.get_payment_method_display()} | Date: {donation.created_at.strftime('%Y-%m-%d')}"
+        except Exception:
+            return "Error retrieving donation preview"
         return "No donation selected"
     get_donation_preview.short_description = 'Donation Preview'
     
+    def file_link(self, obj):
+        if obj.file:
+            return format_html('<a href="{}" target="_blank">View Certificate</a>', obj.file.url)
+        return "No File"
+    file_link.short_description = 'Certificate File'
+
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         """Filter donation options based on donation_type"""
         if db_field.name == "material_donation":
-            # Show only material donations
             kwargs["queryset"] = MaterialDonation.objects.select_related('user').all()
         elif db_field.name == "money_donation":
-            # Show only money donations
             kwargs["queryset"] = MoneyDonation.objects.select_related('user').all()
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
-    
-    class Media:
-        js = ('admin/js/donor_certificate_admin.js',)
-        css = {
-            'all': ('admin/css/donor_certificate_admin.css',)
-        }
 
 
 @admin.register(ContactMessage)
