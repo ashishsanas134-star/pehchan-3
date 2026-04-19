@@ -13,7 +13,7 @@ from .models import (
 )
 
 
-class ExportCsvMixin:
+class ExportDataMixin:
     def export_as_csv(self, request, queryset):
         meta = self.model._meta
         field_names = [field.name for field in meta.fields]
@@ -27,16 +27,71 @@ class ExportCsvMixin:
             row = []
             for field in field_names:
                 value = getattr(obj, field)
-                # Handle many-to-many or related fields if necessary, 
-                # but for simplicity we'll just use the string representation.
-                if hasattr(value, 'pk'):
+                if hasattr(value, 'url'):
+                    value = value.url
+                elif hasattr(value, 'pk'):
                     value = str(value)
                 row.append(value)
             writer.writerow(row)
 
         return response
 
+    def export_as_excel(self, request, queryset):
+        import openpyxl
+        from openpyxl.styles import Font, Alignment
+        
+        meta = self.model._meta
+        field_names = [field.name for field in meta.fields]
+        
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = f'attachment; filename={meta}.xlsx'
+        
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = str(meta).split('.')[-1].capitalize()
+        
+        # Write headers with style
+        header_font = Font(bold=True)
+        for col_num, column_title in enumerate(field_names, 1):
+            cell = ws.cell(row=1, column=col_num)
+            cell.value = column_title.replace('_', ' ').capitalize()
+            cell.font = header_font
+            cell.alignment = Alignment(horizontal='center')
+        
+        # Write data
+        for row_num, obj in enumerate(queryset, 2):
+            for col_num, field in enumerate(field_names, 1):
+                cell = ws.cell(row=row_num, column=col_num)
+                value = getattr(obj, field)
+                
+                if hasattr(value, 'url'):
+                    # Handle image/file fields with clickable links
+                    cell.value = "View File"
+                    cell.hyperlink = value.url
+                    cell.font = Font(color="0000FF", underline="single")
+                elif hasattr(value, 'pk'):
+                    cell.value = str(value)
+                else:
+                    cell.value = str(value) if value is not None else ""
+        
+        # Auto-adjust column widths
+        for col in ws.columns:
+            max_length = 0
+            column = col[0].column_letter
+            for cell in col:
+                try:
+                    if len(str(cell.value)) > max_length:
+                        max_length = len(str(cell.value))
+                except:
+                    pass
+            adjusted_width = (max_length + 2)
+            ws.column_dimensions[column].width = min(adjusted_width, 50)
+            
+        wb.save(response)
+        return response
+
     export_as_csv.short_description = "Download selected as CSV"
+    export_as_excel.short_description = "Download selected as Excel (XLSX)"
 
 
 class NativeDateTimeWidget(forms.SplitDateTimeWidget):
@@ -51,10 +106,10 @@ class NativeDateTimeWidget(forms.SplitDateTimeWidget):
 
 
 @admin.register(Event)
-class EventAdmin(admin.ModelAdmin, ExportCsvMixin):
+class EventAdmin(admin.ModelAdmin, ExportDataMixin):
     list_display = ('name', 'event_date', 'get_status_display', 'status', 'created_by')
     readonly_fields = ('created_by',)
-    actions = ['export_as_csv']
+    actions = ['export_as_csv', 'export_as_excel']
     
     def save_model(self, request, obj, form, change):
         if not obj.pk:
@@ -73,13 +128,13 @@ class EventAdmin(admin.ModelAdmin, ExportCsvMixin):
 
 
 @admin.register(EventVolunteer)
-class EventVolunteerAdmin(admin.ModelAdmin, ExportCsvMixin):
+class EventVolunteerAdmin(admin.ModelAdmin, ExportDataMixin):
     list_display = ['user', 'event', 'contact_number', 'joined_at', 'status', 'issue_certificate_button']
     list_filter = ['status', 'joined_at', 'event']
     search_fields = ['user__username', 'user__email', 'event__name', 'contact_number']
     date_hierarchy = 'joined_at'
     ordering = ['-joined_at']
-    actions = ['issue_certificate', 'export_as_csv']
+    actions = ['issue_certificate', 'export_as_csv', 'export_as_excel']
     
     def get_urls(self):
         urls = super().get_urls()
@@ -110,15 +165,13 @@ class EventVolunteerAdmin(admin.ModelAdmin, ExportCsvMixin):
             return HttpResponseRedirect(reverse('admin:pehchan_eventvolunteer_changelist'))
         
         if request.method == 'POST':
-            certificate_number = request.POST.get('certificate_number')
             certificate_file = request.FILES.get('certificate_file')
-            if certificate_number:
-                # Create a certificate
+            try:
+                # Create a certificate - number will be auto-generated by model's save()
                 from django.utils import timezone
                 certificate = Certificate.objects.create(
                     event=volunteer.event,
                     volunteer=volunteer,
-                    certificate_number=certificate_number,
                     issue_date=timezone.now().date()
                 )
                 # If a file was uploaded, save it to the certificate
@@ -127,8 +180,8 @@ class EventVolunteerAdmin(admin.ModelAdmin, ExportCsvMixin):
                     certificate.save()
                 messages.success(request, f'Certificate issued successfully for {volunteer.user.username}.')
                 return HttpResponseRedirect(reverse('admin:pehchan_eventvolunteer_changelist'))
-            else:
-                messages.error(request, 'Please enter a valid certificate number.')
+            except Exception as e:
+                messages.error(request, f'Error issuing certificate: {str(e)}')
         
         context = {
             'volunteer': volunteer,
@@ -201,14 +254,14 @@ class EventVolunteerAdmin(admin.ModelAdmin, ExportCsvMixin):
 
 
 @admin.register(LifetimeVolunteer)
-class LifetimeVolunteerAdmin(admin.ModelAdmin, ExportCsvMixin):
+class LifetimeVolunteerAdmin(admin.ModelAdmin, ExportDataMixin):
     list_display = ['user', 'contact_number', 'joined_at', 'status', 'approved_at', 'rejected_at']
     list_filter = ['status', 'joined_at']
     search_fields = ['user__username', 'user__email', 'contact_number', 'motivation']
     date_hierarchy = 'joined_at'
     ordering = ['-joined_at']
     readonly_fields = ['joined_at', 'approved_at', 'rejected_at', 'reviewed_by']
-    actions = ['approve_volunteers', 'reject_volunteers', 'export_as_csv']
+    actions = ['approve_volunteers', 'reject_volunteers', 'export_as_csv', 'export_as_excel']
     
     def approve_volunteers(self, request, queryset):
         """Approve selected lifetime volunteers"""
@@ -250,13 +303,13 @@ class LifetimeVolunteerAdmin(admin.ModelAdmin, ExportCsvMixin):
 
 
 @admin.register(Certificate)
-class CertificateAdmin(admin.ModelAdmin, ExportCsvMixin):
+class CertificateAdmin(admin.ModelAdmin, ExportDataMixin):
     list_display = ['certificate_id', 'volunteer', 'event', 'issue_date']
     list_filter = ['issue_date', 'event']
     search_fields = ['volunteer__user__username', 'event__name']
     date_hierarchy = 'issue_date'
     ordering = ['-issue_date']
-    actions = ['export_as_csv']
+    actions = ['export_as_csv', 'export_as_excel']
     
     def certificate_id(self, obj):
         return obj.pk
@@ -264,14 +317,14 @@ class CertificateAdmin(admin.ModelAdmin, ExportCsvMixin):
 
 
 @admin.register(MaterialDonation)
-class MaterialDonationAdmin(admin.ModelAdmin, ExportCsvMixin):
+class MaterialDonationAdmin(admin.ModelAdmin, ExportDataMixin):
     list_display = ['user', 'item_name', 'quantity', 'location', 'contact_number', 'status', 'created_at', 'issue_certificate_button']
     list_filter = ['status', 'location', 'created_at']
     search_fields = ['user__username', 'item_name', 'location', 'contact_number']
     date_hierarchy = 'created_at'
     ordering = ['-created_at']
     readonly_fields = ['created_at']
-    actions = ['issue_donor_certificate', 'export_as_csv']
+    actions = ['issue_donor_certificate', 'export_as_csv', 'export_as_excel']
     
     def get_urls(self):
         urls = super().get_urls()
@@ -303,28 +356,23 @@ class MaterialDonationAdmin(admin.ModelAdmin, ExportCsvMixin):
             return HttpResponseRedirect(reverse('admin:pehchan_materialdonation_changelist'))
         
         if request.method == 'POST':
-            certificate_number = request.POST.get('certificate_number')
             certificate_file = request.FILES.get('certificate_file')
-            if certificate_number:
-                try:
-                    donor_certificate = DonorCertificate.objects.create(
-                        user=donation.user,
-                        donation_type='material',
-                        material_donation=donation,
-                        certificate_number=certificate_number,
-                        issue_date=timezone.now().date(),
-                        remarks=f'Thank you for your generous donation of {donation.quantity} {donation.item_name}(s).'
-                    )
-                    # If a file was uploaded, save it to the certificate
-                    if certificate_file:
-                        donor_certificate.file = certificate_file
-                        donor_certificate.save()
-                    messages.success(request, f'Donor certificate issued successfully for {donation.user.username}.')
-                    return HttpResponseRedirect(reverse('admin:pehchan_materialdonation_changelist'))
-                except IntegrityError:
-                    messages.error(request, f'Certificate number "{certificate_number}" already exists. Please use a unique number.')
-            else:
-                messages.error(request, 'Please enter a valid certificate number.')
+            try:
+                donor_certificate = DonorCertificate.objects.create(
+                    user=donation.user,
+                    donation_type='material',
+                    material_donation=donation,
+                    issue_date=timezone.now().date(),
+                    remarks=f'Thank you for your generous donation of {donation.quantity} {donation.item_name}(s).'
+                )
+                # If a file was uploaded, save it to the certificate
+                if certificate_file:
+                    donor_certificate.file = certificate_file
+                    donor_certificate.save()
+                messages.success(request, f'Donor certificate issued successfully for {donation.user.username}.')
+                return HttpResponseRedirect(reverse('admin:pehchan_materialdonation_changelist'))
+            except Exception as e:
+                messages.error(request, f'Error issuing certificate: {str(e)}')
         
         context = {
             'donation': donation,
@@ -402,14 +450,14 @@ class MaterialDonationAdmin(admin.ModelAdmin, ExportCsvMixin):
 
 
 @admin.register(MoneyDonation)
-class MoneyDonationAdmin(admin.ModelAdmin, ExportCsvMixin):
+class MoneyDonationAdmin(admin.ModelAdmin, ExportDataMixin):
     list_display = ['user', 'amount', 'contact_number', 'status', 'payment_method', 'created_at', 'issue_certificate_button']
     list_filter = ['status', 'payment_method', 'created_at']
     search_fields = ['user__username', 'user__email', 'upi_id', 'contact_number']
     date_hierarchy = 'created_at'
     ordering = ['-created_at']
     readonly_fields = ['created_at']
-    actions = ['issue_donor_certificate', 'verify_donations', 'decline_donations', 'export_as_csv']
+    actions = ['issue_donor_certificate', 'verify_donations', 'decline_donations', 'export_as_csv', 'export_as_excel']
     
     def verify_donations(self, request, queryset):
         queryset.update(status='verified')
@@ -449,28 +497,23 @@ class MoneyDonationAdmin(admin.ModelAdmin, ExportCsvMixin):
             return HttpResponseRedirect(reverse('admin:pehchan_moneydonation_changelist'))
         
         if request.method == 'POST':
-            certificate_number = request.POST.get('certificate_number')
             certificate_file = request.FILES.get('certificate_file')
-            if certificate_number:
-                try:
-                    donor_certificate = DonorCertificate.objects.create(
-                        user=donation.user,
-                        donation_type='money',
-                        money_donation=donation,
-                        certificate_number=certificate_number,
-                        issue_date=timezone.now().date(),
-                        remarks=f'Thank you for your generous donation of Rs. {donation.amount}.'
-                    )
-                    # If a file was uploaded, save it to the certificate
-                    if certificate_file:
-                        donor_certificate.file = certificate_file
-                        donor_certificate.save()
-                    messages.success(request, f'Donor certificate issued successfully for {donation.user.username}.')
-                    return HttpResponseRedirect(reverse('admin:pehchan_moneydonation_changelist'))
-                except IntegrityError:
-                    messages.error(request, f'Certificate number "{certificate_number}" already exists. Please use a unique number.')
-            else:
-                messages.error(request, 'Please enter a valid certificate number.')
+            try:
+                donor_certificate = DonorCertificate.objects.create(
+                    user=donation.user,
+                    donation_type='money',
+                    money_donation=donation,
+                    issue_date=timezone.now().date(),
+                    remarks=f'Thank you for your generous donation of Rs. {donation.amount}.'
+                )
+                # If a file was uploaded, save it to the certificate
+                if certificate_file:
+                    donor_certificate.file = certificate_file
+                    donor_certificate.save()
+                messages.success(request, f'Donor certificate issued successfully for {donation.user.username}.')
+                return HttpResponseRedirect(reverse('admin:pehchan_moneydonation_changelist'))
+            except Exception as e:
+                messages.error(request, f'Error issuing certificate: {str(e)}')
         
         context = {
             'donation': donation,
@@ -545,14 +588,14 @@ class MoneyDonationAdmin(admin.ModelAdmin, ExportCsvMixin):
 
 
 @admin.register(DonorCertificate)
-class DonorCertificateAdmin(admin.ModelAdmin, ExportCsvMixin):
+class DonorCertificateAdmin(admin.ModelAdmin, ExportDataMixin):
     list_display = ['certificate_number', 'user', 'donation_type', 'get_donation_info', 'issue_date', 'issued_by', 'file_link', 'created_at']
     list_filter = ['donation_type', 'issue_date', 'created_at']
     search_fields = ['certificate_number', 'user__username', 'user__email', 'user__first_name', 'user__last_name']
     date_hierarchy = 'issue_date'
     ordering = ['-issue_date', '-created_at']
     readonly_fields = ['certificate_number', 'created_at', 'updated_at', 'get_donation_preview', 'file_link']
-    actions = ['export_as_csv']
+    actions = ['export_as_csv', 'export_as_excel']
     
     fieldsets = (
         ('Donor Information', {
@@ -608,7 +651,7 @@ class DonorCertificateAdmin(admin.ModelAdmin, ExportCsvMixin):
 
 
 @admin.register(ContactMessage)
-class ContactMessageAdmin(admin.ModelAdmin, ExportCsvMixin):
+class ContactMessageAdmin(admin.ModelAdmin, ExportDataMixin):
     list_display = [
         'colored_status', 
         'name', 
@@ -679,7 +722,7 @@ class ContactMessageAdmin(admin.ModelAdmin, ExportCsvMixin):
         'set_priority_medium',
         'set_priority_low',
         'send_reply',
-        'export_as_csv'
+        'export_as_csv', 'export_as_excel'
     ]
     
     # Specify the custom template
@@ -905,10 +948,10 @@ class ContactMessageAdmin(admin.ModelAdmin, ExportCsvMixin):
 
 
 @admin.register(PehchanWallet)
-class PehchanWalletAdmin(admin.ModelAdmin, ExportCsvMixin):
+class PehchanWalletAdmin(admin.ModelAdmin, ExportDataMixin):
     list_display = ['balance', 'created_at', 'updated_at']
     readonly_fields = ['created_at', 'updated_at']
-    actions = ['export_as_csv']
+    actions = ['export_as_csv', 'export_as_excel']
     
     class Media:
         css = {
@@ -925,13 +968,13 @@ class PehchanWalletAdmin(admin.ModelAdmin, ExportCsvMixin):
 
 
 @admin.register(WalletTransaction)
-class WalletTransactionAdmin(admin.ModelAdmin, ExportCsvMixin):
+class WalletTransactionAdmin(admin.ModelAdmin, ExportDataMixin):
     list_display = ['transaction_type', 'amount', 'description', 'balance_after_transaction', 'created_at']
     list_filter = ['transaction_type', 'created_at']
     search_fields = ['description']
     readonly_fields = ['wallet', 'amount', 'transaction_type', 'description', 'related_donation', 'related_expense', 'balance_after_transaction', 'created_at']
     date_hierarchy = 'created_at'
-    actions = ['export_as_csv']
+    actions = ['export_as_csv', 'export_as_excel']
     
     def has_add_permission(self, request):
         # Transactions are created automatically, not manually
@@ -943,12 +986,12 @@ class WalletTransactionAdmin(admin.ModelAdmin, ExportCsvMixin):
 
 
 @admin.register(Expense)
-class ExpenseAdmin(admin.ModelAdmin, ExportCsvMixin):
+class ExpenseAdmin(admin.ModelAdmin, ExportDataMixin):
     list_display = ['title', 'category', 'amount', 'date', 'approved_by', 'created_at']
     list_filter = ['category', 'date', 'approved_by']
     search_fields = ['title', 'description']
     readonly_fields = ['created_at', 'updated_at']
-    actions = ['export_as_csv']
+    actions = ['export_as_csv', 'export_as_excel']
     
     class Media:
         css = {
@@ -978,7 +1021,7 @@ class ExpenseAdmin(admin.ModelAdmin, ExportCsvMixin):
 
 
 @admin.register(AnonymousDonation)
-class AnonymousDonationAdmin(admin.ModelAdmin, ExportCsvMixin):
+class AnonymousDonationAdmin(admin.ModelAdmin, ExportDataMixin):
     """Admin interface for anonymous donations"""
     list_display = [
         'get_donor_name',
