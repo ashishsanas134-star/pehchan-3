@@ -28,9 +28,9 @@ urlpatterns = [
     path('user-dashboard/', views.user_dashboard_ui, name='user_dashboard_ui'),
     
     # Events (Login Required)
-    path('events/', views.EventListView.as_view(), name='event_list'),
-    path('events/<int:pk>/', views.EventDetailView.as_view(), name='event_detail'),
-    path('events/<int:pk>/join/', views.join_event, name='join_event'),
+    path('dashboard/events/', views.EventListView.as_view(), name='event_list'),
+    path('dashboard/events/<int:pk>/', views.EventDetailView.as_view(), name='event_detail'),
+    path('dashboard/events/<int:pk>/join/', views.join_event, name='join_event'),
     
     # Lifetime Volunteer (Login Required)
     path('volunteer/lifetime/', views.LifetimeVolunteerCreateView.as_view(), name='lifetime_volunteer'),
@@ -38,7 +38,7 @@ urlpatterns = [
     # Certificates (Login Required)
     path('certificates/', views.CertificateListView.as_view(), name='certificate_list'),
     path('certificates/<int:pk>/', views.certificate_detail, name='certificate_detail'),
-    path('verify-certificate/', views.certificate_verify, name='certificate_verify'),
+    path('dashboard/verify-certificate/', views.certificate_verify, name='certificate_verify'),
     path('certificates/donor/', views.DonorCertificateListView.as_view(), name='donor_certificate_list'),
     path('certificates/donor/<int:pk>/', views.donor_certificate_detail, name='donor_certificate_detail'),
     

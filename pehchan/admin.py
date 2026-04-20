@@ -313,16 +313,12 @@ class LifetimeVolunteerAdmin(admin.ModelAdmin, ExportDataMixin):
 
 @admin.register(Certificate)
 class CertificateAdmin(admin.ModelAdmin, ExportDataMixin):
-    list_display = ['certificate_id', 'volunteer', 'event', 'issue_date']
+    list_display = ['certificate_number', 'volunteer', 'event', 'issue_date']
     list_filter = ['issue_date', 'event']
-    search_fields = ['volunteer__user__username', 'event__name']
+    search_fields = ['certificate_number', 'volunteer__user__username', 'event__name']
     date_hierarchy = 'issue_date'
     ordering = ['-issue_date']
     actions = ['export_as_csv', 'export_as_excel']
-    
-    def certificate_id(self, obj):
-        return obj.pk
-    certificate_id.short_description = 'Certificate ID'
 
 
 @admin.register(MaterialDonation)

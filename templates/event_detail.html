@@ -84,6 +84,11 @@
                             </label>
                             <p style="font-size: 0.85rem; color: var(--text-tertiary); margin: 4px 0 10px;">Enter your 10-digit number to join this event</p>
                             {{ volunteer_form.contact_number }}
+                            {% if volunteer_form.contact_number.errors %}
+                                <div style="color: var(--error); font-size: 0.85rem; margin-top: 4px;">
+                                    {{ volunteer_form.contact_number.errors.0 }}
+                                </div>
+                            {% endif %}
                         </div>
                         <button type="submit" class="pill-button pill-button--primary" style="width: 100%; margin-top: 12px;">
                             <span class="material-icons-round">volunteer_activism</span> Join as Volunteer
