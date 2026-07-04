@@ -259,7 +259,6 @@
                 {% endif %}
 
                 <div class="form-group">
-                    {{ form.username.as_hidden }}
                     <div class="input-wrapper" style="position: relative;">
                         <input type="text" name="username" class="form-input" placeholder="Enter your username"
                             value="{{ form.username.value|default:'' }}" required>
@@ -274,7 +273,6 @@
                 </div>
 
                 <div class="form-group">
-                    {{ form.password.as_hidden }}
                     <div class="input-wrapper" style="position: relative;">
                         <input type="password" name="password" class="form-input" placeholder="Enter your password"
                             required>

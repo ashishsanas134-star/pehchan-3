@@ -607,14 +607,14 @@ class MoneyDonationCreateView(LoginRequiredMixin, CreateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Static UPI ID for donations
-        context['upi_id'] = 'anikshaupadhyay2001@okicici'  # Replace with your actual UPI ID
+        # Dynamic UPI ID for donations from settings
+        context['upi_id'] = getattr(settings, 'DONATION_UPI_ID', '')
         return context
     
     def form_valid(self, form):
         form.instance.user = self.request.user
         form.instance.payment_method = 'upi'
-        form.instance.upi_id = 'anikshaupadhyay2001@okicici'  # Static UPI ID
+        form.instance.upi_id = getattr(settings, 'DONATION_UPI_ID', '')
         messages.success(self.request, '🌟 Thanks for your contribution! ❤️ You will receive a confirmation email once your donation is processed. ✨')
         return super().form_valid(form)
 
@@ -657,13 +657,19 @@ def forgot_password(request):
                 Pehchan Team
                 """
                 
-                send_mail(
-                    subject,
-                    message,
-                    settings.EMAIL_HOST_USER,
-                    [email],
-                    fail_silently=False,
-                )
+                try:
+                    send_mail(
+                        subject,
+                        message,
+                        settings.EMAIL_HOST_USER,
+                        [email],
+                        fail_silently=False,
+                    )
+                except Exception as e:
+                    # Clean up OTP if email fails
+                    PasswordResetOTP.objects.filter(user=user, otp=otp).delete()
+                    messages.error(request, 'Failed to send OTP email. Please try again later or contact support.')
+                    return redirect('forgot_password')
                 
                 # Store user ID in session for later use
                 request.session['reset_user_id'] = user.id

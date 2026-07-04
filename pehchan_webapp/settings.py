@@ -14,10 +14,13 @@ from pathlib import Path
 import os
 import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables from .env file
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -200,6 +203,8 @@ if not EMAIL_HOST_USER or not EMAIL_HOST_PASSWORD:
         RuntimeWarning
     )
 
+DONATION_UPI_ID = os.environ.get('DONATION_UPI_ID', 'anikshaupadhyay2001@okicici')
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ==========================================
@@ -232,12 +237,13 @@ if not DEBUG:
 
 # Session Security
 SESSION_COOKIE_HTTPONLY = True
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_AGE = 3600  # 1 hour
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_AGE = 2592000  # 30 days
 
 # CSRF Protection
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000']
 
 # Logging Configuration
 LOGGING = {
