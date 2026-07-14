@@ -49,7 +49,7 @@ if 'RENDER' in os.environ:
 
 # Ensure localhost is allowed during development
 if DEBUG:
-    ALLOWED_HOSTS.extend(['localhost', '127.0.0.1', '0.0.0.0'])
+    ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -104,13 +104,22 @@ WSGI_APPLICATION = 'pehchan_webapp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
-        conn_max_age=0,
-        conn_health_checks=True,
-    )
-}
+if DEBUG:
+    # Development: Strictly use a local SQLite database named db_dev.sqlite3
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db_dev.sqlite3',
+        }
+    }
+else:
+    # Production: Use the PostgreSQL database URL from the environment
+    DATABASES = {
+        'default': dj_database_url.config(
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
 
 
 # Password validation

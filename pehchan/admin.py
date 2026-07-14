@@ -3,7 +3,7 @@ from django.urls import path, reverse
 from django.utils.html import format_html
 from django.utils import timezone
 from django import forms
-from django.db import models
+from django.db import models, IntegrityError
 import csv
 from django.http import HttpResponse
 from .models import (
@@ -138,8 +138,9 @@ class EventAdmin(admin.ModelAdmin, ExportDataMixin):
 
 @admin.register(EventVolunteer)
 class EventVolunteerAdmin(admin.ModelAdmin, ExportDataMixin):
-    list_display = ['user', 'event', 'contact_number', 'joined_at', 'status', 'issue_certificate_button']
-    list_filter = ['status', 'joined_at', 'event']
+    list_display = ['user', 'event', 'contact_number', 'joined_at', 'status', 'attended', 'issue_certificate_button']
+    list_editable = ['status', 'attended']
+    list_filter = ['status', 'attended', 'joined_at', 'event']
     search_fields = ['user__username', 'user__email', 'event__name', 'contact_number']
     date_hierarchy = 'joined_at'
     ordering = ['-joined_at']
@@ -181,12 +182,9 @@ class EventVolunteerAdmin(admin.ModelAdmin, ExportDataMixin):
                 certificate = Certificate.objects.create(
                     event=volunteer.event,
                     volunteer=volunteer,
-                    issue_date=timezone.now().date()
+                    issue_date=timezone.now().date(),
+                    file=certificate_file if certificate_file else None
                 )
-                # If a file was uploaded, save it to the certificate
-                if certificate_file:
-                    certificate.file = certificate_file
-                    certificate.save()
                 messages.success(request, f'Certificate issued successfully for {volunteer.user.username}.')
                 return HttpResponseRedirect(reverse('admin:pehchan_eventvolunteer_changelist'))
             except Exception as e:
@@ -203,14 +201,14 @@ class EventVolunteerAdmin(admin.ModelAdmin, ExportDataMixin):
     def issue_certificate_button(self, obj):
         """Display an 'Issue Certificate' button for each volunteer"""
         from django.urls import reverse
-        # Only show button for approved volunteers
-        if obj.status == 'approved':
+        # Only show button for approved AND attended volunteers
+        if obj.status == 'approved' and obj.attended:
             url = reverse('admin:pehchan_eventvolunteer_issue_certificate', args=[obj.pk])
             return format_html(
                 '<a class="button" href="{}" target="_blank">Issue Certificate</a>',
                 url
             )
-        return "Not Approved"
+        return "Not Eligible"
     issue_certificate_button.short_description = 'Certificate Actions'
     
     def issue_certificate(self, request, queryset):
@@ -223,12 +221,12 @@ class EventVolunteerAdmin(admin.ModelAdmin, ExportDataMixin):
         # If only one volunteer is selected, redirect to custom form for certificate number input
         if len(queryset) == 1:
             volunteer = queryset.first()
-            if volunteer.status == 'approved':
+            if volunteer.status == 'approved' and volunteer.attended:
                 # Redirect to a custom view for entering certificate number
                 url = reverse('admin:pehchan_eventvolunteer_issue_certificate', args=[volunteer.pk])
                 return HttpResponseRedirect(url)
             else:
-                self.message_user(request, 'Only approved volunteers can be issued certificates.', level='error')
+                self.message_user(request, 'Only approved volunteers who attended can be issued certificates.', level='error')
                 return
         
         # For multiple selection, issue certificates with auto-generated numbers
@@ -237,7 +235,7 @@ class EventVolunteerAdmin(admin.ModelAdmin, ExportDataMixin):
         not_approved_count = 0
         
         for volunteer in queryset:
-            if volunteer.status != 'approved':
+            if volunteer.status != 'approved' or not volunteer.attended:
                 not_approved_count += 1
                 continue
             
@@ -368,12 +366,9 @@ class MaterialDonationAdmin(admin.ModelAdmin, ExportDataMixin):
                     donation_type='material',
                     material_donation=donation,
                     issue_date=timezone.now().date(),
-                    remarks=f'Thank you for your generous donation of {donation.quantity} {donation.item_name}(s).'
+                    remarks=f'Thank you for your generous donation of {donation.quantity} {donation.item_name}(s).',
+                    file=certificate_file if certificate_file else None
                 )
-                # If a file was uploaded, save it to the certificate
-                if certificate_file:
-                    donor_certificate.file = certificate_file
-                    donor_certificate.save()
                 messages.success(request, f'Donor certificate issued successfully for {donation.user.username}.')
                 return HttpResponseRedirect(reverse('admin:pehchan_materialdonation_changelist'))
             except Exception as e:
@@ -509,12 +504,9 @@ class MoneyDonationAdmin(admin.ModelAdmin, ExportDataMixin):
                     donation_type='money',
                     money_donation=donation,
                     issue_date=timezone.now().date(),
-                    remarks=f'Thank you for your generous donation of Rs. {donation.amount}.'
+                    remarks=f'Thank you for your generous donation of Rs. {donation.amount}.',
+                    file=certificate_file if certificate_file else None
                 )
-                # If a file was uploaded, save it to the certificate
-                if certificate_file:
-                    donor_certificate.file = certificate_file
-                    donor_certificate.save()
                 messages.success(request, f'Donor certificate issued successfully for {donation.user.username}.')
                 return HttpResponseRedirect(reverse('admin:pehchan_moneydonation_changelist'))
             except Exception as e:

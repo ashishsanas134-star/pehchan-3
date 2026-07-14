@@ -100,11 +100,22 @@ def public_event_detail(request, pk):
             user=request.user,
             event=event
         ).exists()
+        
+    # Calculate fundraising progress
+    total_raised = 0
+    progress_percentage = 0
+    if event.fundraising_goal:
+        from django.db.models import Sum
+        donations = event.money_donations.filter(status='verified').aggregate(total=Sum('amount'))
+        total_raised = donations['total'] or 0
+        progress_percentage = min(100, int((total_raised / event.fundraising_goal) * 100))
     
     return render(request, 'public_event_detail.html', {
         'event': event,
         'already_joined': already_joined,
-        'volunteer_form': EventVolunteerForm() if not already_joined else None
+        'volunteer_form': EventVolunteerForm() if not already_joined else None,
+        'total_raised': total_raised,
+        'progress_percentage': progress_percentage
     })
 
 
@@ -627,6 +638,10 @@ def forgot_password(request):
             email = form.cleaned_data['email']
             try:
                 user = User.objects.get(email=email)
+                
+                # Delete any existing OTPs for this user to prevent confusion and database bloat
+                PasswordResetOTP.objects.filter(user=user).delete()
+                
                 # Generate a 6-digit OTP
                 otp = ''.join(random.choices(string.digits, k=6))
                 

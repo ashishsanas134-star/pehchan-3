@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.validators import EmailValidator, RegexValidator
@@ -19,6 +19,8 @@ class Event(models.Model):
     event_date = models.DateField()
     location = models.CharField(max_length=200)
     image = models.ImageField(upload_to='event_images/', blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    fundraising_goal = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text="Target amount to raise for this event")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='upcoming')
     created_by = models.ForeignKey(
         User, 
@@ -75,6 +77,7 @@ class EventVolunteer(models.Model):
     contact_number = models.CharField(max_length=10, validators=[phone_regex], default='0000000000')
     joined_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    attended = models.BooleanField(default=False, help_text="Did the volunteer actually attend the event?")
     
     class Meta:
         unique_together = ['user', 'event']
@@ -130,29 +133,30 @@ class Certificate(models.Model):
             year = timezone.now().year
             prefix = f"PYUI/{year}/V/"
             
-            # Find the last certificate number for this year and type
-            last_cert = Certificate.objects.filter(
-                certificate_number__startswith=prefix
-            ).order_by('-certificate_number').first()
-            
-            if last_cert:
-                try:
-                    # Extract the sequence number from the last certificate
-                    last_sequence = int(last_cert.certificate_number.split('/')[-1])
-                    new_sequence = last_sequence + 1
-                except (ValueError, IndexError):
-                    new_sequence = 1
-            else:
-                new_sequence = 1
+            with transaction.atomic():
+                # Lock the table/rows conceptually by getting the max in a safe way
+                last_cert = Certificate.objects.select_for_update().filter(
+                    certificate_number__startswith=prefix
+                ).order_by('-certificate_number').first()
                 
-            self.certificate_number = f"{prefix}{new_sequence:04d}"
-            
-            # Handle potential collision just in case
-            while Certificate.objects.filter(certificate_number=self.certificate_number).exists():
-                new_sequence += 1
+                if last_cert:
+                    try:
+                        last_sequence = int(last_cert.certificate_number.split('/')[-1])
+                        new_sequence = last_sequence + 1
+                    except (ValueError, IndexError):
+                        new_sequence = 1
+                else:
+                    new_sequence = 1
+                    
                 self.certificate_number = f"{prefix}{new_sequence:04d}"
                 
-        super().save(*args, **kwargs)
+                while Certificate.objects.filter(certificate_number=self.certificate_number).exists():
+                    new_sequence += 1
+                    self.certificate_number = f"{prefix}{new_sequence:04d}"
+                    
+                super().save(*args, **kwargs)
+        else:
+            super().save(*args, **kwargs)
     
     def __str__(self):
         return f"Certificate {self.certificate_number or f'#{self.pk}'} - {self.volunteer.user.username} - {self.event.name}"
@@ -211,6 +215,7 @@ class MoneyDonation(models.Model):
     )
     
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='money_donations')
+    event = models.ForeignKey(Event, on_delete=models.SET_NULL, null=True, blank=True, related_name='money_donations', help_text="Optional: Link this donation to a specific event")
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES, default='upi')
     upi_id = models.CharField(max_length=100, blank=True)
@@ -268,29 +273,29 @@ class DonorCertificate(models.Model):
             year = timezone.now().year
             prefix = f"PYUI/{year}/D/"
             
-            # Find the last certificate number for this year and type
-            last_cert = DonorCertificate.objects.filter(
-                certificate_number__startswith=prefix
-            ).order_by('-certificate_number').first()
-            
-            if last_cert:
-                try:
-                    # Extract the sequence number from the last certificate
-                    last_sequence = int(last_cert.certificate_number.split('/')[-1])
-                    new_sequence = last_sequence + 1
-                except (ValueError, IndexError):
-                    new_sequence = 1
-            else:
-                new_sequence = 1
+            with transaction.atomic():
+                last_cert = DonorCertificate.objects.select_for_update().filter(
+                    certificate_number__startswith=prefix
+                ).order_by('-certificate_number').first()
                 
-            self.certificate_number = f"{prefix}{new_sequence:04d}"
-            
-            # Handle potential collision just in case
-            while DonorCertificate.objects.filter(certificate_number=self.certificate_number).exists():
-                new_sequence += 1
+                if last_cert:
+                    try:
+                        last_sequence = int(last_cert.certificate_number.split('/')[-1])
+                        new_sequence = last_sequence + 1
+                    except (ValueError, IndexError):
+                        new_sequence = 1
+                else:
+                    new_sequence = 1
+                    
                 self.certificate_number = f"{prefix}{new_sequence:04d}"
                 
-        super().save(*args, **kwargs)
+                while DonorCertificate.objects.filter(certificate_number=self.certificate_number).exists():
+                    new_sequence += 1
+                    self.certificate_number = f"{prefix}{new_sequence:04d}"
+                    
+                super().save(*args, **kwargs)
+        else:
+            super().save(*args, **kwargs)
     
     def __str__(self):
         return f"Certificate {self.certificate_number} - {self.user.username}"
@@ -403,49 +408,46 @@ class PehchanWallet(models.Model):
     
     def deposit(self, amount, description="", transaction_type="donation"):
         """Deposit money to wallet and record transaction"""
-        # Ensure amount is a Decimal
         amount = Decimal(str(amount))
-        
         if amount <= 0:
             raise ValueError("Deposit amount must be positive")
             
-        # Explicitly cast current balance to Decimal to avoid float + decimal errors
-        current_balance = Decimal(str(self.balance))
-        self.balance = current_balance + amount
-        self.save()
-        
-        return WalletTransaction.objects.create(
-            wallet=self,
-            amount=amount,
-            transaction_type=transaction_type,
-            description=description,
-            balance_after_transaction=self.balance
-        )
+        with transaction.atomic():
+            wallet = PehchanWallet.objects.select_for_update().get(id=self.id)
+            wallet.balance = wallet.balance + amount
+            wallet.save()
+            self.balance = wallet.balance
+            
+            return WalletTransaction.objects.create(
+                wallet=wallet,
+                amount=amount,
+                transaction_type=transaction_type,
+                description=description,
+                balance_after_transaction=wallet.balance
+            )
     
     def withdraw(self, amount, description="", transaction_type="expense"):
         """Withdraw money from wallet and record transaction"""
-        # Ensure amount is a Decimal
         amount = Decimal(str(amount))
-        
         if amount <= 0:
             raise ValueError("Withdrawal amount must be positive")
-        
-        # Explicitly cast current balance to Decimal
-        current_balance = Decimal(str(self.balance))
             
-        if amount > current_balance:
-            raise ValueError("Insufficient funds in wallet")
-        
-        self.balance = current_balance - amount
-        self.save()
-        
-        return WalletTransaction.objects.create(
-            wallet=self,
-            amount=-amount,
-            transaction_type=transaction_type,
-            description=description,
-            balance_after_transaction=self.balance
-        )
+        with transaction.atomic():
+            wallet = PehchanWallet.objects.select_for_update().get(id=self.id)
+            if amount > wallet.balance:
+                raise ValueError("Insufficient funds in wallet")
+            
+            wallet.balance = wallet.balance - amount
+            wallet.save()
+            self.balance = wallet.balance
+            
+            return WalletTransaction.objects.create(
+                wallet=wallet,
+                amount=-amount,
+                transaction_type=transaction_type,
+                description=description,
+                balance_after_transaction=wallet.balance
+            )
 
 
 class WalletTransaction(models.Model):
