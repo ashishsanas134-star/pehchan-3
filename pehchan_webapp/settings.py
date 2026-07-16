@@ -104,21 +104,21 @@ WSGI_APPLICATION = 'pehchan_webapp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-if DEBUG:
-    # Development: Strictly use a local SQLite database named db_dev.sqlite3
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db_dev.sqlite3',
-        }
-    }
-else:
+if os.environ.get('DATABASE_URL'):
     # Production: Use the PostgreSQL database URL from the environment
     DATABASES = {
         'default': dj_database_url.config(
             conn_max_age=600,
             conn_health_checks=True,
         )
+    }
+else:
+    # Development: Strictly use a local SQLite database named db_dev.sqlite3
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db_dev.sqlite3',
+        }
     }
 
 
