@@ -1,6 +1,12 @@
 {
+<<<<<<< HEAD
     "python.defaultInterpreterPath": "${workspaceFolder}\\venv\\Scripts\\python.exe",
     "python.analysis.extraPaths": [
         "${workspaceFolder}\\venv\\Lib\\site-packages"
+=======
+    "python.defaultInterpreterPath": "${workspaceFolder}\\pehchan-webapp\\venv\\Scripts\\python.exe",
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}\\pehchan-webapp\\venv\\Lib\\site-packages"
+>>>>>>> 9c8e8970eacddfb77ccf53450f0717b7fd16484e
     ]
 }
