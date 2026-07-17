@@ -104,7 +104,7 @@ WSGI_APPLICATION = 'pehchan_webapp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-if not DEBUG and os.environ.get('DATABASE_URL'):
+if 'RENDER' in os.environ and os.environ.get('DATABASE_URL'):
     # Production: Use the PostgreSQL database URL from the environment
     DATABASES = {
         'default': dj_database_url.config(
@@ -250,6 +250,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 2592000  # 30 days
 
 # CSRF Protection
+CSRF_COOKIE_NAME = "pehchan_csrftoken"
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000']
