@@ -104,7 +104,7 @@ WSGI_APPLICATION = 'pehchan_webapp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-if os.environ.get('DATABASE_URL'):
+if not DEBUG and os.environ.get('DATABASE_URL'):
     # Production: Use the PostgreSQL database URL from the environment
     DATABASES = {
         'default': dj_database_url.config(
