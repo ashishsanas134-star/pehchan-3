@@ -104,10 +104,13 @@ WSGI_APPLICATION = 'pehchan_webapp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-if 'RENDER' in os.environ and os.environ.get('DATABASE_URL'):
+if 'RENDER' in os.environ:
     # Production: Use the PostgreSQL database URL from the environment
+    # We use SUPABASE_URL so Render's internal database doesn't override it
+    db_url = os.environ.get('SUPABASE_URL') or os.environ.get('DATABASE_URL')
     DATABASES = {
-        'default': dj_database_url.config(
+        'default': dj_database_url.parse(
+            db_url,
             conn_max_age=600,
             conn_health_checks=True,
         )
