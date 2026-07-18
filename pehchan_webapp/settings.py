@@ -256,6 +256,16 @@ SESSION_COOKIE_AGE = 2592000  # 30 days
 CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000']
 
+if 'RENDER' in os.environ:
+    render_host = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+    if render_host:
+        CSRF_TRUSTED_ORIGINS.append(f'https://{render_host}')
+    
+    env_allowed_hosts = os.environ.get('ALLOWED_HOSTS', '').split(',')
+    for host in env_allowed_hosts:
+        if host and host.strip():
+            CSRF_TRUSTED_ORIGINS.append(f'https://{host.strip()}')
+
 # Caching Configuration
 CACHES = {
     'default': {
