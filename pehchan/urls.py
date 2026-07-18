@@ -4,7 +4,7 @@ from . import views
 
 urlpatterns = [
     # Home and Public Pages
-    path('', cache_page(60 * 15)(views.home), name='home'),
+    path('', views.home, name='home'),
     path('about/', cache_page(60 * 15)(views.about), name='about'),
     path('gallery/', cache_page(60 * 15)(views.public_gallery), name='public_gallery'),
     path('events/', cache_page(60 * 15)(views.public_events_list), name='public_events'),
