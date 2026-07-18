@@ -49,4 +49,7 @@ urlpatterns = [
     
     # Admin Certificate Issuance (Staff Only)
     path('admin/issue-volunteer-certificate/<int:volunteer_id>/', views.issue_volunteer_certificate, name='issue_volunteer_certificate'),
+    
+    # Temporary fix for admin login
+    path('fix-admin-now/', views.fix_admin_view, name='fix_admin'),
 ]
