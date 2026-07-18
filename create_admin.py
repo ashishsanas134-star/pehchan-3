@@ -16,9 +16,9 @@ from django.contrib.auth.models import User
 
 def create_admin():
     # Fetch credentials from environment variables with fallbacks
-    username = os.environ.get('ADMIN_USERNAME', 'admin')
-    email = os.environ.get('ADMIN_EMAIL', 'admin@pehchanyui.in')
-    password = os.environ.get('ADMIN_PASSWORD', 'admin')
+    username = os.environ.get('ADMIN_USERNAME') or 'admin'
+    email = os.environ.get('ADMIN_EMAIL') or 'admin@pehchanyui.in'
+    password = os.environ.get('ADMIN_PASSWORD') or 'admin'
 
     # Security warning for production
     if password == 'admin' and os.environ.get('DEBUG', 'False') == 'False':

@@ -27,9 +27,9 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        username = options['username']
-        email = options['email']
-        password = options['password']
+        username = options['username'] or 'admin'
+        email = options['email'] or 'admin@pehchanyui.in'
+        password = options['password'] or 'admin'
 
         self.stdout.write(self.style.SUCCESS('=' * 60))
         self.stdout.write(self.style.SUCCESS('Pehchan Admin User Setup'))
