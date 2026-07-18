@@ -50,6 +50,8 @@ class Command(BaseCommand):
             user = User.objects.get(username=username)
             user.set_password(password)
             user.email = email
+            user.is_staff = True
+            user.is_superuser = True
             user.save()
             self.stdout.write(self.style.SUCCESS(
                 f'[*] Updated existing superuser "{username}"'

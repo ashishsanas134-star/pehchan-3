@@ -42,7 +42,14 @@ def create_admin():
             print(f"[ERROR] Failed to create superuser: {e}")
             return False
     else:
-        print(f"[INFO] Superuser '{username}' already exists. Skipping creation.")
+        print(f"[INFO] User '{username}' already exists. Updating privileges and password...")
+        user = User.objects.get(username=username)
+        user.set_password(password)
+        user.email = email
+        user.is_staff = True
+        user.is_superuser = True
+        user.save()
+        print(f"[*] Superuser '{username}' updated successfully!")
         return True
 
 if __name__ == "__main__":
